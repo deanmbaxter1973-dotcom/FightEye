@@ -1,0 +1,7 @@
+{
+  "name":"fighteye-v195-v196",
+  "private":true,
+  "version":"195.196.0",
+  "scripts":{"test":"node tests/smoke.js","check":"node --check app.js && node --check netlify/functions/health.js && node --check netlify/functions/events.js && node --check netlify/functions/sync.js && node --check netlify/functions/analytics.js && node --check netlify/functions/metrics.js && node tests/smoke.js"},
+  "engines":{"node":">=18"}
+}
