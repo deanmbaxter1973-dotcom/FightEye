@@ -1,0 +1,7 @@
+.rail nav{overflow-y:auto;min-height:0;padding-right:3px;scrollbar-width:thin}
+@media(max-width:620px){
+  .rail{overflow-x:auto;overflow-y:hidden}
+  .rail nav{display:flex!important;min-width:max-content;gap:3px}
+  .rail nav button{min-width:48px}
+  .workspace{padding-bottom:96px!important}
+}
