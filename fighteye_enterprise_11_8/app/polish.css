@@ -1,0 +1,6 @@
+body{font-family:var(--font-geist-sans),Arial,sans-serif}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #82dafe;outline-offset:2px}
+.panel{box-shadow:inset 0 1px #ffffff08}
+.workspace>header h1{font-weight:760}
+@media(hover:hover){button:not(:disabled){transition:border-color .16s ease,background-color .16s ease,color .16s ease}button:not(:disabled):hover{border-color:#ffffff3a}}
+@media(max-width:900px) and (hover:none){.panel{box-shadow:none}.workspace>header h1{letter-spacing:-.025em}}

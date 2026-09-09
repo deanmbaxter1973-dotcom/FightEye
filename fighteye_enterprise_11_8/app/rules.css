@@ -1,0 +1,22 @@
+.rulePicker{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.rulePicker>div{border:1px solid var(--line);background:#ffffff07;border-radius:15px;padding:12px}
+.rulePicker small{display:block;color:var(--gold);font-size:8px;font-weight:900;letter-spacing:.12em;margin-bottom:9px}
+.rulePicker button{border:1px solid var(--line);background:#ffffff08;color:var(--muted);border-radius:9px;padding:9px 12px;margin:0 5px 5px 0;font-weight:900}
+.rulePicker button.active{background:var(--gold);color:var(--navy);border-color:var(--gold)}
+.rulesLayout{display:grid;grid-template-columns:1.35fr .65fr;gap:14px}
+.ruleTitle{display:flex;justify-content:space-between;align-items:start}
+.ruleTitle h3{font-size:28px;margin:10px 0 3px}
+.ruleTitle p,.sourceCard>p{color:var(--muted);font-size:10px}
+.ruleTitle>strong{font-size:44px;color:#ffffff12}
+.criteria{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:17px}
+.criteria>div{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:#ffffff07;border-radius:12px;padding:12px;font-size:11px}
+.criteria i{width:25px;height:25px;border-radius:8px;background:#3bb8ec18;color:#82dafe;display:grid;place-items:center;font-style:normal;font-weight:900}
+.ruleNotice{border:1px solid #e6b94d44;background:#e6b94d11;color:#f5d473;border-radius:10px;padding:11px;margin-top:9px;font-size:10px}
+.sourceCard dl{margin:15px 0}
+.sourceCard dl>div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.sourceCard dt{color:var(--muted);font-size:9px}.sourceCard dd{margin:0;text-align:right;font-size:10px;font-weight:800}
+.sourceCard>a{display:block;color:#82dafe;font-size:10px;font-weight:900;margin:14px 0}
+.caution{border-left:3px solid var(--gold);background:#e6b94d0d;padding:11px;display:grid;gap:5px}
+.caution b{font-size:10px}.caution span{font-size:9px;color:var(--muted);line-height:1.45}.matrix{margin-top:14px}
+@media(max-width:950px){.rulesLayout{grid-template-columns:1fr}}
+@media(max-width:620px){.rulePicker{grid-template-columns:1fr}.criteria{grid-template-columns:1fr}}
