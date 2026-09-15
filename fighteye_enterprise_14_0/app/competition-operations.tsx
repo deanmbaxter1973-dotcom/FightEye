@@ -1,0 +1,42 @@
+"use client";
+
+import {useEffect,useMemo,useRef,useState} from "react";
+
+type Athlete={id:string;name:string;age:string;weight:string;categories:string[];licence:boolean;consent:boolean;medical:boolean;weightCheck:boolean};
+type CheckKey="submission"|"travel"|"accommodation"|"insurance"|"documents"|"kit";
+type Checks=Record<CheckKey,boolean>;
+const fallbackAthletes:Athlete[]=[
+ {id:"charlie",name:"Charlie Baxter",age:"Older Cadet",weight:"−42 kg",categories:["PF","LC","KL"],licence:true,consent:true,medical:true,weightCheck:false},
+ {id:"jamie",name:"Jamie Granville",age:"Junior",weight:"−60 kg",categories:["PF","LC"],licence:true,consent:true,medical:true,weightCheck:true},
+ {id:"olivia",name:"Olivia Green",age:"Younger Cadet",weight:"−37 kg",categories:["PF"],licence:false,consent:true,medical:true,weightCheck:true},
+ {id:"hollie",name:"Hollie Haworth",age:"Older Cadet",weight:"−50 kg",categories:["LC","KL"],licence:true,consent:false,medical:true,weightCheck:true},
+];
+const events=[
+ {id:"wako-worlds",name:"WAKO Junior World Championships",date:"18–27 Sep 2026",place:"Italy"},
+ {id:"peterborough",name:"Peterborough Series",date:"9 Nov 2026",place:"Peterborough, UK"},
+ {id:"revolution",name:"Revolution Series",date:"Date pending",place:"United Kingdom"},
+];
+const defaultChecks:Checks={submission:false,travel:false,accommodation:false,insurance:false,documents:false,kit:false};
+const checkLabels:Record<CheckKey,[string,string]>={submission:["Entry submitted","Confirmation received from organiser"],travel:["Travel booked","Team transport and meeting point confirmed"],accommodation:["Accommodation","Rooms and athlete supervision confirmed"],insurance:["Insurance","Competition and travel cover checked"],documents:["Documents","IDs, licences and consent copies packed"],kit:["Competition kit","Uniform, gloves, protection and spares checked"]};
+const safeAthletes=(value:unknown):Athlete[]=>Array.isArray(value)&&value.every(item=>item&&typeof item==="object"&&typeof (item as Athlete).name==="string"&&Array.isArray((item as Athlete).categories))?value as Athlete[]:fallbackAthletes;
+const athleteReady=(athlete:Athlete)=>athlete.licence&&athlete.consent&&athlete.medical&&athlete.weightCheck;
+const readAthletes=()=>{if(typeof window==="undefined")return fallbackAthletes;try{return safeAthletes(JSON.parse(localStorage.getItem("fighteye-entry-readiness-v1")||"null"))}catch{return fallbackAthletes}};
+const readOperations=(eventId:string)=>{if(typeof window==="undefined")return{checks:defaultChecks,issued:false};try{const saved=JSON.parse(localStorage.getItem("fighteye-operations-"+eventId)||"null");return{checks:saved?.checks?{...defaultChecks,...saved.checks}:defaultChecks,issued:Boolean(saved?.issued)}}catch{return{checks:defaultChecks,issued:false}}};
+
+export default function CompetitionOperations({notice}:{notice:(message:string)=>void}){
+ const initialOperations=useMemo(()=>readOperations(events[0].id),[]);const[eventId,setEventId]=useState(events[0].id);const[athletes]=useState<Athlete[]>(readAthletes);const[checks,setChecks]=useState<Checks>(initialOperations.checks);const[issued,setIssued]=useState(initialOperations.issued);const timer=useRef<ReturnType<typeof setTimeout>|null>(null);
+ const selected=events.find(event=>event.id===eventId)??events[0];
+ useEffect(()=>{if(timer.current)clearTimeout(timer.current);timer.current=setTimeout(()=>{try{localStorage.setItem("fighteye-operations-"+eventId,JSON.stringify({checks,issued}))}catch{}},120);return()=>{if(timer.current)clearTimeout(timer.current)}},[checks,issued,eventId]);
+ const teamReady=athletes.filter(athleteReady).length;const opsReady=Object.values(checks).filter(Boolean).length;const totalEntries=athletes.reduce((sum,athlete)=>sum+athlete.categories.length,0);const blockers=athletes.length-teamReady+(Object.keys(checks) as CheckKey[]).filter(key=>!checks[key]).length;
+ const teamText=useMemo(()=>athletes.map(athlete=>athlete.name+": "+(athlete.categories.join(", ")||"No category")+" ("+(athleteReady(athlete)?"ready":"action needed")+")").join("\n"),[athletes]);
+ const toggle=(key:CheckKey)=>{setChecks(current=>({...current,[key]:!current[key]}));setIssued(false)};
+ const sharePack=async()=>{const text=selected.name+"\n"+selected.date+" · "+selected.place+"\n\nPrestige Martial Arts\n"+teamText+"\n\nOperations: "+opsReady+"/6 complete";try{if(navigator.share)await navigator.share({title:"FightEye · "+selected.name,text});else{await navigator.clipboard.writeText(text);notice("Event pack copied to clipboard")}}catch(error){if(error instanceof DOMException&&error.name==="AbortError")return;notice("Could not share the event pack")}};
+ return <div className="operationsPack">
+  <section className="opsHero"><div><span className="badge gold">PHASE 47 · COMPETITION OPERATIONS</span><h2>One event pack for the whole team.</h2><p>Turn approved entries into a clear submission, travel and event-day plan that coaches can use from their iPhone.</p></div><label><span>Active event</span><select value={eventId} onChange={event=>{const nextId=event.target.value;const next=readOperations(nextId);setEventId(nextId);setChecks(next.checks);setIssued(next.issued)}}>{events.map(event=><option value={event.id} key={event.id}>{event.name}</option>)}</select></label></section>
+  <section className="opsPulse"><article><small>Pack status</small><b>{issued?"Issued":"Draft"}</b><span className={issued?"good":"attention"}>{issued?"Shared with team":blockers+" actions remain"}</span></article><article><small>Operations</small><b>{opsReady}/6</b><span>{Math.round(opsReady/6*100)}% complete</span></article><article><small>Athletes ready</small><b>{teamReady}/{athletes.length}</b><span>{totalEntries} category entries</span></article><article><small>Event</small><b className="opsDate">{selected.date}</b><span>{selected.place}</span></article></section>
+  <div className="opsColumns"><section className="panel opsChecklist"><div className="opsSectionHead"><div><span className="eyebrow">FINAL CLEARANCE</span><h3>Submission & logistics</h3></div><strong>{opsReady}/6</strong></div>{(Object.keys(checkLabels) as CheckKey[]).map(key=><button key={key} className={checks[key]?"done":""} onClick={()=>toggle(key)} aria-pressed={checks[key]}><i>{checks[key]?"✓":"○"}</i><span><b>{checkLabels[key][0]}</b><small>{checkLabels[key][1]}</small></span></button>)}</section>
+  <section className="panel opsRunSheet"><div className="opsSectionHead"><div><span className="eyebrow">EVENT-DAY PACK</span><h3>Working run sheet</h3></div><span className="provisional">VERIFY TIMES</span></div><p className="opsNote">Times are a working club plan until the official running order is imported.</p>{[["07:30","Team call","Meet coach · documents and kit check"],["08:00","Registration","Collect passes · confirm category entries"],["08:30","Weigh-in","Record verified weights in athlete profiles"],["09:00","Coach briefing","Confirm rules, areas and first-call procedure"],["09:30","Competition ready","Warm-up groups begin by ring order"]].map(item=><div className="runRow" key={item[0]}><time>{item[0]}</time><span><b>{item[1]}</b><small>{item[2]}</small></span></div>)}</section></div>
+  <section className="panel opsTeam"><div className="opsSectionHead"><div><span className="eyebrow">TEAM MANIFEST</span><h3>Prestige Martial Arts</h3></div><span>{totalEntries} entries</span></div><div className="opsTeamGrid">{athletes.map(athlete=><article key={athlete.id}><div><span className="opsAvatar">{athlete.name.split(" ").map(part=>part[0]).join("")}</span><span><b>{athlete.name}</b><small>{athlete.age} · {athlete.weight}</small></span></div><div className="opsCategories">{athlete.categories.map(category=><i key={category}>{category}</i>)}</div><strong className={athleteReady(athlete)?"ready":"blocked"}>{athleteReady(athlete)?"✓ Ready":"! Action needed"}</strong></article>)}</div></section>
+  <section className="panel opsActions"><div><span className="eyebrow">PACK CONTROL</span><h3>{issued?"Event pack issued":"Issue the event pack when checked"}</h3><p>{blockers?blockers+" outstanding items are clearly marked. You can still share this as a draft.":"All athlete and operations checks are complete."}</p></div><div><button onClick={sharePack}>Share draft</button><button onClick={()=>window.print()}>Print pack</button><button className="primary" onClick={()=>{setIssued(true);notice("Event pack marked as issued")}}>{issued?"Reissue pack":"Mark pack issued"}</button></div></section>
+ </div>
+}

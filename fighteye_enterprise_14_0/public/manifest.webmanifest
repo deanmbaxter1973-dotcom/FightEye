@@ -1,0 +1,12 @@
+{
+  "name": "FightEye Enterprise",
+  "short_name": "FightEye",
+  "description": "Fight database, competition operations and athlete intelligence.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#031025",
+  "theme_color": "#061832",
+  "icons": [
+    {"src":"/favicon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
