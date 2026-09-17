@@ -58,6 +58,22 @@ test("uses stable iPhone scroll layers", async () => {
   assert.doesNotMatch(css, /\.mobileDock[^}]*(fixed|translate3d|contain:layout paint)/);
 });
 
+test("makes FightEye installable on iPhone and supported browsers", async () => {
+  const source = await readFile(new URL("../app/install-app.tsx", import.meta.url), "utf8");
+  const manifest = JSON.parse(await readFile(new URL("../public/manifest.webmanifest", import.meta.url), "utf8"));
+  const worker = await readFile(new URL("../public/sw.js", import.meta.url), "utf8");
+
+  assert.equal(manifest.display, "standalone");
+  assert.equal(manifest.scope, "/");
+  assert.ok(manifest.icons.some(icon => icon.sizes === "192x192"));
+  assert.ok(manifest.icons.some(icon => icon.sizes === "512x512"));
+  assert.match(source, /beforeinstallprompt/);
+  assert.match(source, /serviceWorker\.register\("\/sw\.js"\)/);
+  assert.match(source, /Add to Home Screen/);
+  assert.match(source, /Download FightEye app/);
+  assert.match(worker, /fighteye-app-v1/);
+});
+
 test("connects the event execution phases to saved pathway data", async () => {
   const source = await readFile(new URL("../app/event-execution.tsx", import.meta.url), "utf8");
 
@@ -114,6 +130,110 @@ test("provides simple hub navigation, search and device shortcuts", async () => 
   assert.match(page, /fighteye-favourite-tools-v1/);
   assert.match(page, /fighteye-recent-tools-v1/);
   assert.match(page, /Enterprise 14\.0/);
+});
+
+test("restores the filtered current and past event timeline", async () => {
+  const source = await readFile(new URL("../app/competition-discovery.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/event-timeline.css", import.meta.url), "utf8");
+
+  assert.match(source, /EVENT TIMELINE/);
+  assert.match(source, /aria-label=\{`\$\{period\} event timeline`\}/);
+  assert.match(source, /Past events/);
+  assert.match(source, /layout===\"Timeline\"/);
+  assert.match(source, /◷ Timeline/);
+  assert.match(source, /NEXT EVENT/);
+  assert.match(source, /NEXT ENTRY DEADLINE/);
+  assert.match(source, /Filter timeline by month/);
+  assert.match(source, /timeline-month-break/);
+  assert.match(source, /Entries close in/);
+  assert.match(source, /registration ready/);
+  assert.match(css, /\.event-timeline-row/);
+  assert.match(css, /\.timeline-date-tile/);
+  assert.match(css, /\.timeline-glance/);
+  assert.match(css, /touch-action:manipulation/);
+  assert.match(css, /@media\(max-width:470px\)/);
+  assert.doesNotMatch(css, /position:(fixed|sticky)/);
+});
+
+test("restores the comprehensive event catalogue and working club planner", async () => {
+  const source = await readFile(new URL("../app/competition-discovery.tsx", import.meta.url), "utf8");
+  const catalogue = await readFile(new URL("../app/event-catalogue.ts", import.meta.url), "utf8");
+  const plannerCss = await readFile(new URL("../app/event-planner.css", import.meta.url), "utf8");
+
+  assert.ok((catalogue.match(/id:\"/g) ?? []).length >= 30);
+  assert.match(catalogue, /WAKO Children, Cadet & Junior World Championships/);
+  assert.match(catalogue, /The Bristol Open 2026/);
+  assert.match(catalogue, /Peterborough Championship Series No\. 3/);
+  assert.match(catalogue, /ISKA AMA World Championships/);
+  assert.match(catalogue, /WKU World Championships/);
+  assert.match(source, /PHASES 91–93 · EVENT DECISIONS/);
+  assert.match(source, /Club plan/);
+  assert.match(source, /Select the athletes to enter/);
+  assert.match(source, /fighteye-event-plans-v2/);
+  assert.match(source, /Open registration/);
+  assert.match(source, /timeline-details-button/);
+  assert.match(source, /timeline-register/);
+  assert.match(source, /Register for \$\{event\.name\}/);
+  assert.match(source, /<dt>Venue<\/dt>/);
+  assert.match(plannerCss, /@media\(max-width:430px\)/);
+});
+
+test("adds registration readiness, event comparison and portable event actions", async () => {
+  const source = await readFile(new URL("../app/competition-discovery.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/event-planner.css", import.meta.url), "utf8");
+
+  assert.match(source, /PHASE 91 · REGISTRATION READY/);
+  assert.match(source, /Licences checked/);
+  assert.match(source, /Categories confirmed/);
+  assert.match(source, /PHASE 92 · COMPARE EVENTS/);
+  assert.match(source, /Compare up to three events at once/);
+  assert.match(source, /PHASE 93 · TAKE IT WITH YOU/);
+  assert.match(source, /Add to calendar/);
+  assert.match(source, /Share event/);
+  assert.match(source, /BEGIN:VCALENDAR/);
+  assert.match(css, /\.registration-readiness/);
+  assert.match(css, /\.event-comparison/);
+  assert.match(css, /\.event-portability/);
+});
+
+test("adds a shared club roster, coaching team and club operations manager", async () => {
+  const manager = await readFile(new URL("../app/club-manager.tsx", import.meta.url), "utf8");
+  const data = await readFile(new URL("../app/club-data.ts", import.meta.url), "utf8");
+  const events = await readFile(new URL("../app/competition-discovery.tsx", import.meta.url), "utf8");
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/club-manager.css", import.meta.url), "utf8");
+
+  assert.match(manager, /PHASES 94–99 · CLUB MANAGEMENT/);
+  assert.match(manager, /PHASE 95 · COACHING TEAM/);
+  assert.match(manager, /PHASE 96 · CLUB OPERATIONS/);
+  assert.match(manager, /Add club athlete/);
+  assert.match(manager, /Safeguarding current/);
+  assert.match(data, /fighteye-club-athletes-v1/);
+  assert.match(events, /readClubAthletes/);
+  assert.match(page, /clubManager/);
+  assert.match(css, /@media\(max-width:430px\)/);
+  assert.match(css, /touch-action|minimum|\.club-manager-tabs/);
+  assert.doesNotMatch(css, /position:(fixed|sticky)/);
+});
+
+test("adds membership, onboarding and club command phases with iPhone polish", async () => {
+  const manager = await readFile(new URL("../app/club-manager.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/club-manager.css", import.meta.url), "utf8");
+  const iphone = await readFile(new URL("../app/iphone.css", import.meta.url), "utf8");
+
+  assert.match(manager, /PHASE 97 · MEMBERSHIP CONTROL/);
+  assert.match(manager, /PHASE 98 · ATHLETE ONBOARDING/);
+  assert.match(manager, /PHASE 99 · CLUB COMMAND/);
+  assert.match(manager, /fighteye-membership-control-v1/);
+  assert.match(manager, /fighteye-athlete-onboarding-v1/);
+  assert.match(manager, /Consent recorded/);
+  assert.match(manager, /actions need attention/);
+  assert.match(css, /\.membership-list/);
+  assert.match(css, /\.onboarding-list/);
+  assert.match(css, /\.command-grid/);
+  assert.match(css, /overscroll-behavior-x:contain/);
+  assert.match(iphone, /\.mobileMoreHead\{position:relative/);
+  assert.doesNotMatch(iphone, /\.mobileMoreHead\{position:sticky/);
 });
 
 test("provides guided context, today priorities and one-tap actions", async () => {

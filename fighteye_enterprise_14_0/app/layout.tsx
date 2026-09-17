@@ -14,6 +14,8 @@ import "./federation-operations.css";
 import "./competition-mobile.css";
 import "./enterprise.css";
 import "./competition-discovery.css";
+import "./event-timeline.css";
+import "./event-planner.css";
 import "./entry-readiness.css";
 import "./competition-operations.css";
 import "./competition-live-suite.css";
@@ -31,12 +33,14 @@ import "./welfare-coordination.css";
 import "./welfare-engagement.css";
 import "./club-participation.css";
 import "./coaching-session.css";
+import "./club-manager.css";
 import "./experience-hub.css";
 import "./fight-day-focus.css";
 import "./simplified-nav.css";
 import "./guided-experience.css";
 import "./polish.css";
 import "./iphone.css";
+import "./install-app.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,8 +59,9 @@ export const metadata: Metadata = {
   appleWebApp: {capable:true,statusBarStyle:"black-translucent",title:"FightEye"},
   formatDetection: {telephone:false},
   icons: {
-    icon: "/favicon.svg",
+    icon: [{url:"/favicon.svg",type:"image/svg+xml"},{url:"/icon-192.png",sizes:"192x192",type:"image/png"},{url:"/icon-512.png",sizes:"512x512",type:"image/png"}],
     shortcut: "/favicon.svg",
+    apple: [{url:"/apple-touch-icon.png",sizes:"180x180",type:"image/png"}],
   },
 };
 

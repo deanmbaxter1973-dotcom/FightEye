@@ -1,4 +1,12 @@
-# vinext-starter
+# FightEye Enterprise 14.0
+
+## Netlify deployment
+
+The repository includes a production Netlify configuration for the Next.js App Router build. Netlify should use `npm run build:netlify`; its OpenNext adapter detects the output automatically, so no manual publish directory is required. The PWA manifest, service worker and install icons are included in the deployment.
+
+The Cloudflare-backed database and private video routes still require their D1 and R2 runtime bindings. The core event, club, coaching and live-tracker experience uses device storage and remains available without those optional server bindings.
+
+## Development
 
 A clean full-stack starter running on
 [vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
