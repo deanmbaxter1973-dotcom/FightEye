@@ -166,9 +166,9 @@ test("restores the comprehensive event catalogue and working club planner", asyn
   assert.match(catalogue, /Peterborough Championship Series No\. 3/);
   assert.match(catalogue, /ISKA AMA World Championships/);
   assert.match(catalogue, /WKU World Championships/);
-  assert.match(source, /PHASES 100–102 · TIMELINE INTEGRITY/);
+  assert.match(source, /PHASES 103–105 · CONNECTED EVENT TEAMS/);
   assert.match(source, /Club plan/);
-  assert.match(source, /Select the athletes to enter/);
+  assert.match(source, /Select the club athletes to enter/);
   assert.match(source, /fighteye-event-plans-v2/);
   assert.match(source, /Open registration/);
   assert.match(source, /timeline-details-button/);
@@ -208,7 +208,7 @@ test("adds registration readiness, event comparison and portable event actions",
   assert.match(source, /Categories confirmed/);
   assert.match(source, /PHASE 92 · COMPARE EVENTS/);
   assert.match(source, /Compare up to three events at once/);
-  assert.match(source, /PHASE 102 · TRUSTED HANDOVER/);
+  assert.match(source, /PHASE 103 · LIVE EVENT BRIDGE/);
   assert.match(source, /Add to calendar/);
   assert.match(source, /Share event/);
   assert.match(source, /BEGIN:VCALENDAR/);
@@ -224,7 +224,7 @@ test("adds a shared club roster, coaching team and club operations manager", asy
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/club-manager.css", import.meta.url), "utf8");
 
-  assert.match(manager, /PHASES 94–99 · CLUB MANAGEMENT/);
+  assert.match(manager, /PHASES 94–105 · CONNECTED CLUB MANAGEMENT/);
   assert.match(manager, /PHASE 95 · COACHING TEAM/);
   assert.match(manager, /PHASE 96 · CLUB OPERATIONS/);
   assert.match(manager, /Add club athlete/);
@@ -332,4 +332,21 @@ test("connects class planner, drill library and live session command", async () 
   assert.match(css, /@media\(max-width:430px\)/);
   assert.match(css, /touch-action:manipulation/);
   assert.doesNotMatch(css, /position:(fixed|sticky)/);
+});
+
+test("connects event timeline, live tracker and club athletes", async () => {
+  const links = await readFile(new URL("../app/event-club-links.ts", import.meta.url), "utf8");
+  const timeline = await readFile(new URL("../app/competition-discovery.tsx", import.meta.url), "utf8");
+  const club = await readFile(new URL("../app/club-manager.tsx", import.meta.url), "utf8");
+  const live = await readFile(new URL("../app/competition-live-suite.tsx", import.meta.url), "utf8");
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+
+  assert.match(links, /fighteye-event-team-links-v1/);
+  assert.match(links, /fighteye-active-live-event-v1/);
+  assert.match(timeline, /PHASES 103–105 · CONNECTED EVENT TEAMS/);
+  assert.match(timeline, /Stable athlete IDs/);
+  assert.match(club, /PHASE 104 · CLUB EVENT TEAMS/);
+  assert.match(club, /athleteIds\.includes\(athlete\.id\)/);
+  assert.match(live, /PHASE 103 · ACTIVE EVENT/);
+  assert.match(page, /\["clubManager","Club","◆"\]/);
 });
