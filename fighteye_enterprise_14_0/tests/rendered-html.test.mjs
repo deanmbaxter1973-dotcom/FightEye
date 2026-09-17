@@ -166,7 +166,7 @@ test("restores the comprehensive event catalogue and working club planner", asyn
   assert.match(catalogue, /Peterborough Championship Series No\. 3/);
   assert.match(catalogue, /ISKA AMA World Championships/);
   assert.match(catalogue, /WKU World Championships/);
-  assert.match(source, /PHASES 91–93 · EVENT DECISIONS/);
+  assert.match(source, /PHASES 100–102 · TIMELINE INTEGRITY/);
   assert.match(source, /Club plan/);
   assert.match(source, /Select the athletes to enter/);
   assert.match(source, /fighteye-event-plans-v2/);
@@ -178,6 +178,27 @@ test("restores the comprehensive event catalogue and working club planner", asyn
   assert.match(plannerCss, /@media\(max-width:430px\)/);
 });
 
+test("audits timeline dates and exposes missing official results", async () => {
+  const source = await readFile(new URL("../app/competition-discovery.tsx", import.meta.url), "utf8");
+  const catalogue = await readFile(new URL("../app/event-catalogue.ts", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/event-planner.css", import.meta.url), "utf8");
+
+  assert.match(source, /Timeline integrity centre/);
+  assert.match(source, /Dates to review/);
+  assert.match(source, /Missing results/);
+  assert.match(source, /Results complete/);
+  assert.match(source, /Check results/);
+  assert.match(catalogue, /city:"Berlin",venue:"Estrel Berlin"/);
+  assert.match(catalogue, /start:"2026-07-11",end:"2026-07-12"/);
+  assert.match(catalogue, /city:"Barnsley",venue:"Barnsley Metrodome"/);
+  assert.match(catalogue, /dateStatus:"Corrected"/);
+  assert.match(catalogue, /resultStatus:"Complete"/);
+  assert.match(catalogue, /resultStatus:"Missing"/);
+  assert.match(catalogue, /https:\/\/www\.wako\.sport\/official-results/);
+  assert.match(css, /\.integrity-command/);
+  assert.match(css, /overscroll-behavior-x:contain/);
+});
+
 test("adds registration readiness, event comparison and portable event actions", async () => {
   const source = await readFile(new URL("../app/competition-discovery.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/event-planner.css", import.meta.url), "utf8");
@@ -187,7 +208,7 @@ test("adds registration readiness, event comparison and portable event actions",
   assert.match(source, /Categories confirmed/);
   assert.match(source, /PHASE 92 · COMPARE EVENTS/);
   assert.match(source, /Compare up to three events at once/);
-  assert.match(source, /PHASE 93 · TAKE IT WITH YOU/);
+  assert.match(source, /PHASE 102 · TRUSTED HANDOVER/);
   assert.match(source, /Add to calendar/);
   assert.match(source, /Share event/);
   assert.match(source, /BEGIN:VCALENDAR/);
