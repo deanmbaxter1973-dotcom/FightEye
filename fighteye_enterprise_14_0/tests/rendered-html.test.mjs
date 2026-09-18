@@ -166,7 +166,7 @@ test("restores the comprehensive event catalogue and working club planner", asyn
   assert.match(catalogue, /Peterborough Championship Series No\. 3/);
   assert.match(catalogue, /ISKA AMA World Championships/);
   assert.match(catalogue, /WKU World Championships/);
-  assert.match(source, /PHASES 106–108 · COMPLETE EVENT DIRECTORY/);
+  assert.match(source, /PHASES 109–111 · TIMELINE & CLUB iOS/);
   assert.match(source, /Club plan/);
   assert.match(source, /Select the club athletes to enter/);
   assert.match(source, /fighteye-event-plans-v2/);
@@ -224,9 +224,9 @@ test("adds a shared club roster, coaching team and club operations manager", asy
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/club-manager.css", import.meta.url), "utf8");
 
-  assert.match(manager, /PHASES 94–105 · CONNECTED CLUB MANAGEMENT/);
+  assert.match(manager, /PHASES 109–111 · CONNECTED CLUB iOS/);
   assert.match(manager, /PHASE 95 · COACHING TEAM/);
-  assert.match(manager, /PHASE 96 · CLUB OPERATIONS/);
+  assert.match(manager, /PHASE 111 · ORGANISATION IDENTITY/);
   assert.match(manager, /Add club athlete/);
   assert.match(manager, /Safeguarding current/);
   assert.match(data, /fighteye-club-athletes-v1/);
@@ -343,7 +343,7 @@ test("connects event timeline, live tracker and club athletes", async () => {
 
   assert.match(links, /fighteye-event-team-links-v1/);
   assert.match(links, /fighteye-active-live-event-v1/);
-  assert.match(timeline, /PHASES 106–108 · COMPLETE EVENT DIRECTORY/);
+  assert.match(timeline, /PHASES 109–111 · TIMELINE & CLUB iOS/);
   assert.match(timeline, /Stable athlete IDs/);
   assert.match(club, /PHASE 104 · CLUB EVENT TEAMS/);
   assert.match(club, /athleteIds\.includes\(athlete\.id\)/);
@@ -368,4 +368,26 @@ test("builds the comprehensive automatic past-events archive", async () => {
   assert.match(catalogue, /catalogueSources/);
   assert.match(css, /\.past-events-head/);
   assert.doesNotMatch(css, /position:(fixed|sticky)/);
+});
+
+test("adds smart timeline, iPhone club command and organisation identity phases", async () => {
+  const timeline = await readFile(new URL("../app/competition-discovery.tsx", import.meta.url), "utf8");
+  const manager = await readFile(new URL("../app/club-manager.tsx", import.meta.url), "utf8");
+  const brand = await readFile(new URL("../app/organisation-brand.tsx", import.meta.url), "utf8");
+  const timelineCss = await readFile(new URL("../app/event-timeline.css", import.meta.url), "utf8");
+  const clubCss = await readFile(new URL("../app/club-manager.css", import.meta.url), "utf8");
+
+  assert.match(timeline, /PHASE 109 · SMART EVENT TIMELINE/);
+  assert.match(timeline, /My club teams/);
+  assert.match(timeline, /CLUB TEAM/);
+  assert.match(timeline, /OrganisationMark/);
+  assert.match(manager, /PHASE 110 · CLUB iOS COMMAND/);
+  assert.match(manager, /Run the club with one hand/);
+  assert.match(manager, /Upload organisation logo/);
+  assert.match(manager, /openLive/);
+  assert.match(brand, /fighteye-club-profile-v1/);
+  assert.match(brand, /optimiseLogo/);
+  assert.match(timelineCss, /\.timeline-team/);
+  assert.match(clubCss, /\.ios-quick-actions/);
+  assert.doesNotMatch(clubCss, /position:(fixed|sticky)/);
 });

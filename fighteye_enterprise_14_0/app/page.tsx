@@ -90,7 +90,7 @@ export default function Home(){
  {view==="competitionDay"&&<CompetitionDay notice={notice}/>} 
  {view==="mobile"&&<MobileExperience notice={notice}/>} 
  {view==="coachCommand"&&<CoachCommandMobile notice={notice}/>} 
- {view==="clubManager"&&<ClubManager notice={notice} addRequest={clubAddRequest} openTimeline={()=>openView("competitions")}/>}
+ {view==="clubManager"&&<ClubManager notice={notice} addRequest={clubAddRequest} openTimeline={()=>openView("competitions")} openLive={()=>openView("liveSchedule")}/>}
  {view==="clubMission"&&<ClubMissionBoard notice={notice}/>} 
  {view==="eventReplay"&&<MobileEventReplay notice={notice}/>} 
  {view==="athletes"&&<ListHeader title="Athlete registry" text="Identity-controlled profiles linked to clubs, categories and fight history." query={query} setQuery={setQuery}/>} 
