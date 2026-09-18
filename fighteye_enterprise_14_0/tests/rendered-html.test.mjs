@@ -166,7 +166,7 @@ test("restores the comprehensive event catalogue and working club planner", asyn
   assert.match(catalogue, /Peterborough Championship Series No\. 3/);
   assert.match(catalogue, /ISKA AMA World Championships/);
   assert.match(catalogue, /WKU World Championships/);
-  assert.match(source, /PHASES 103–105 · CONNECTED EVENT TEAMS/);
+  assert.match(source, /PHASES 106–108 · COMPLETE EVENT DIRECTORY/);
   assert.match(source, /Club plan/);
   assert.match(source, /Select the club athletes to enter/);
   assert.match(source, /fighteye-event-plans-v2/);
@@ -343,10 +343,29 @@ test("connects event timeline, live tracker and club athletes", async () => {
 
   assert.match(links, /fighteye-event-team-links-v1/);
   assert.match(links, /fighteye-active-live-event-v1/);
-  assert.match(timeline, /PHASES 103–105 · CONNECTED EVENT TEAMS/);
+  assert.match(timeline, /PHASES 106–108 · COMPLETE EVENT DIRECTORY/);
   assert.match(timeline, /Stable athlete IDs/);
   assert.match(club, /PHASE 104 · CLUB EVENT TEAMS/);
   assert.match(club, /athleteIds\.includes\(athlete\.id\)/);
   assert.match(live, /PHASE 103 · ACTIVE EVENT/);
   assert.match(page, /\["clubManager","Club","◆"\]/);
+});
+
+test("builds the comprehensive automatic past-events archive", async () => {
+  const source = await readFile(new URL("../app/competition-discovery.tsx", import.meta.url), "utf8");
+  const catalogue = await readFile(new URL("../app/event-catalogue.ts", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/event-timeline.css", import.meta.url), "utf8");
+
+  assert.match(source, /PHASE 106 · COMPREHENSIVE DIRECTORY/);
+  assert.match(source, /PHASE 107 · AUTOMATIC EVENT LIFECYCLE/);
+  assert.match(source, /PHASE 108 · PAST EVENTS ARCHIVE/);
+  assert.match(source, /eventBelongsInPast/);
+  assert.match(source, /event\.end<today/);
+  assert.match(source, /reverse date order/);
+  assert.match(source, /All results/);
+  assert.match(catalogue, /Oxford Champions/);
+  assert.match(catalogue, /Peterborough Championship Series No\. 1/);
+  assert.match(catalogue, /catalogueSources/);
+  assert.match(css, /\.past-events-head/);
+  assert.doesNotMatch(css, /position:(fixed|sticky)/);
 });
