@@ -391,3 +391,24 @@ test("adds smart timeline, iPhone club command and organisation identity phases"
   assert.match(clubCss, /\.ios-quick-actions/);
   assert.doesNotMatch(clubCss, /position:(fixed|sticky)/);
 });
+
+test("adds event-team availability, coach allocation and iPhone readiness phases", async () => {
+  const links = await readFile(new URL("../app/event-club-links.ts", import.meta.url), "utf8");
+  const timeline = await readFile(new URL("../app/competition-discovery.tsx", import.meta.url), "utf8");
+  const manager = await readFile(new URL("../app/club-manager.tsx", import.meta.url), "utf8");
+  const timelineCss = await readFile(new URL("../app/event-timeline.css", import.meta.url), "utf8");
+  const clubCss = await readFile(new URL("../app/club-manager.css", import.meta.url), "utf8");
+
+  assert.match(links, /fighteye-event-team-operations-v1/);
+  assert.match(links, /Invited.*Confirmed.*Unavailable/);
+  assert.match(manager, /PHASE 112 · ATHLETE AVAILABILITY/);
+  assert.match(manager, /PHASE 113 · COACH ALLOCATION/);
+  assert.match(manager, /PHASE 114 · TEAM READINESS/);
+  assert.match(manager, /Team readiness/);
+  assert.match(timeline, /TEAM READY/);
+  assert.match(clubCss, /.availability-row/);
+  assert.match(clubCss, /.coach-allocation/);
+  assert.match(timelineCss, /.timeline-team-readiness/);
+  assert.doesNotMatch(clubCss, /position:(fixed|sticky)/);
+  assert.doesNotMatch(timelineCss, /position:(fixed|sticky)/);
+});

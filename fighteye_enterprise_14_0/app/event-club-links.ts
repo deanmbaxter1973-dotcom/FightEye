@@ -3,9 +3,13 @@ import {readClubAthletes} from "./club-data";
 
 export type EventTeamLink={athleteIds:string[];athleteNames:string[];updatedAt:string};
 export type EventTeamLinks=Record<string,EventTeamLink>;
+export type AthleteAvailability="Invited"|"Confirmed"|"Unavailable";
+export type EventTeamOperation={availability:Record<string,AthleteAvailability>;coachIds:string[];notes:string;updatedAt:string};
+export type EventTeamOperations=Record<string,EventTeamOperation>;
 export type ActiveLiveEvent=Pick<EventRecord,"id"|"name"|"start"|"end"|"venue"|"city"|"country"|"flag">;
 
 export const eventTeamLinksKey="fighteye-event-team-links-v1";
+export const eventTeamOperationsKey="fighteye-event-team-operations-v1";
 export const activeLiveEventKey="fighteye-active-live-event-v1";
 
 export const readEventTeamLinks=():EventTeamLinks=>{
@@ -16,6 +20,11 @@ export const readEventTeamLinks=():EventTeamLinks=>{
   Object.entries(plans&&typeof plans==="object"?plans:{}).forEach(([eventId,plan])=>{const names=Array.isArray((plan as {athletes?:unknown}).athletes)?(plan as {athletes:string[]}).athletes:[];if(!links[eventId]&&names.length){const athleteIds=names.map(name=>roster.find(athlete=>athlete.name===name)?.id).filter(Boolean) as string[];links[eventId]={athleteIds,athleteNames:names,updatedAt:new Date().toISOString()}}});
   return links;
  }catch{return{}}
+};
+
+export const readEventTeamOperations=():EventTeamOperations=>{
+ if(typeof window==="undefined")return{};
+ try{const value=JSON.parse(localStorage.getItem(eventTeamOperationsKey)||"{}");return value&&typeof value==="object"?value as EventTeamOperations:{}}catch{return{}}
 };
 
 export const readActiveLiveEvent=():ActiveLiveEvent|null=>{
