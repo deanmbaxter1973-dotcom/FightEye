@@ -28,7 +28,7 @@ test("renders the unified FightEye Enterprise application", async () => {
     /^text\/html\b/i,
   );
   const html = await response.text();
-  assert.match(html, /<title>FightEye Enterprise 14.0/);
+  assert.match(html, /<title>FightEye Enterprise 14.2/);
   assert.match(html, /Your next action/);
   assert.match(html, /What needs attention/);
   assert.match(html, /Review 2 competition entries/);
@@ -129,7 +129,7 @@ test("provides simple hub navigation, search and device shortcuts", async () => 
   assert.match(source, /QUICK ACCESS/);
   assert.match(page, /fighteye-favourite-tools-v1/);
   assert.match(page, /fighteye-recent-tools-v1/);
-  assert.match(page, /Enterprise 14\.0/);
+  assert.match(page, /Enterprise 14\.2/);
 });
 
 test("restores the filtered current and past event timeline", async () => {
@@ -166,7 +166,7 @@ test("restores the comprehensive event catalogue and working club planner", asyn
   assert.match(catalogue, /Peterborough Championship Series No\. 3/);
   assert.match(catalogue, /ISKA AMA World Championships/);
   assert.match(catalogue, /WKU World Championships/);
-  assert.match(source, /PHASES 109–111 · TIMELINE & CLUB iOS/);
+  assert.match(source, /PHASES 115–120 · TIMELINE COMMAND/);
   assert.match(source, /Club plan/);
   assert.match(source, /Select the club athletes to enter/);
   assert.match(source, /fighteye-event-plans-v2/);
@@ -343,7 +343,7 @@ test("connects event timeline, live tracker and club athletes", async () => {
 
   assert.match(links, /fighteye-event-team-links-v1/);
   assert.match(links, /fighteye-active-live-event-v1/);
-  assert.match(timeline, /PHASES 109–111 · TIMELINE & CLUB iOS/);
+  assert.match(timeline, /PHASES 115–120 · TIMELINE COMMAND/);
   assert.match(timeline, /Stable athlete IDs/);
   assert.match(club, /PHASE 104 · CLUB EVENT TEAMS/);
   assert.match(club, /athleteIds\.includes\(athlete\.id\)/);
@@ -411,4 +411,41 @@ test("adds event-team availability, coach allocation and iPhone readiness phases
   assert.match(timelineCss, /.timeline-team-readiness/);
   assert.doesNotMatch(clubCss, /position:(fixed|sticky)/);
   assert.doesNotMatch(timelineCss, /position:(fixed|sticky)/);
+});
+
+test("adds the 14.2 event timeline command through phase 120", async () => {
+  const source = await readFile(new URL("../app/competition-discovery.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/event-archive.css", import.meta.url), "utf8");
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const manifest = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
+
+  assert.equal(manifest.version, "14.2.0");
+  assert.match(page, /Enterprise 14\.2/);
+  assert.match(source, /PHASES 115–120 · TIMELINE COMMAND/);
+  assert.match(source, /type Period="Current events"\|"Past events"/);
+  assert.match(source, /eventBelongsInCurrent/);
+  assert.match(source, /eventIsLive/);
+  assert.match(source, /event\.end>=today/);
+  assert.match(source, /event\.end<today/);
+  assert.match(source, /Europe\/London/);
+  assert.match(source, /Current events/);
+  assert.match(source, /Live now/);
+  assert.match(source, /Registration open/);
+  assert.match(source, /Dates to review/);
+  assert.match(source, /All years/);
+  assert.match(source, /All results/);
+  assert.match(source, /PHASE 118 · DATE RANGE/);
+  assert.match(source, /PHASE 119 · EVENT CLASH INTELLIGENCE/);
+  assert.match(source, /PHASE 120 · IPHONE AGENDA/);
+  assert.match(source, /eventsOverlap/);
+  assert.match(source, /Next \$\{item\}/);
+  assert.match(source, /Last \$\{item\}/);
+  assert.match(source, /layout==="Agenda"/);
+  assert.match(css, /\.timeline-period-tabs/);
+  assert.match(css, /\.current-event-filters/);
+  assert.match(css, /\.timeline-range-filters/);
+  assert.match(css, /\.timeline-clash-alert/);
+  assert.match(css, /\.event-agenda/);
+  assert.match(css, /overscroll-behavior-x:contain/);
+  assert.doesNotMatch(css, /position:(fixed|sticky)/);
 });
