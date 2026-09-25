@@ -28,7 +28,7 @@ test("renders the unified FightEye Enterprise application", async () => {
     /^text\/html\b/i,
   );
   const html = await response.text();
-  assert.match(html, /<title>FightEye Enterprise 14.3/);
+  assert.match(html, /<title>FightEye Enterprise 14.4/);
   assert.match(html, /Your next action/);
   assert.match(html, /What needs attention/);
   assert.match(html, /Review 2 competition entries/);
@@ -129,7 +129,7 @@ test("provides simple hub navigation, search and device shortcuts", async () => 
   assert.match(source, /QUICK ACCESS/);
   assert.match(page, /fighteye-favourite-tools-v1/);
   assert.match(page, /fighteye-recent-tools-v1/);
-  assert.match(page, /Enterprise 14\.3/);
+  assert.match(page, /Enterprise 14\.4/);
 });
 
 test("restores the filtered current and past event timeline", async () => {
@@ -166,7 +166,7 @@ test("restores the comprehensive event catalogue and working club planner", asyn
   assert.match(catalogue, /Peterborough Championship Series No\. 3/);
   assert.match(catalogue, /ISKA AMA World Championships/);
   assert.match(catalogue, /WKU World Championships/);
-  assert.match(source, /PHASES 121–123 · PERSONAL TIMELINE/);
+  assert.match(source, /PHASES 124–126 · EVENT READINESS/);
   assert.match(source, /Club plan/);
   assert.match(source, /Select the club athletes to enter/);
   assert.match(source, /fighteye-event-plans-v2/);
@@ -343,7 +343,7 @@ test("connects event timeline, live tracker and club athletes", async () => {
 
   assert.match(links, /fighteye-event-team-links-v1/);
   assert.match(links, /fighteye-active-live-event-v1/);
-  assert.match(timeline, /PHASES 121–123 · PERSONAL TIMELINE/);
+  assert.match(timeline, /PHASES 124–126 · EVENT READINESS/);
   assert.match(timeline, /Stable athlete IDs/);
   assert.match(club, /PHASE 104 · CLUB EVENT TEAMS/);
   assert.match(club, /athleteIds\.includes\(athlete\.id\)/);
@@ -413,15 +413,15 @@ test("adds event-team availability, coach allocation and iPhone readiness phases
   assert.doesNotMatch(timelineCss, /position:(fixed|sticky)/);
 });
 
-test("adds the 14.3 personal event timeline through phase 123", async () => {
+test("adds the 14.4 event readiness timeline through phase 126", async () => {
   const source = await readFile(new URL("../app/competition-discovery.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/event-archive.css", import.meta.url), "utf8");
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
   const manifest = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
 
-  assert.equal(manifest.version, "14.3.0");
-  assert.match(page, /Enterprise 14\.3/);
-  assert.match(source, /PHASES 121–123 · PERSONAL TIMELINE/);
+  assert.equal(manifest.version, "14.4.0");
+  assert.match(page, /Enterprise 14\.4/);
+  assert.match(source, /PHASES 124–126 · EVENT READINESS/);
   assert.match(source, /type Period="Current events"\|"Past events"/);
   assert.match(source, /eventBelongsInCurrent/);
   assert.match(source, /eventIsLive/);
@@ -446,6 +446,13 @@ test("adds the 14.3 personal event timeline through phase 123", async () => {
   assert.match(source, /calendarContent/);
   assert.match(source, /X-WR-CALNAME:FightEye events/);
   assert.match(source, /＋ Calendar/);
+  assert.match(source, /PHASE 124 · ENTRY DEADLINE RADAR/);
+  assert.match(source, /Closing soon/);
+  assert.match(source, /directionsUrl/);
+  assert.match(source, /maps\.apple\.com/);
+  assert.match(source, /PHASES 125–126 · MOBILE EVENT PACK/);
+  assert.match(source, /FIGHTEYE CLUB EVENT BRIEF/);
+  assert.match(source, /⇩ Club briefing/);
   assert.match(css, /\.timeline-period-tabs/);
   assert.match(css, /\.current-event-filters/);
   assert.match(css, /\.timeline-range-filters/);
@@ -454,6 +461,8 @@ test("adds the 14.3 personal event timeline through phase 123", async () => {
   assert.match(css, /\.agenda-group/);
   assert.match(css, /\.timeline-personal-filters/);
   assert.match(css, /\.calendar-pack/);
+  assert.match(css, /\.deadline-radar/);
+  assert.match(css, /\.timeline-directions/);
   assert.match(css, /overscroll-behavior-x:contain/);
   assert.doesNotMatch(css, /position:(fixed|sticky)/);
 });
