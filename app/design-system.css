@@ -1,0 +1,18 @@
+:root{--fe-radius-sm:10px;--fe-radius:14px;--fe-radius-lg:20px;--fe-space-1:6px;--fe-space-2:10px;--fe-space-3:16px;--fe-space-4:24px;--fe-border:rgba(143,177,210,.18);--fe-surface:#0a203c;--fe-surface-2:#0d2848;--fe-shadow:0 14px 38px rgba(0,8,24,.2)}
+.panel{border-radius:var(--fe-radius-lg);border-color:var(--fe-border);box-shadow:var(--fe-shadow)}
+button,a,input,select,textarea{border-radius:var(--fe-radius-sm)}
+button,a[role=button],select,input{min-height:44px}
+.appIcon{width:20px;height:20px;display:block}
+.rail nav button>i svg,.mobileDock button>i svg,.homeHubs button>i svg,.mobileHubGrid button>i svg{width:21px;height:21px}
+.viewLoading{min-height:260px;display:grid;place-content:center;justify-items:center;gap:14px;color:#a9bed4}
+.viewLoading i{width:36px;height:36px;border:3px solid rgba(255,255,255,.12);border-top-color:#f4bd32;border-radius:50%;animation:fe-load .7s linear infinite}
+@keyframes fe-load{to{transform:rotate(360deg)}}
+.planner-filter-toggle{display:flex;align-items:center;justify-content:center;gap:8px;font-weight:800}
+.planner-filter-toggle b{min-width:20px;padding:2px 6px;border-radius:99px;background:#f4bd32;color:#061832;font-size:11px}
+.planner-filter-fields{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:10px;width:100%}
+.planner-filter-fields .timeline-range-filters{grid-column:1/-1;margin:0;box-shadow:none}
+.event-load-more{width:100%;margin-top:16px;min-height:52px;font-weight:800;border:1px solid rgba(244,189,50,.34);background:rgba(244,189,50,.08);color:#f8cf68}
+.event-load-more small{display:block;font-weight:500;color:#9fb4ca}
+.performance-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}.performance-grid article{padding:18px;background:rgba(255,255,255,.035);border:1px solid var(--fe-border);border-radius:var(--fe-radius)}.performance-grid b{display:block;font-size:24px}.performance-consent{display:flex;align-items:center;justify-content:space-between;gap:20px}.performance-consent p{margin:.35rem 0 0;color:#9fb4ca}.performance-consent button{flex:none}
+@media(max-width:760px){.panel{border-radius:16px;box-shadow:none}.planner-filter-fields{grid-template-columns:1fr 1fr}.planner-filter-fields .timeline-range-filters{grid-column:1/-1}.performance-grid{grid-template-columns:1fr}.performance-consent{align-items:flex-start;flex-direction:column}.viewLoading{min-height:180px}}
+@media(prefers-reduced-motion:reduce){.viewLoading i{animation:none}}

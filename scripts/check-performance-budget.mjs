@@ -1,0 +1,13 @@
+import {readFile,stat} from "node:fs/promises";
+const manifest=JSON.parse(await readFile("dist/client/.vite/manifest.json","utf8"));
+const entry=manifest["app/page.tsx"]??Object.values(manifest).find(item=>item.isEntry&&item.src==="app/page.tsx");
+if(!entry)throw new Error("Could not find the FightEye page bundle");
+const pageBytes=(await stat(`dist/client/${entry.file}`)).size;
+const cssFiles=[...new Set(Object.values(manifest).flatMap(item=>item.css??[]))];
+const cssSizes=await Promise.all(cssFiles.map(async file=>({file,bytes:(await stat(`dist/client/${file}`)).size})));
+const largestCss=cssSizes.sort((a,b)=>b.bytes-a.bytes)[0]??{file:"none",bytes:0};
+const failures=[];
+if(pageBytes>100_000)failures.push(`initial page JavaScript is ${pageBytes} bytes (budget 100000)`);
+if(largestCss.bytes>180_000)failures.push(`${largestCss.file} is ${largestCss.bytes} bytes (CSS budget 180000)`);
+console.log(`Performance budget: page ${pageBytes} B; largest CSS ${largestCss.bytes} B; ${cssFiles.length} CSS chunks`);
+if(failures.length)throw new Error(failures.join("; "));
