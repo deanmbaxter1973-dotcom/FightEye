@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VERSION='v195–v196';
+const VERSION='v197';
 const events=(window.FIGHTEYE_EVENTS||[]).map(e=>({...e,status:statusFor(e)})).sort((a,b)=>new Date(a.start)-new Date(b.start));
 const athletes=window.FIGHTEYE_ATHLETES||[];
 const persisted=readStore();
