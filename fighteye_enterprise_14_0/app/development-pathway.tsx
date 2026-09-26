@@ -1,5 +1,7 @@
 "use client";
 
+import "./development-pathway.css";
+
 import {useEffect,useState} from "react";
 
 type Plan={focus:string;target:string;sessions:number;done:number;owner:string;complete:boolean};

@@ -1,4 +1,5 @@
 "use client";
+import "./sync-consent.css";
 import {useState} from "react";
 const athletes=[{name:"Charlie Baxter",age:"13",guardian:"Dean Baxter",storage:true,analysis:true,sharing:false,expires:"31 Aug 2027"},{name:"Olivia Green",age:"12",guardian:"Gemma Green",storage:true,analysis:true,sharing:true,expires:"12 May 2027"},{name:"Zak Taylor",age:"15",guardian:"Will Taylor",storage:true,analysis:false,sharing:false,expires:"18 Jan 2027"}];
 const Badge=({children,tone=""}:{children:React.ReactNode,tone?:string})=><span className={`badge ${tone}`}>{children}</span>;

@@ -1,4 +1,5 @@
 "use client";
+import "./intelligence.css";
 import {useState} from "react";
 const people=["Charlie Baxter","Máté Horváth","Noah Williams","Jamie Granville"];
 const shared=[["Noah Williams","W 12–9","W 9–8","Charlie +2"],["Ethan Clarke","W 3–0","L 7–10","Charlie +8"],["Leo Martin","W 8–5","W 11–10","Even"]];

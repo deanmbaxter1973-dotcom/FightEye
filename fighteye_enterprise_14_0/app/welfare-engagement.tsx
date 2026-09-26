@@ -1,5 +1,7 @@
 "use client";
 
+import "./welfare-engagement.css";
+
 import {FormEvent,useEffect,useState} from "react";
 import {initialLiveBouts,type LiveBout} from "./competition-live-data";
 

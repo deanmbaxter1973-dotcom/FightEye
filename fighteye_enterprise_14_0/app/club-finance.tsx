@@ -1,5 +1,7 @@
 "use client";
 
+import "./club-finance.css";
+
 import {FormEvent,useEffect,useState} from "react";
 
 type Checklist={selected:boolean;weight:boolean;consent:boolean;entry:boolean};

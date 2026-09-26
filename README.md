@@ -1,10 +1,10 @@
 # FightEye
 
-FightEye Enterprise 14.0 is a mobile-first fight operations app for athletes, coaches, clubs and competition days.
+FightEye Enterprise 14.7 is a mobile-first fight operations app for athletes, coaches, clubs and competition days.
 
 ## Current application
 
-The deployable application is in [`fighteye_enterprise_14_0`](./fighteye_enterprise_14_0). Older folders are retained as release history.
+The current 14.7 application is in [`fighteye_enterprise_14_0`](./fighteye_enterprise_14_0). The directory name is retained for the existing Netlify configuration; older folders are release history.
 
 ## Netlify
 

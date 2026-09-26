@@ -1,5 +1,7 @@
 "use client";
 
+import "./club-participation.css";
+
 import {useEffect,useState} from "react";
 
 type AttendanceStatus="Present"|"Late"|"Absent"|"Excused";

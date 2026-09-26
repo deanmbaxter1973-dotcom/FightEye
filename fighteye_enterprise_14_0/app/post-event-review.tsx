@@ -1,5 +1,7 @@
 "use client";
 
+import "./post-event-review.css";
+
 import {useEffect,useRef,useState} from "react";
 import {initialLiveBouts} from "./competition-live-data";
 

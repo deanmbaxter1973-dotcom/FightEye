@@ -1,5 +1,7 @@
 "use client";
 
+import "./entry-readiness.css";
+
 import {useEffect,useMemo,useRef,useState} from "react";
 
 type Readiness="Ready"|"Action needed"|"Review";

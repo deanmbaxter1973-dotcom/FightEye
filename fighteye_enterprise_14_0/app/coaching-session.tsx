@@ -1,5 +1,7 @@
 "use client";
 
+import "./coaching-session.css";
+
 import {FormEvent,useEffect,useMemo,useState} from "react";
 
 type Drill={id:string;title:string;category:"Warm-up"|"Technical"|"Tactical"|"Conditioning"|"Cool-down";duration:number;intensity:"Low"|"Medium"|"High";cue:string;favourite:boolean};

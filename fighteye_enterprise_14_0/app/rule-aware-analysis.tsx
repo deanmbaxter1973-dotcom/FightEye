@@ -1,4 +1,5 @@
 "use client";
+import "./rule-analysis.css";
 import {useRef,useState} from "react";
 const sources={WAKO:{version:"Current rules portal",url:"https://www.wako.sport/rules-overview",note:"PF, LC and KL treated as separate tatami disciplines."},ISKA:{version:"Event jurisdiction required",url:"https://www.iskaworldhq.com/rules/",note:"Rules vary by jurisdiction; attach the event pack before analysis."},ICO:{version:"Event rules pack required",url:"https://ico-martialarts.com/",note:"Verify the organiser-issued discipline rules."},WKKC:{version:"Event rules pack required",url:"https://www.wkcworld.com/",note:"Verify WKC/WKKC event rules and category naming."},WKU:{version:"Official English packs · 20 Jun 2022",url:"https://www.wkuworld.com/organisation/rules/rules-english/",note:"Distinct Point Fighting, LC/KL and Ring Sport packs."}} as const;
 type Fed=keyof typeof sources;

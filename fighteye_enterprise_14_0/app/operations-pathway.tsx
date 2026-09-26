@@ -1,5 +1,7 @@
 "use client";
 
+import "./operations-pathway.css";
+
 import {useEffect,useState} from "react";
 
 type CheckIn={technique:number;confidence:number;fitness:number;note:string};

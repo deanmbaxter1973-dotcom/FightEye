@@ -1,5 +1,7 @@
 "use client";
 
+import "./event-execution.css";
+
 import {useEffect,useMemo,useState} from "react";
 
 type Checklist={selected:boolean;weight:boolean;consent:boolean;entry:boolean};

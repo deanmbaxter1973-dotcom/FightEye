@@ -1,5 +1,7 @@
 "use client";
 
+import "./equipment-safety.css";
+
 import {useEffect,useState} from "react";
 
 type Checklist={selected:boolean;weight:boolean;consent:boolean;entry:boolean};

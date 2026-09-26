@@ -1,9 +1,9 @@
 "use client";
 
-import {useEffect,useMemo,useRef,useState} from "react";
+import {useEffect,useMemo,useRef,useState,type ReactNode} from "react";
 
 export type ToolItem={id:string;label:string;icon:string;hub:string;description:string};
-export type HubItem={id:string;label:string;icon:string;description:string};
+export type HubItem={id:string;label:string;icon:ReactNode;description:string};
 type TodayWindow="Now"|"Today"|"This week";
 
 const hubNames:Record<string,string>={athletes:"Athletes",coaching:"Coaching",events:"Events",live:"Live",club:"Club",manage:"Manage"};

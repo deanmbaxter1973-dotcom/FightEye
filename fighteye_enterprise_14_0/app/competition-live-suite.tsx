@@ -1,5 +1,8 @@
 "use client";
 
+import "./competition-live-suite.css";
+import "./fight-day-focus.css";
+
 import {useEffect,useMemo,useRef,useState} from "react";
 import {BoutStatus,coaches,initialAssignments,initialLiveBouts,LiveBout,minutes,statusOrder} from "./competition-live-data";
 import {readActiveLiveEvent} from "./event-club-links";

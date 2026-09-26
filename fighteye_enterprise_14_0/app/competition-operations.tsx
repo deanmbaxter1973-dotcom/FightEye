@@ -1,5 +1,7 @@
 "use client";
 
+import "./competition-operations.css";
+
 import {useEffect,useMemo,useRef,useState} from "react";
 
 type Athlete={id:string;name:string;age:string;weight:string;categories:string[];licence:boolean;consent:boolean;medical:boolean;weightCheck:boolean};

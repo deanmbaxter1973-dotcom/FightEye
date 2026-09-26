@@ -1,5 +1,7 @@
 "use client";
 
+import "./event-readiness.css";
+
 import {useEffect,useState} from "react";
 
 type Logistics={event:string;date:string;venue:string;travel:number;hotel:number;entries:number;extras:number;depositPaid:boolean;transportBooked:boolean;hotelBooked:boolean;entriesSubmitted:boolean;notes:string};

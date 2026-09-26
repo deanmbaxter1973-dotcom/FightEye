@@ -1,4 +1,5 @@
 "use client";
+import "./processing.css";
 import {useState} from "react";
 const jobs=[{id:"VID-0176",file:"Charlie_Baxter_Hungarian_WC_PF.mp4",status:"Needs review",progress:100,event:"Hungarian World Cup",red:"Charlie Baxter",blue:"Máté Horváth",discipline:"PF",result:"10–7",confidence:94,duration:"02:18"},{id:"VID-0175",file:"area3_final.mov",status:"Processing",progress:72,event:"WAKO GB Nationals",red:"Jamie Granville",blue:"Leo Martin",discipline:"K1",result:"Pending",confidence:71,duration:"03:04"},{id:"VID-0174",file:"Peterborough_OC42_fight2.mp4",status:"Needs review",progress:100,event:"Peterborough Series",red:"Charlie Baxter",blue:"Noah Williams",discipline:"PF",result:"12–9",confidence:86,duration:"01:42"}];
 const Badge=({children}:{children:React.ReactNode})=><span className="badge gold">{children}</span>;

@@ -1,4 +1,5 @@
 "use client";
+import "./intelligence.css";
 import {useState} from "react";
 const tags=[[12,"Attack","Lead side kick","+1"],[28,"Counter","Rear-hand counter","+1"],[47,"Defence","Exit-line exposure",""],[66,"Score","Jump head kick","+3"],[89,"Warning","Holding",""]] as const;
 const Badge=({children,tone=""}:{children:React.ReactNode,tone?:string})=><span className={`badge ${tone}`}>{children}</span>;

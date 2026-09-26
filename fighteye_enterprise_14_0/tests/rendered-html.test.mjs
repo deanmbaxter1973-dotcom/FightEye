@@ -28,32 +28,32 @@ test("renders the unified FightEye Enterprise application", async () => {
     /^text\/html\b/i,
   );
   const html = await response.text();
-  assert.match(html, /<title>FightEye Enterprise 14.4/);
-  assert.match(html, /Your next action/);
-  assert.match(html, /What needs attention/);
-  assert.match(html, /Review 2 competition entries/);
-  assert.match(html, /Profiles and progress/);
-  assert.match(html, /Plan and improve/);
-  assert.match(html, /Prepare and review/);
-  assert.match(html, /Fight-day command/);
-  assert.match(html, /People and resources/);
-  assert.match(html, /Welfare and controls/);
-  assert.match(html, /Open fight tracker/);
+  assert.match(html, /<title>FightEye Enterprise 14.7/);
+  assert.match(html, /Event timeline/);
+  assert.match(html, /Current events/);
+  assert.match(html, /NEXT EVENT/);
+  assert.match(html, />Athletes</);
+  assert.match(html, />Events</);
+  assert.match(html, />Live</);
+  assert.match(html, />Club</);
   assert.match(html, /Primary navigation/);
   assert.match(html, /Guided fight operations/);
   assert.match(html, /Find anything/);
-  assert.match(html, /Fight-day command/);
   assert.doesNotMatch(html, /codex-preview/);
 });
 
 test("uses stable iPhone scroll layers", async () => {
   const css = await readFile(new URL("../app/iphone.css", import.meta.url), "utf8");
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
 
   assert.match(css, /body\{height:100%;overflow:hidden/);
   assert.match(css, /\.app\{display:flex;height:100%;min-height:0/);
+  assert.match(css, /height:100dvh/);
   assert.match(css, /\.workspace\{[^}]*overflow-y:auto/);
   assert.match(css, /\.workspace>header\{position:relative/);
   assert.match(css, /\.mobileDock\{position:relative/);
+  assert.match(css, /backdrop-filter:none!important/);
+  assert.match(page, /dynamicTool/);
   assert.doesNotMatch(css, /\.workspace>header[^}]*(sticky|translate3d|contain:paint)/);
   assert.doesNotMatch(css, /\.mobileDock[^}]*(fixed|translate3d|contain:layout paint)/);
 });
@@ -71,7 +71,9 @@ test("makes FightEye installable on iPhone and supported browsers", async () => 
   assert.match(source, /serviceWorker\.register\("\/sw\.js"\)/);
   assert.match(source, /Add to Home Screen/);
   assert.match(source, /Download FightEye app/);
-  assert.match(worker, /fighteye-app-v1/);
+  assert.match(worker, /fighteye-app-v3/);
+  assert.match(worker, /MAX_ENTRIES=80/);
+  assert.match(worker, /MAX_AGE/);
 });
 
 test("connects the event execution phases to saved pathway data", async () => {
@@ -129,7 +131,7 @@ test("provides simple hub navigation, search and device shortcuts", async () => 
   assert.match(source, /QUICK ACCESS/);
   assert.match(page, /fighteye-favourite-tools-v1/);
   assert.match(page, /fighteye-recent-tools-v1/);
-  assert.match(page, /Enterprise 14\.4/);
+  assert.match(page, /Enterprise 14\.7/);
 });
 
 test("restores the filtered current and past event timeline", async () => {
@@ -166,7 +168,7 @@ test("restores the comprehensive event catalogue and working club planner", asyn
   assert.match(catalogue, /Peterborough Championship Series No\. 3/);
   assert.match(catalogue, /ISKA AMA World Championships/);
   assert.match(catalogue, /WKU World Championships/);
-  assert.match(source, /PHASES 124–126 · EVENT READINESS/);
+  assert.match(source, /events-home-head/);
   assert.match(source, /Club plan/);
   assert.match(source, /Select the club athletes to enter/);
   assert.match(source, /fighteye-event-plans-v2/);
@@ -343,12 +345,12 @@ test("connects event timeline, live tracker and club athletes", async () => {
 
   assert.match(links, /fighteye-event-team-links-v1/);
   assert.match(links, /fighteye-active-live-event-v1/);
-  assert.match(timeline, /PHASES 124–126 · EVENT READINESS/);
+  assert.match(timeline, /Event timeline/);
   assert.match(timeline, /Stable athlete IDs/);
   assert.match(club, /PHASE 104 · CLUB EVENT TEAMS/);
   assert.match(club, /athleteIds\.includes\(athlete\.id\)/);
   assert.match(live, /PHASE 103 · ACTIVE EVENT/);
-  assert.match(page, /\["clubManager","Club","◆"\]/);
+  assert.match(page, /\["clubManager","Club",<AppIcon name="club"/);
 });
 
 test("builds the comprehensive automatic past-events archive", async () => {
@@ -413,15 +415,17 @@ test("adds event-team availability, coach allocation and iPhone readiness phases
   assert.doesNotMatch(timelineCss, /position:(fixed|sticky)/);
 });
 
-test("adds the 14.4 event readiness timeline through phase 126", async () => {
+test("makes the improved event timeline the main page in 14.7", async () => {
   const source = await readFile(new URL("../app/competition-discovery.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/event-archive.css", import.meta.url), "utf8");
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
   const manifest = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
 
-  assert.equal(manifest.version, "14.4.0");
-  assert.match(page, /Enterprise 14\.4/);
-  assert.match(source, /PHASES 124–126 · EVENT READINESS/);
+  assert.equal(manifest.version, "14.7.0");
+  assert.match(page, /Enterprise 14\.7/);
+  assert.match(page, /useState<View>\("competitions"\)/);
+  assert.match(source, /events-home-head/);
+  assert.match(source, /NEXT ENTRY DEADLINE/);
   assert.match(source, /type Period="Current events"\|"Past events"/);
   assert.match(source, /eventBelongsInCurrent/);
   assert.match(source, /eventIsLive/);
@@ -434,8 +438,8 @@ test("adds the 14.4 event readiness timeline through phase 126", async () => {
   assert.match(source, /Dates to review/);
   assert.match(source, /All years/);
   assert.match(source, /All results/);
-  assert.match(source, /PHASE 118 · DATE RANGE/);
-  assert.match(source, /PHASE 119 · EVENT CLASH INTELLIGENCE/);
+  assert.match(source, /planner-filter-toggle/);
+  assert.match(source, /clashesByEvent/);
   assert.match(source, /eventsOverlap/);
   assert.match(source, /Next \$\{item\}/);
   assert.match(source, /Last \$\{item\}/);
@@ -446,7 +450,7 @@ test("adds the 14.4 event readiness timeline through phase 126", async () => {
   assert.match(source, /calendarContent/);
   assert.match(source, /X-WR-CALNAME:FightEye events/);
   assert.match(source, /＋ Calendar/);
-  assert.match(source, /PHASE 124 · ENTRY DEADLINE RADAR/);
+  assert.match(source, /primaryDeadline/);
   assert.match(source, /Closing soon/);
   assert.match(source, /directionsUrl/);
   assert.match(source, /maps\.apple\.com/);

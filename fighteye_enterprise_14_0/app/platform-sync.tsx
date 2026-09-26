@@ -1,4 +1,5 @@
 "use client";
+import "./sync-consent.css";
 import {useState} from "react";
 const sources=[{name:"Sportdata",state:"Connected",last:"2 min ago",events:18,records:246,tone:"green"},{name:"Smoothcomp",state:"Ready",last:"Manual import",events:7,records:94,tone:""},{name:"Kihapp",state:"Ready",last:"Manual import",events:4,records:38,tone:""}];
 const rows=[{event:"Hungarian World Cup",platform:"Sportdata",body:"WAKO",external:"2827",match:"246 / 246",status:"Reconciled"},{event:"GB Grand Slam 2",platform:"Sportdata",body:"WAKO GB",external:"2741",match:"92 / 94",status:"2 conflicts"},{event:"WKU English Open",platform:"Kihapp",body:"WKU",external:"WKU-EO-26",match:"58 / 58",status:"Reconciled"},{event:"Peterborough Series",platform:"Smoothcomp",body:"Independent",external:"PCS-0326",match:"41 / 44",status:"3 reviews"}];

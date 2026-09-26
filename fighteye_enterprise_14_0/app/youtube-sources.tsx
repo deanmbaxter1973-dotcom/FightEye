@@ -1,4 +1,5 @@
 "use client";
+import "./youtube.css";
 import {FormEvent,useState} from "react";
 const videos=[{id:"yt-HWC-0182",title:"Charlie Baxter vs Máté Horváth · Hungarian World Cup",channel:"Prestige Martial Arts",date:"15 Jun 2026",duration:"2:06",privacy:"Unlisted",match:"98%",athletes:"Charlie Baxter · Máté Horváth",event:"Hungarian World Cup",cat:"PF",ready:true},{id:"yt-GBS-0041",title:"Charlie Baxter vs Noah Williams · GB Grand Slam 2",channel:"Prestige Martial Arts",date:"28 Apr 2026",duration:"1:42",privacy:"Private",match:"94%",athletes:"Charlie Baxter · Noah Williams",event:"GB Grand Slam 2",cat:"LC",ready:true},{id:"yt-OPEN-992",title:"Prestige Team Highlights · April 2026",channel:"Prestige Martial Arts",date:"30 Apr 2026",duration:"8:19",privacy:"Public",match:"61%",athletes:"Multiple athletes",event:"Needs confirmation",cat:"Mixed",ready:false}];
 const Badge=({children,tone=""}:{children:React.ReactNode,tone?:string})=><span className={`badge ${tone}`}>{children}</span>;

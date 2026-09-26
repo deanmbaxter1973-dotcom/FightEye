@@ -1,4 +1,5 @@
 "use client";
+import "./competition-mobile.css";
 import {useState} from "react";
 const Badge=({children,tone=""}:{children:React.ReactNode,tone?:string})=><span className={`badge ${tone}`}>{children}</span>;
 const fighters=[

@@ -1,5 +1,7 @@
 "use client";
 
+import "./athlete-welfare.css";
+
 import {FormEvent,useEffect,useMemo,useState} from "react";
 import {initialLiveBouts,type LiveBout} from "./competition-live-data";
 

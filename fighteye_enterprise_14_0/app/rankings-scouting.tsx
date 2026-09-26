@@ -1,4 +1,5 @@
 "use client";
+import "./training-rankings.css";
 import {useState} from "react";
 const ranks=[{rank:1,name:"Máté Horváth",club:"Halker-Király Team",nation:"HU",score:924,record:"22–8",quality:88,trend:"—"},{rank:2,name:"Charlie Baxter",club:"Prestige Martial Arts",nation:"GB",score:907,record:"18–7",quality:84,trend:"↑ 2"},{rank:3,name:"Noah Williams",club:"Elite Combat Academy",nation:"GB",score:861,record:"14–9",quality:79,trend:"↓ 1"},{rank:4,name:"Ethan Clarke",club:"Northern Combat",nation:"GB",score:828,record:"16–10",quality:76,trend:"↑ 1"},{rank:5,name:"Leo Martin",club:"Team Impact",nation:"FR",score:799,record:"12–6",quality:73,trend:"—"}];
 const Badge=({children,tone=""}:{children:React.ReactNode,tone?:string})=><span className={`badge ${tone}`}>{children}</span>;

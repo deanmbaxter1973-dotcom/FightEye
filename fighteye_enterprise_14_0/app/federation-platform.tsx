@@ -1,4 +1,5 @@
 "use client";
+import "./federation-operations.css";
 import {useState} from "react";
 const Badge=({children,tone=""}:{children:React.ReactNode,tone?:string})=><span className={`badge ${tone}`}>{children}</span>;
 const licences=[{id:"WGB-OC-1042",name:"Charlie Baxter",club:"Prestige Martial Arts",type:"Competitor",expires:"31 Dec 2026",status:"Valid"},{id:"WGB-CO-0188",name:"Will Taylor",club:"Prestige Martial Arts",type:"Coach",expires:"31 Dec 2026",status:"Valid"},{id:"WGB-OF-0047",name:"Sarah Evans",club:"WAKO GB Officials",type:"Referee B",expires:"30 Sep 2026",status:"Renewal"},{id:"WGB-OC-1198",name:"Noah Williams",club:"Elite Combat Academy",type:"Competitor",expires:"31 Dec 2026",status:"Valid"}];

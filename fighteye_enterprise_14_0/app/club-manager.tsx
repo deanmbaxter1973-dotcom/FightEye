@@ -1,5 +1,7 @@
 "use client";
 
+import "./club-manager.css";
+
 import {FormEvent,useEffect,useMemo,useState} from "react";
 import {ClubAthlete,clubAthletesKey,defaultClubAthletes,MembershipStatus,readClubAthletes} from "./club-data";
 import {eventCatalogue} from "./event-catalogue";

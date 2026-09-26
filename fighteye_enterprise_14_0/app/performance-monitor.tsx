@@ -1,0 +1,8 @@
+"use client";
+import {useEffect} from "react";
+
+type MetricState={lcp?:number;cls?:number;inp?:number;updatedAt:string};
+const consentKey="fighteye-performance-consent-v1",metricsKey="fighteye-performance-metrics-v1";
+export default function PerformanceMonitor(){
+ useEffect(()=>{let observers:PerformanceObserver[]=[];const start=()=>{if(localStorage.getItem(consentKey)!=="true"||!("PerformanceObserver" in window))return;const metrics:MetricState={updatedAt:new Date().toISOString()};const save=()=>{metrics.updatedAt=new Date().toISOString();localStorage.setItem(metricsKey,JSON.stringify(metrics));window.dispatchEvent(new Event("fighteye-performance-updated"))};const watch=(type:string,handler:(entries:PerformanceEntryList)=>void)=>{try{const observer=new PerformanceObserver(list=>{handler(list.getEntries());save()});observer.observe({type,buffered:true} as PerformanceObserverInit);observers.push(observer)}catch{}};watch("largest-contentful-paint",entries=>{const last=entries.at(-1);if(last)metrics.lcp=Math.round(last.startTime)});watch("layout-shift",entries=>{const added=entries.reduce((sum,entry)=>{const shift=entry as PerformanceEntry&{value?:number;hadRecentInput?:boolean};return sum+(shift.hadRecentInput?0:shift.value??0)},0);metrics.cls=Number(((metrics.cls??0)+added).toFixed(3))});watch("event",entries=>{const durations=entries.map(entry=>entry.duration).filter(Boolean);if(durations.length)metrics.inp=Math.round(Math.max(metrics.inp??0,...durations))})};const stop=()=>{observers.forEach(observer=>observer.disconnect());observers=[]};const change=()=>{stop();start()};start();window.addEventListener("fighteye-performance-consent",change);return()=>{stop();window.removeEventListener("fighteye-performance-consent",change)}},[]);return null;
+}
