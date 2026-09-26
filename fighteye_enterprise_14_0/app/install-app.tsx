@@ -23,8 +23,9 @@ export default function InstallApp(){
     standalone.addEventListener("change",syncInstalled);
     window.addEventListener("beforeinstallprompt",capture);
     window.addEventListener("appinstalled",complete);
-    if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>undefined);
-    return()=>{standalone.removeEventListener("change",syncInstalled);window.removeEventListener("beforeinstallprompt",capture);window.removeEventListener("appinstalled",complete)};
+    const refreshOnUpdate=()=>{if(navigator.serviceWorker.controller&&!sessionStorage.getItem("fighteye-sw-refreshed")){sessionStorage.setItem("fighteye-sw-refreshed","1");window.location.reload()}};
+    if("serviceWorker" in navigator){navigator.serviceWorker.addEventListener("controllerchange",refreshOnUpdate);navigator.serviceWorker.register("/sw.js").then(registration=>registration.update()).catch(()=>undefined)}
+    return()=>{standalone.removeEventListener("change",syncInstalled);window.removeEventListener("beforeinstallprompt",capture);window.removeEventListener("appinstalled",complete);if("serviceWorker" in navigator)navigator.serviceWorker.removeEventListener("controllerchange",refreshOnUpdate)};
   },[]);
 
   async function install(){

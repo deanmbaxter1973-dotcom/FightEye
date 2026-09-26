@@ -30,6 +30,15 @@
 .source-actions .live-event-launch{min-height:46px;border:1px solid #ff6e7966;border-radius:10px;background:#ff6e7912;color:#ffadb4;font-weight:900}.source-actions:has(.live-event-launch){grid-template-columns:repeat(3,1fr)}
 @media(max-width:700px){.source-actions:has(.live-event-launch){grid-template-columns:1fr}}
 
+/* Allow long event names and metadata to grow cards vertically on phones. */
+.planner-card-grid{grid-template-columns:repeat(3,minmax(0,1fr));min-width:0}
+.planner-event-card{min-width:0;max-width:100%;grid-template-columns:minmax(0,1fr);overflow-wrap:anywhere}
+.planner-event-card>*{min-width:0}
+.planner-card-head,.planner-card-status{flex-wrap:wrap}
+.planner-card-head>div{flex-shrink:0}
+@media(max-width:1150px){.planner-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.planner-card-grid{grid-template-columns:minmax(0,1fr)}}
+
 /* Geographic event filters and source clarity */
 .planner-toolbar:has(.planner-filter-toggle){grid-template-columns:minmax(220px,1fr) auto}
 .planner-filter-fields{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:8px}

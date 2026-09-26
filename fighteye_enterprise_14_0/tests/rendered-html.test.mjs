@@ -71,9 +71,10 @@ test("makes FightEye installable on iPhone and supported browsers", async () => 
   assert.match(source, /serviceWorker\.register\("\/sw\.js"\)/);
   assert.match(source, /Add to Home Screen/);
   assert.match(source, /Download FightEye app/);
-  assert.match(worker, /fighteye-app-v3/);
+  assert.match(worker, /fighteye-app-v4/);
   assert.match(worker, /MAX_ENTRIES=80/);
-  assert.match(worker, /MAX_AGE/);
+  assert.doesNotMatch(worker, /MAX_AGE|if\(fresh\(cached\)\)/);
+  assert.match(source, /controllerchange/);
 });
 
 test("connects the event execution phases to saved pathway data", async () => {
