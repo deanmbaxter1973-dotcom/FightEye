@@ -14,3 +14,21 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--blue
 
 /* v195-v196 AI analytics and production */
 .insight-card{position:relative;overflow:hidden}.recommendation-score{float:right;width:72px;height:72px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--gold) 0 82%,#ffffff18 82%);font-size:1.35rem;font-weight:900;border:6px solid #ffffff12}.analytics-bars label{display:grid;grid-template-columns:1fr 3fr 36px;align-items:center;gap:8px;margin:14px 0}.analytics-bars span{height:10px;background:#ffffff14;border-radius:999px;overflow:hidden}.analytics-bars i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--gold));border-radius:999px}.shortlist{width:100%;display:flex;align-items:center;gap:12px;border:0;border-bottom:1px solid var(--line);background:transparent;color:inherit;text-align:left;padding:12px 0;cursor:pointer}.shortlist>span{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#ffffff12;font-weight:900}.shortlist div{display:grid}.shortlist small{margin-top:3px}.release-list{margin-top:14px}.release-list p{padding:9px 11px;border-radius:12px;background:#ffffff0b}.release-list .pass{border-left:4px solid var(--green)}.release-list .fail{border-left:4px solid #ef4444}.pipeline{padding-left:22px}.pipeline li{padding:7px 0}.light .shortlist{color:#071b3a}.light .analytics-bars span{background:#071b3a14}@media(max-width:620px){.analytics-bars label{grid-template-columns:1fr 2fr 32px}.recommendation-score{width:62px;height:62px}}
+
+/* On narrow phones, show complete cards in a vertical list instead of a peeking carousel. */
+@media(max-width:620px){
+  .app-shell,.section,.carousel{min-width:0}
+  .carousel{display:grid;grid-auto-flow:row;grid-template-columns:minmax(0,1fr);grid-auto-columns:auto;gap:16px;overflow:visible;scroll-snap-type:none}
+  .event-card{width:100%;min-width:0;max-width:100%;scroll-snap-align:none}
+  .event-card:hover{transform:none}
+  .event-art{min-width:0;gap:8px}
+  .event-art .logo-pill,.event-art .status{min-width:0;max-width:65%;overflow-wrap:anywhere;text-align:center}
+  .event-body{min-width:0;overflow-wrap:anywhere}
+  .event-body h3{margin:0 0 8px;line-height:1.2}
+  .event-body p{line-height:1.4}
+  .event-body .meta{grid-template-columns:minmax(0,1fr)}
+  .event-body .meta div{min-width:0;display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .event-body .meta b,.event-body .meta small{min-width:0;overflow-wrap:anywhere}
+  .event-body .actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .event-body .actions button{min-width:0;width:100%}
+}

@@ -1,4 +1,4 @@
-const CACHE = 'fighteye-v195-v196-cache-v1';
+const CACHE = 'fighteye-v195-v196-cache-v2';
 const ASSETS = ['./', './index.html', './styles.css', './app.js', './data/events.js', './data/events-api.json', './manifest.json', './assets/fighteye-logo.jpg', './assets/hero.jpg', './assets/icon-192.png', './assets/icon-512.png', './assets/apple-touch-icon.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
