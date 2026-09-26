@@ -100,3 +100,21 @@
  .timeline-heading>button{width:100%;white-space:normal}
  .timeline-date-copy small{white-space:normal;overflow-wrap:anywhere}
 }
+@media(orientation:portrait) and (max-width:600px){
+ .event-timeline .event-timeline-row{display:flex;flex-direction:column;align-items:stretch;gap:12px;width:100%;min-width:0;min-height:0;padding:18px 0;border-bottom:1px solid var(--line)}
+ .event-timeline .timeline-marker{display:none}
+ .event-timeline .event-timeline-row time{display:flex;width:100%;min-width:0;align-items:center}
+ .event-timeline .timeline-date-copy{min-width:0;flex:1}
+ .event-timeline .timeline-date-copy>b,.event-timeline .timeline-date-copy small{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}
+ .event-timeline .timeline-event{width:100%;min-width:0;padding:0}
+ .event-timeline .timeline-event h3,.event-timeline .timeline-event p,.event-timeline .timeline-audit-note{overflow-wrap:anywhere}
+ .event-timeline .timeline-details{display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
+ .event-timeline .timeline-details div{min-width:0;flex-wrap:wrap}
+ .event-timeline .timeline-details dd{max-width:100%;white-space:normal;overflow:visible;overflow-wrap:anywhere}
+ .event-timeline .timeline-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;min-width:0;gap:8px;padding:0}
+ .event-timeline .timeline-actions button,.event-timeline .timeline-actions a{width:100%;min-width:0;min-height:48px;padding:8px;white-space:normal;overflow-wrap:anywhere}
+}
+@media(orientation:portrait) and (max-width:430px){
+ .event-timeline .timeline-actions{grid-template-columns:minmax(0,1fr)}
+ .event-timeline .timeline-actions .club-decision,.event-timeline .timeline-actions>button:first-of-type{grid-column:auto}
+}
