@@ -32,3 +32,13 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--blue
   .event-body .actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
   .event-body .actions button{min-width:0;width:100%}
 }
+
+.club-switch{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;padding:4px 0 12px;-webkit-overflow-scrolling:touch}
+.club-switch .chip{flex:0 0 auto;scroll-snap-align:start}
+.club-tools{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 16px}
+.club-form{display:grid;gap:8px;margin:0 0 16px;max-width:560px}
+.club-form label,.club-summary label{display:block;color:var(--muted)}
+.club-form .budget,.club-summary .budget{margin:5px 0 10px}
+.club-summary{margin:12px 0 16px}
+.club-remove{margin-top:8px;width:100%}
+@media(max-width:620px){.club-tools{display:grid;grid-template-columns:minmax(0,1fr)}.club-tools button{width:100%;min-width:0}.club-os .section-head h2{overflow-wrap:anywhere}}
