@@ -40,8 +40,18 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--blue
 .club-form label,.club-summary label{display:block;color:var(--muted)}
 .club-form .budget,.club-summary .budget{margin:5px 0 10px}
 .club-summary{margin:12px 0 16px}
+.club-title{display:grid;gap:14px}
+.club-identity{display:flex;align-items:flex-start;gap:16px;min-width:0}
+.club-logo{width:84px;height:84px;flex:0 0 84px;border-radius:18px;object-fit:contain;background:rgba(255,255,255,.1)}
+.club-logo-placeholder{display:grid;place-items:center;font-size:28px;font-weight:800}
+.club-identity-copy{min-width:0;overflow-wrap:anywhere}
+.club-identity-copy h3{margin:0 0 5px}
+.club-identity-copy p{margin:0 0 10px}
+.club-contact{display:flex;flex-wrap:wrap;gap:7px 16px}
+.club-contact>*{overflow-wrap:anywhere;max-width:100%}
+.athlete-edit{margin:12px 0;padding:12px;border:1px solid var(--muted);border-radius:12px}
 .club-remove{margin-top:8px;width:100%}
-@media(max-width:620px){.club-tools{display:grid;grid-template-columns:minmax(0,1fr)}.club-tools button{width:100%;min-width:0}.club-os .section-head h2{overflow-wrap:anywhere}}
+@media(max-width:620px){.club-tools{display:grid;grid-template-columns:minmax(0,1fr)}.club-tools button{width:100%;min-width:0}.club-os .section-head h2{overflow-wrap:anywhere}.club-logo{width:64px;height:64px;flex-basis:64px}.club-identity{gap:10px}.club-title>.ghost{width:100%}}
 
 .event-period{display:flex;gap:8px;overflow-x:auto;margin:0 0 14px;padding:2px 0 6px}
 .event-period .chip{flex:0 0 auto}
