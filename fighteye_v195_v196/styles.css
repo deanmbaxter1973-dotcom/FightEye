@@ -50,6 +50,12 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--blue
 .club-contact{display:flex;flex-wrap:wrap;gap:7px 16px}
 .club-contact>*{overflow-wrap:anywhere;max-width:100%}
 .athlete-edit{margin:12px 0;padding:12px;border:1px solid var(--muted);border-radius:12px}
+.athlete .athlete-edit{text-align:left}
+.profile-membership,.profile-emergency{min-width:0;border:1px solid var(--muted);border-radius:12px;padding:10px 12px}
+.profile-membership label{display:block;padding:7px 0;overflow-wrap:anywhere}
+.profile-membership input{margin-right:8px}
+.profile-emergency label{display:block}
+.athlete .avatar.athlete-photo{display:block;margin:0 auto 10px;width:76px;height:76px}
 .athlete-card-head{display:flex;align-items:center;gap:12px;min-width:0}
 .athlete-card-head h3{min-width:0;overflow-wrap:anywhere}
 .athlete-photo{width:58px;height:58px;flex:0 0 58px;border-radius:50%;object-fit:cover;background:rgba(255,255,255,.12)}

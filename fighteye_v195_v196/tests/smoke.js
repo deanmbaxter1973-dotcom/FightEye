@@ -16,7 +16,7 @@ assert.strictEqual(events.find(e=>e.id==='ico-england-squad-oct-2026').access,'O
 assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'Eligibility to confirm','GB eligibility not assumed');
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[{id:'test-athlete',name:'Test Athlete',ranking:'Cadet',weight:'42 kg'}],addEventListener:()=>{}},document:{getElementById:()=>({})},localStorage:{getItem:()=>null},navigator:{},URL};
-vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,clubView,nav,registrationOpen,calendarText,clubWebsite,state};})();'),context);
+vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,clubView,passportView,nav,registrationOpen,calendarText,clubWebsite,state};})();'),context);
 assert.strictEqual(context.__events.statusFor({start:'2099-01-01',end:'2099-01-02',closing:null}),'Date confirmed • entry TBC');
 assert(context.__events.eventsView().includes('data-event-period="past"'),'past events tab present');
 assert(context.__events.eventsView().includes('data-event-period="open"'),'registration tab present');
@@ -29,6 +29,11 @@ assert(context.__events.clubView().includes('Edit club details'),'club title edi
 assert(context.__events.clubView().includes('data-edit-athlete="test-athlete"'),'athlete edit present');
 context.__events.state.editAthlete='test-athlete';
 assert(context.__events.clubView().includes('name="photo" type="file"'),'athlete photo upload present');
+assert(context.__events.clubView().includes('name="emergencyPhone"'),'emergency contact editable');
+assert(context.__events.clubView().includes('name="groups"'),'club membership editable');
+assert(context.__events.passportView().includes('Edit profile'),'passport profile editing present');
+context.window.FIGHTEYE_ATHLETES[0].photo='data:image/jpeg;base64,YWJj';
+assert(context.__events.passportView().includes('class="avatar athlete-photo"'),'passport shows athlete photo');
 context.__events.state.editAthlete='';
 context.__events.state.clubForm='details';
 assert(context.__events.clubView().includes('name="logo"'),'club logo upload present');
