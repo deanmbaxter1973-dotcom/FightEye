@@ -1,6 +1,6 @@
 {
   "name": "fighteye-fight-database-phase1",
-  "version": "14.7.0",
+  "version": "14.8.0",
   "private": true,
   "engines": {
     "node": ">=22.13.0"

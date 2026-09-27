@@ -55,3 +55,8 @@
  .event-drawer header p{margin-bottom:6px}
  .drawer-content{padding:14px}
 }
+@media(max-width:900px) and (hover:none){
+ html,body,.app{max-width:100%;overflow-x:hidden;overscroll-behavior:none}
+ .workspace{overscroll-behavior:none;background:#031025}
+ .event-timeline-list,.timeline-months{overscroll-behavior-x:contain}
+}

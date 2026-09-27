@@ -118,3 +118,23 @@
  .event-timeline .timeline-actions{grid-template-columns:minmax(0,1fr)}
  .event-timeline .timeline-actions .club-decision,.event-timeline .timeline-actions>button:first-of-type{grid-column:auto}
 }
+
+/* The Netlify app's iPhone event timeline is a horizontal, contained card rail. */
+@media(max-width:900px) and (hover:none){
+ .event-timeline{max-width:100%;min-width:0;overflow:hidden}
+ .event-timeline-list{display:flex;flex-wrap:nowrap;align-items:stretch;gap:12px;width:100%;max-width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;padding:14px;scroll-snap-type:x mandatory;scroll-padding-inline:14px;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y}
+ .event-timeline-list>.timeline-month-break{display:none}
+ .event-timeline .event-timeline-row{display:flex;flex:0 0 min(420px,calc(100% - 12px));flex-direction:column;align-items:stretch;gap:12px;width:auto;max-width:calc(100% - 12px);min-width:0;min-height:0;margin:0;padding:16px;border:1px solid var(--line);border-radius:16px;background:#0b2750;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden}
+ .event-timeline .timeline-marker{display:none}
+ .event-timeline .event-timeline-row time,.event-timeline .timeline-event,.event-timeline .timeline-actions{display:flex;width:100%;min-width:0;grid-column:auto;grid-row:auto}
+ .event-timeline .event-timeline-row time{align-items:center}
+ .event-timeline .timeline-event{display:block;padding:0}
+ .event-timeline .timeline-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:end;margin-top:auto;padding:0}
+ .event-timeline .timeline-actions button,.event-timeline .timeline-actions a{min-width:0;width:100%;white-space:normal;overflow-wrap:anywhere}
+ .event-timeline .timeline-date-copy,.event-timeline .timeline-event *{min-width:0;max-width:100%;overflow-wrap:anywhere}
+ .event-timeline .timeline-details dd{white-space:normal}
+}
+@media(max-width:520px) and (hover:none){
+ .event-timeline .event-timeline-row{flex-basis:calc(100% - 12px)}
+ .event-timeline .timeline-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+}

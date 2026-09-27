@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FightEye Enterprise 14.7 — Event-First Fight Operations",
+  title: "FightEye Enterprise 14.8 — Event-First Fight Operations",
   description: "Fast, guided access to athletes, coaching, competitions, live fight operations and club management.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {capable:true,statusBarStyle:"black-translucent",title:"FightEye"},
