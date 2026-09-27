@@ -24,6 +24,7 @@ assert(context.__events.eventsView().includes('data-event-period="open"'),'regis
 assert(context.__events.eventsView().includes('data-calendar='),'calendar action on event cards');
 assert(!context.__events.eventsView().includes('Subscribe in Calendar'),'subscription moved off Events');
 assert(context.__events.settingsView().includes('Subscribe in Calendar'),'subscription in Settings');
+assert(context.__events.settingsView().includes('Apple Health privacy notice'),'Health privacy link in Settings');
 assert(context.__events.nav().includes('data-tab="settings"'),'Settings in bottom navigation');
 assert(context.__events.clubView().includes('Injury tracker'),'injury option in ClubOS');
 assert(context.__events.clubView().includes('Edit club details'),'club title edit present');
@@ -42,10 +43,11 @@ assert(context.__events.passportView().includes('data-health-import="test-athlet
 assert(context.__events.passportView().includes('Connect Apple Health'),'native Health connection offered');
 context.__events.receiveHealthResult({athleteId:'test-athlete',status:'syncing'});
 assert(context.__events.passportView().includes('Syncing body mass'),'sync progress shown');
-context.__events.receiveHealthResult({athleteId:'test-athlete',status:'synced',lastSync:'2026-09-27T17:00:00Z',samples:[{date:'2026-09-26',kg:42.4},{date:'2026-09-27',kg:43.1}]});
+context.__events.receiveHealthResult({athleteId:'test-athlete',status:'synced',backgroundEnabled:true,lastSync:'2026-09-27T17:00:00Z',samples:[{date:'2026-09-26',kg:42.4},{date:'2026-09-27',kg:43.1}]});
 assert.strictEqual(context.__events.state.weightRecords['test-athlete'].length,2,'native weight samples stored');
 assert(context.__events.passportView().includes('43.1 kg'),'latest Health weight displayed');
 assert(context.__events.passportView().includes('last read'),'last Health read shown');
+assert(context.__events.passportView().includes('Health changes can notify'),'background delivery status shown');
 context.__events.state.weightRecords['test-athlete'].push({date:'2026-09-28',kg:44,source:'Manual'});
 context.__events.receiveHealthResult({athleteId:'test-athlete',samples:[{date:'2026-09-28',kg:50},{date:'2026-09-27',kg:43.5},{date:'2026-09-27',kg:41}]});
 assert.strictEqual(context.__events.state.weightRecords['test-athlete'].find(r=>r.date==='2026-09-28').kg,44,'manual weight takes precedence');

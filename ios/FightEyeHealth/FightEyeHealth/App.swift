@@ -2,8 +2,64 @@ import SwiftUI
 import WebKit
 import HealthKit
 
+private extension Notification.Name {
+    static let fightEyeHealthChanged = Notification.Name("FightEyeHealthChanged")
+}
+
+final class FightEyeAppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        HealthBackgroundObserver.shared.startIfLinked()
+        return true
+    }
+}
+
+final class HealthBackgroundObserver {
+    static let shared = HealthBackgroundObserver()
+    private let store = HKHealthStore()
+    private var observer: HKObserverQuery?
+    private let athleteKey = "fighteye.health.athleteId"
+    private let enabledKey = "fighteye.health.backgroundEnabled"
+
+    func startIfLinked() {
+        guard observer == nil, UserDefaults.standard.string(forKey: athleteKey) != nil,
+              HKHealthStore.isHealthDataAvailable(),
+              let type = HKObjectType.quantityType(forIdentifier: .bodyMass) else { return }
+        let query = HKObserverQuery(sampleType: type, predicate: nil) { _, completion, _ in
+            // No private Health samples are read or written while the phone is locked.
+            UserDefaults.standard.set(true, forKey: "fighteye.health.pendingRefresh")
+            DispatchQueue.main.async {
+                if UIApplication.shared.applicationState == .active {
+                    NotificationCenter.default.post(name: .fightEyeHealthChanged, object: nil)
+                }
+                completion()
+            }
+        }
+        observer = query
+        store.execute(query)
+    }
+
+    func enableDelivery(completion: @escaping (Bool) -> Void) {
+        guard let type = HKObjectType.quantityType(forIdentifier: .bodyMass) else { completion(false); return }
+        startIfLinked()
+        store.enableBackgroundDelivery(for: type, frequency: .immediate) { success, _ in
+            UserDefaults.standard.set(success, forKey: self.enabledKey)
+            DispatchQueue.main.async { completion(success) }
+        }
+    }
+
+    func stop() {
+        if let observer { store.stop(observer); self.observer = nil }
+        UserDefaults.standard.set(false, forKey: enabledKey)
+        UserDefaults.standard.removeObject(forKey: "fighteye.health.pendingRefresh")
+        if let type = HKObjectType.quantityType(forIdentifier: .bodyMass) {
+            store.disableBackgroundDelivery(for: type) { _, _ in }
+        }
+    }
+}
+
 @main
 struct FightEyeHealthApp: App {
+    @UIApplicationDelegateAdaptor(FightEyeAppDelegate.self) private var appDelegate
     var body: some Scene {
         WindowGroup { FightEyeWebView().ignoresSafeArea() }
     }
@@ -57,17 +113,16 @@ struct FightEyeWebView: UIViewRepresentable {
         private let athleteKey = "fighteye.health.athleteId"
         private let syncKey = "fighteye.health.lastSync"
         private var linkedAthlete: String? { UserDefaults.standard.string(forKey: athleteKey) }
-        private var observer: HKObserverQuery?
         private var isRefreshing = false
         private var refreshAgain = false
 
         override init() {
             super.init()
             NotificationCenter.default.addObserver(self, selector: #selector(refreshOnForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(refreshOnForeground), name: .fightEyeHealthChanged, object: nil)
         }
 
         deinit {
-            if let observer { healthStore.stop(observer) }
             NotificationCenter.default.removeObserver(self)
         }
 
@@ -75,8 +130,9 @@ struct FightEyeWebView: UIViewRepresentable {
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             send(["athleteId": linkedAthlete ?? "", "status": linkedAthlete == nil ? "disconnected" : "linked",
-                  "lastSync": UserDefaults.standard.string(forKey: syncKey) ?? ""])
-            if linkedAthlete != nil { startObserving(); refresh() }
+                  "lastSync": UserDefaults.standard.string(forKey: syncKey) ?? "",
+                  "backgroundEnabled": UserDefaults.standard.bool(forKey: "fighteye.health.backgroundEnabled")])
+            if linkedAthlete != nil { HealthBackgroundObserver.shared.startIfLinked(); refresh() }
         }
 
         func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
@@ -105,8 +161,8 @@ struct FightEyeWebView: UIViewRepresentable {
                 guard id == linkedAthlete else { return }
                 UserDefaults.standard.removeObject(forKey: athleteKey)
                 UserDefaults.standard.removeObject(forKey: syncKey)
-                if let observer { healthStore.stop(observer); self.observer = nil }
-                send(["athleteId": "", "status": "disconnected"])
+                HealthBackgroundObserver.shared.stop()
+                send(["athleteId": "", "status": "disconnected", "backgroundEnabled": false])
             default: break
             }
         }
@@ -122,20 +178,12 @@ struct FightEyeWebView: UIViewRepresentable {
                     if !success { self.send(["error": "Apple Health authorisation was not completed."]); return }
                     // HealthKit intentionally does not disclose whether read permission was denied.
                     UserDefaults.standard.set(id, forKey: self.athleteKey)
-                    self.startObserving()
+                    HealthBackgroundObserver.shared.enableDelivery { [weak self] enabled in
+                        self?.send(["athleteId": id, "status": "linked", "backgroundEnabled": enabled])
+                    }
                     self.refresh()
                 }
             }
-        }
-
-        private func startObserving() {
-            guard observer == nil, let type = HKObjectType.quantityType(forIdentifier: .bodyMass) else { return }
-            let query = HKObserverQuery(sampleType: type, predicate: nil) { [weak self] _, completion, _ in
-                DispatchQueue.main.async { self?.refresh() }
-                completion()
-            }
-            observer = query
-            healthStore.execute(query)
         }
 
         private func refresh() {
@@ -165,6 +213,7 @@ struct FightEyeWebView: UIViewRepresentable {
                         }
                         let synced = ISO8601DateFormatter().string(from: Date())
                         UserDefaults.standard.set(synced, forKey: self.syncKey)
+                        UserDefaults.standard.removeObject(forKey: "fighteye.health.pendingRefresh")
                         self.send(["athleteId": id, "status": "synced", "lastSync": synced, "samples": rows])
                     }
                     if self.refreshAgain { self.refreshAgain = false; self.refresh() }
