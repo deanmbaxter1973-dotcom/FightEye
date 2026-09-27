@@ -15,8 +15,9 @@ assert.strictEqual(events.filter(e=>e.series==='GB Grand Slam').length,4,'four d
 assert.strictEqual(events.find(e=>e.id==='ico-england-squad-oct-2026').access,'Open','ICO squad is open');
 assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'Eligibility to confirm','GB eligibility not assumed');
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
-const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[{id:'test-athlete',name:'Test Athlete',ranking:'Cadet',weight:'42 kg'}],addEventListener:()=>{}},document:{getElementById:()=>({})},localStorage:{getItem:()=>null},navigator:{},URL};
-vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,clubView,passportView,nav,registrationOpen,calendarText,clubWebsite,parseHealthWeightXML,state};})();'),context);
+const store=new Map();
+const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[{id:'test-athlete',name:'Test Athlete',ranking:'Cadet',weight:'42 kg'}],addEventListener:()=>{},webkit:{messageHandlers:{fighteyeHealth:{postMessage:()=>{}}}}},document:{getElementById:()=>({}),querySelector:()=>null,querySelectorAll:()=>[]},localStorage:{getItem:key=>store.get(key)||null,setItem:(key,value)=>store.set(key,value)},navigator:{},URL};
+vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,clubView,passportView,nav,registrationOpen,calendarText,clubWebsite,parseHealthWeightXML,receiveHealthResult,state};})();'),context);
 assert.strictEqual(context.__events.statusFor({start:'2099-01-01',end:'2099-01-02',closing:null}),'Date confirmed • entry TBC');
 assert(context.__events.eventsView().includes('data-event-period="past"'),'past events tab present');
 assert(context.__events.eventsView().includes('data-event-period="open"'),'registration tab present');
@@ -38,6 +39,16 @@ assert(context.__events.passportView().includes('2026 • WAKO'),'organisation a
 assert(context.__events.passportView().includes('🥇 2 · 🥈 1 · 🥉 3'),'medal totals shown in Passport');
 assert(context.__events.clubView().includes('data-weight-form="test-athlete"'),'manual weight entry in ClubOS');
 assert(context.__events.passportView().includes('data-health-import="test-athlete"'),'Health XML import in Passport');
+assert(context.__events.passportView().includes('Connect Apple Health'),'native Health connection offered');
+context.__events.receiveHealthResult({athleteId:'test-athlete',samples:[{date:'2026-09-26',kg:42.4},{date:'2026-09-27',kg:43.1}]});
+assert.strictEqual(context.__events.state.weightRecords['test-athlete'].length,2,'native weight samples stored');
+assert(context.__events.passportView().includes('43.1 kg'),'latest Health weight displayed');
+context.__events.state.weightRecords['test-athlete'].push({date:'2026-09-28',kg:44,source:'Manual'});
+context.__events.receiveHealthResult({athleteId:'test-athlete',samples:[{date:'2026-09-28',kg:50},{date:'2026-09-27',kg:43.5},{date:'2026-09-27',kg:41}]});
+assert.strictEqual(context.__events.state.weightRecords['test-athlete'].find(r=>r.date==='2026-09-28').kg,44,'manual weight takes precedence');
+assert.strictEqual(context.__events.state.weightRecords['test-athlete'].find(r=>r.date==='2026-09-27').kg,43.5,'newest Health sample for a date wins');
+context.__events.receiveHealthResult({athleteId:'unknown',samples:[{date:'2026-09-27',kg:99}]});
+assert(!context.__events.state.weightRecords.unknown,'unknown athlete ignored');
 const weights=context.__events.parseHealthWeightXML('<HealthData><Record type="HKQuantityTypeIdentifierBodyMass" startDate="2026-09-20 07:00:00 +0100" unit="lb" value="110"/><Record type="HKQuantityTypeIdentifierHeartRate" startDate="2026-09-20 07:00:00 +0100" unit="count/min" value="70"/></HealthData>');
 assert.strictEqual(weights.length,1,'only body mass records imported');
 assert.strictEqual(weights[0].kg,49.9,'pounds converted to kilograms');
