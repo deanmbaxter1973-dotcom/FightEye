@@ -42,3 +42,8 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--blue
 .club-summary{margin:12px 0 16px}
 .club-remove{margin-top:8px;width:100%}
 @media(max-width:620px){.club-tools{display:grid;grid-template-columns:minmax(0,1fr)}.club-tools button{width:100%;min-width:0}.club-os .section-head h2{overflow-wrap:anywhere}}
+
+.event-period{display:flex;gap:8px;overflow-x:auto;margin:0 0 14px;padding:2px 0 6px}
+.event-period .chip{flex:0 0 auto}
+.event-source{display:block;line-height:1.4;overflow-wrap:anywhere}
+.source-link{color:var(--blue);font-weight:800;overflow-wrap:anywhere}
