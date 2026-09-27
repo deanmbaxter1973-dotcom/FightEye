@@ -1,0 +1,20 @@
+const fs=require('fs');const path=require('path');const vm=require('vm');const assert=require('assert');
+const {webcrypto}=require('crypto');const app=fs.readFileSync(path.join(__dirname,'../app.js'),'utf8');
+const data=new Map();const localStorage={getItem:k=>data.get(k)??null,setItem:(k,v)=>data.set(k,String(v))};
+const context={window:{FIGHTEYE_EVENTS:[],FIGHTEYE_ATHLETES:[],addEventListener:()=>{}},document:{getElementById:()=>({})},localStorage,navigator:{},crypto:webcrypto,TextEncoder,TextDecoder,btoa,atob};
+vm.runInNewContext(app.replace('})();','globalThis.vault={openInjuryVault,saveInjuries,state,INJURY_STORE};})();'),context);
+(async()=>{
+ const {openInjuryVault,saveInjuries,state,INJURY_STORE}=context.vault;
+ await openInjuryVault('strong passphrase 123');
+ state.injuries.push({id:'test',athleteId:'athlete-1',note:'Private ankle note',status:'Active'});
+ await saveInjuries();
+ const stored=localStorage.getItem(INJURY_STORE);
+ assert(stored&&!stored.includes('Private ankle note'),'no plaintext injury in storage');
+ assert(!localStorage.getItem('fighteye-v192')?.includes('Private ankle note'),'club store stays separate');
+ state.injuries=[];state.injuryKey=null;
+ await assert.rejects(openInjuryVault('incorrect passphrase'),'wrong passphrase rejected');
+ await openInjuryVault('strong passphrase 123');
+ assert.strictEqual(state.injuries[0].note,'Private ankle note');
+ assert(!app.includes('fetch(INJURY_STORE'),'no injury upload path');
+ console.log('Injury vault tests passed: encryption, local storage and passphrase.');
+})().catch(error=>{console.error(error);process.exitCode=1});
