@@ -1,0 +1,36 @@
+name: iPhone Health bridge build
+on:
+  push:
+    paths:
+      - 'ios/FightEyeHealth/**'
+      - 'fighteye_v195_v196/**'
+      - '.github/workflows/ios-health-build.yml'
+  pull_request:
+    paths:
+      - 'ios/FightEyeHealth/**'
+      - 'fighteye_v195_v196/**'
+      - '.github/workflows/ios-health-build.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  simulator-build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate web bridge
+        run: npm --prefix fighteye_v195_v196 run check
+      - name: Compile iPhone target without signing
+        run: |
+          xcodebuild \
+            -project ios/FightEyeHealth/FightEyeHealth.xcodeproj \
+            -target FightEyeHealth \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            CODE_SIGNING_ALLOWED=NO \
+            SYMROOT="$RUNNER_TEMP/FightEyeBuild" \
+            build
+      - name: Verify bundled web app
+        run: |
+          test -f "$RUNNER_TEMP/FightEyeBuild/Debug-iphonesimulator/FightEyeHealth.app/WebApp/index.html"
+          test -f "$RUNNER_TEMP/FightEyeBuild/Debug-iphonesimulator/FightEyeHealth.app/WebApp/app.js"

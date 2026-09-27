@@ -6,4 +6,4 @@ In ClubOS or Athlete Passport, open the athlete's Weight tracker and tap **Conne
 
 HealthKit does not tell an app whether read permission was denied. If no entries appear, check Health → Data Access & Devices → FightEye → Body Measurements → Body Mass. Disconnect removes the athlete mapping; it does not erase weights already imported into FightEye. Browser and native app storage are separate. The existing XML import remains available in the browser.
 
-Build validation requires Xcode on macOS and a real iPhone with Health data. The web tests exercise the JavaScript bridge and storage behaviour; they cannot validate signing, the native permission prompt, or device delivery.
+The `iPhone Health bridge build` GitHub Action compiles an unsigned iOS Simulator target and checks that the bundled web files are present. Installing the app still requires Xcode signing and a real iPhone with Health data. The web tests exercise the JavaScript bridge and storage behaviour; neither CI nor the simulator validates the native Health permission prompt or real device delivery.
