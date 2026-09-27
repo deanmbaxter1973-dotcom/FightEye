@@ -16,11 +16,14 @@ assert.strictEqual(events.find(e=>e.id==='ico-england-squad-oct-2026').access,'O
 assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'Eligibility to confirm','GB eligibility not assumed');
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[],addEventListener:()=>{}},document:{getElementById:()=>({})},localStorage:{getItem:()=>null},navigator:{}};
-vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,registrationOpen,calendarText,state};})();'),context);
+vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,nav,registrationOpen,calendarText,state};})();'),context);
 assert.strictEqual(context.__events.statusFor({start:'2099-01-01',end:'2099-01-02',closing:null}),'Date confirmed • entry TBC');
 assert(context.__events.eventsView().includes('data-event-period="past"'),'past events tab present');
 assert(context.__events.eventsView().includes('data-event-period="open"'),'registration tab present');
 assert(context.__events.eventsView().includes('data-calendar='),'calendar action on event cards');
+assert(!context.__events.eventsView().includes('Subscribe in Calendar'),'subscription moved off Events');
+assert(context.__events.settingsView().includes('Subscribe in Calendar'),'subscription in Settings');
+assert(context.__events.nav().includes('data-tab="settings"'),'Settings in bottom navigation');
 const ics=context.__events.calendarText({id:'test',name:'Open, Finals',org:'Test',city:'Leeds',country:'United Kingdom',venue:'Arena',start:'2027-07-10',end:'2027-07-11',sourceUrl:'https://example.org/event'});
 assert(ics.includes('DTSTART;VALUE=DATE:20270710'),'calendar starts on event date');
 assert(ics.includes('DTEND;VALUE=DATE:20270712'),'calendar includes final day');
