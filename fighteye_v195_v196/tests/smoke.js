@@ -15,8 +15,13 @@ assert.strictEqual(events.find(e=>e.id==='ico-england-squad-oct-2026').access,'O
 assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'Eligibility to confirm','GB eligibility not assumed');
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[],addEventListener:()=>{}},document:{getElementById:()=>({})},localStorage:{getItem:()=>null},navigator:{}};
-vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView};})();'),context);
+vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,registrationOpen,state};})();'),context);
 assert.strictEqual(context.__events.statusFor({start:'2099-01-01',end:'2099-01-02',closing:null}),'Date confirmed • entry TBC');
 assert(context.__events.eventsView().includes('data-event-period="past"'),'past events tab present');
+assert(context.__events.eventsView().includes('data-event-period="open"'),'registration tab present');
+const future=new Date(Date.now()+40*86400000).toISOString().slice(0,10), closing=new Date(Date.now()+20*86400000).toISOString().slice(0,10), expired=new Date(Date.now()-86400000).toISOString().slice(0,10);
+assert(context.__events.registrationOpen({start:future,end:future,closing},new Date().toISOString().slice(0,10)),'future competition accepting entries');
+assert(!context.__events.registrationOpen({start:future,end:future,closing:expired},new Date().toISOString().slice(0,10)),'closed registration excluded');
+assert(!context.__events.registrationOpen({kind:'Squad training',start:future,end:future,closing},new Date().toISOString().slice(0,10)),'training excluded');
 for(const f of ['styles.css','sw.js','manifest.json','netlify.toml','netlify/functions/analytics.js','netlify/functions/metrics.js'])assert(fs.existsSync(path.join(root,f)),`missing ${f}`);
 console.log(`Smoke tests passed: ${events.length} events, unique IDs, analytics and production modules present.`);
