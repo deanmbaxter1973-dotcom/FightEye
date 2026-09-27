@@ -12,6 +12,25 @@ struct FightEyeHealthApp: App {
 struct FightEyeWebView: UIViewRepresentable {
     func makeCoordinator() -> Coordinator { Coordinator() }
 
+    private func installedWebApp() throws -> URL {
+        guard let bundled = Bundle.main.url(forResource: "WebApp", withExtension: nil) else {
+            throw CocoaError(.fileNoSuchFile)
+        }
+        let files = FileManager.default
+        let root = files.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("FightEyeWebApp", isDirectory: true)
+        try files.createDirectory(at: root, withIntermediateDirectories: true)
+        // A stable file URL keeps the web view's local storage attached to the
+        // same origin after an iOS app update changes the bundle's location.
+        for name in ["index.html", "app.js", "styles.css", "manifest.json", "assets", "data"] {
+            let source = bundled.appendingPathComponent(name)
+            let destination = root.appendingPathComponent(name)
+            if files.fileExists(atPath: destination.path) { try files.removeItem(at: destination) }
+            try files.copyItem(at: source, to: destination)
+        }
+        return root
+    }
+
     func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
         configuration.websiteDataStore = .default()
@@ -19,11 +38,12 @@ struct FightEyeWebView: UIViewRepresentable {
         let view = WKWebView(frame: .zero, configuration: configuration)
         view.navigationDelegate = context.coordinator
         context.coordinator.webView = view
-        guard let folder = Bundle.main.url(forResource: "WebApp", withExtension: nil),
-              let index = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "WebApp") else {
-            assertionFailure("Run the Copy FightEye WebApp build phase")
+        guard let folder = try? installedWebApp() else {
+            assertionFailure("Could not prepare the bundled FightEye web app")
             return view
         }
+        context.coordinator.webRoot = folder
+        let index = folder.appendingPathComponent("index.html")
         view.loadFileURL(index, allowingReadAccessTo: folder)
         return view
     }
@@ -32,10 +52,14 @@ struct FightEyeWebView: UIViewRepresentable {
 
     final class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         weak var webView: WKWebView?
+        var webRoot: URL?
         private let healthStore = HKHealthStore()
         private let athleteKey = "fighteye.health.athleteId"
+        private let syncKey = "fighteye.health.lastSync"
         private var linkedAthlete: String? { UserDefaults.standard.string(forKey: athleteKey) }
         private var observer: HKObserverQuery?
+        private var isRefreshing = false
+        private var refreshAgain = false
 
         override init() {
             super.init()
@@ -50,7 +74,8 @@ struct FightEyeWebView: UIViewRepresentable {
         @objc private func refreshOnForeground() { refresh() }
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            send(["athleteId": linkedAthlete ?? ""])
+            send(["athleteId": linkedAthlete ?? "", "status": linkedAthlete == nil ? "disconnected" : "linked",
+                  "lastSync": UserDefaults.standard.string(forKey: syncKey) ?? ""])
             if linkedAthlete != nil { startObserving(); refresh() }
         }
 
@@ -65,7 +90,8 @@ struct FightEyeWebView: UIViewRepresentable {
 
         func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
             guard message.name == "fighteyeHealth", message.frameInfo.isMainFrame,
-                  webView?.url?.isFileURL == true,
+                  let webRoot, let page = webView?.url,
+                  page.isFileURL, page.path.hasPrefix(webRoot.path + "/"),
                   let body = message.body as? [String: String], let action = body["action"] else { return }
             let id = body["athleteId"] ?? ""
             switch action {
@@ -78,8 +104,9 @@ struct FightEyeWebView: UIViewRepresentable {
             case "disconnect":
                 guard id == linkedAthlete else { return }
                 UserDefaults.standard.removeObject(forKey: athleteKey)
+                UserDefaults.standard.removeObject(forKey: syncKey)
                 if let observer { healthStore.stop(observer); self.observer = nil }
-                send(["athleteId": ""])
+                send(["athleteId": "", "status": "disconnected"])
             default: break
             }
         }
@@ -88,10 +115,11 @@ struct FightEyeWebView: UIViewRepresentable {
             guard HKHealthStore.isHealthDataAvailable(), let type = HKObjectType.quantityType(forIdentifier: .bodyMass) else {
                 send(["error": "Apple Health is unavailable on this device."]); return
             }
-            healthStore.requestAuthorization(toShare: [], read: [type]) { [weak self] _, error in
+            healthStore.requestAuthorization(toShare: [], read: [type]) { [weak self] success, error in
                 DispatchQueue.main.async {
                     guard let self else { return }
                     if let error { self.send(["error": error.localizedDescription]); return }
+                    if !success { self.send(["error": "Apple Health authorisation was not completed."]); return }
                     // HealthKit intentionally does not disclose whether read permission was denied.
                     UserDefaults.standard.set(id, forKey: self.athleteKey)
                     self.startObserving()
@@ -112,20 +140,35 @@ struct FightEyeWebView: UIViewRepresentable {
 
         private func refresh() {
             guard let id = linkedAthlete, let type = HKObjectType.quantityType(forIdentifier: .bodyMass) else { return }
+            if isRefreshing { refreshAgain = true; return }
+            isRefreshing = true
+            send(["athleteId": id, "status": "syncing"])
             let start = Calendar.current.date(byAdding: .year, value: -3, to: Date())
             let predicate = HKQuery.predicateForSamples(withStart: start, end: Date(), options: [])
             let query = HKSampleQuery(sampleType: type, predicate: predicate, limit: 1000,
                                       sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)]) { [weak self] _, samples, error in
-                guard let self else { return }
-                if let error { self.send(["error": error.localizedDescription]); return }
-                let formatter = DateFormatter()
-                formatter.calendar = Calendar(identifier: .gregorian)
-                formatter.timeZone = TimeZone(identifier: "Europe/London")
-                formatter.dateFormat = "yyyy-MM-dd"
-                let rows: [[String: Any]] = (samples as? [HKQuantitySample] ?? []).map {
-                    ["date": formatter.string(from: $0.endDate), "kg": $0.quantity.doubleValue(for: .gramUnit(with: .kilo))]
+                DispatchQueue.main.async {
+                    guard let self else { return }
+                    self.isRefreshing = false
+                    guard id == self.linkedAthlete else {
+                        if self.refreshAgain { self.refreshAgain = false; self.refresh() }
+                        return
+                    }
+                    if let error { self.send(["athleteId": id, "status": "error", "error": error.localizedDescription]) }
+                    else {
+                        let formatter = DateFormatter()
+                        formatter.calendar = Calendar(identifier: .gregorian)
+                        formatter.timeZone = TimeZone(identifier: "Europe/London")
+                        formatter.dateFormat = "yyyy-MM-dd"
+                        let rows: [[String: Any]] = (samples as? [HKQuantitySample] ?? []).map {
+                            ["date": formatter.string(from: $0.endDate), "kg": $0.quantity.doubleValue(for: .gramUnit(with: .kilo))]
+                        }
+                        let synced = ISO8601DateFormatter().string(from: Date())
+                        UserDefaults.standard.set(synced, forKey: self.syncKey)
+                        self.send(["athleteId": id, "status": "synced", "lastSync": synced, "samples": rows])
+                    }
+                    if self.refreshAgain { self.refreshAgain = false; self.refresh() }
                 }
-                self.send(["athleteId": id, "samples": rows])
             }
             healthStore.execute(query)
         }
