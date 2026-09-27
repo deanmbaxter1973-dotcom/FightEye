@@ -127,3 +127,18 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--blue
  .event-changes h3{font-size:18px}
  .event-changes .ghost{width:auto}
 }
+
+/* v222: a single horizontal card track, with no page-level sideways rubber band. */
+html{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
+body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
+.app-shell,.section{width:100%;max-width:100%;min-width:0}
+.carousel{display:flex;flex-direction:row;align-items:stretch;gap:14px;grid-auto-flow:unset;grid-auto-columns:unset;grid-template-columns:none;width:100%;max-width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scroll-padding-inline:0;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y}
+.carousel>.event-card{flex:0 0 min(420px,calc(100% - 16px));width:auto;min-width:0;max-width:none;scroll-snap-align:start;scroll-snap-stop:always;transform:none!important}
+.event-card .event-art,.event-card .event-body,.event-card .meta{min-width:0;max-width:100%}
+.event-card .event-art{gap:8px}
+.event-card .logo-pill,.event-card .status{min-width:0;max-width:50%;overflow-wrap:anywhere}
+@media(max-width:760px){
+ .carousel{gap:12px}
+ .carousel>.event-card{flex-basis:100%;width:100%;max-width:100%}
+ .event-card .meta{grid-template-columns:minmax(0,1fr)}
+}

@@ -93,6 +93,9 @@ struct FightEyeWebView: UIViewRepresentable {
         configuration.userContentController.add(context.coordinator, name: "fighteyeHealth")
         let view = WKWebView(frame: .zero, configuration: configuration)
         view.navigationDelegate = context.coordinator
+        view.scrollView.bounces = false
+        view.scrollView.alwaysBounceHorizontal = false
+        view.scrollView.isDirectionalLockEnabled = true
         context.coordinator.webView = view
         guard let folder = try? installedWebApp() else {
             assertionFailure("Could not prepare the bundled FightEye web app")

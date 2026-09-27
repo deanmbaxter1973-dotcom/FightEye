@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VERSION='v221';
+const VERSION='v222';
 const ICLOUD_FEED='https://raw.githubusercontent.com/deanmbaxter1973-dotcom/FightEye/main/fighteye_v195_v196/data/events.ics';
 const events=(window.FIGHTEYE_EVENTS||[]).map(e=>({...e,status:statusFor(e)})).sort((a,b)=>new Date(a.start)-new Date(b.start));
 const athletes=[...(window.FIGHTEYE_ATHLETES||[])];
