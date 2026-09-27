@@ -17,7 +17,7 @@ assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'E
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const store=new Map();
 const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[{id:'test-athlete',name:'Test Athlete',ranking:'Cadet',weight:'42 kg'}],addEventListener:()=>{},webkit:{messageHandlers:{fighteyeHealth:{postMessage:()=>{}}}}},document:{getElementById:()=>({}),querySelector:()=>null,querySelectorAll:()=>[]},localStorage:{getItem:key=>store.get(key)||null,setItem:(key,value)=>store.set(key,value)},navigator:{},URL};
-vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,clubView,passportView,nav,registrationOpen,calendarText,clubWebsite,parseHealthWeightXML,receiveHealthResult,state};})();'),context);
+vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,clubView,passportView,nav,registrationOpen,calendarText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
 assert.strictEqual(context.__events.statusFor({start:'2099-01-01',end:'2099-01-02',closing:null}),'Date confirmed • entry TBC');
 assert(context.__events.eventsView().includes('data-event-period="past"'),'past events tab present');
 assert(context.__events.eventsView().includes('data-event-period="open"'),'registration tab present');
@@ -39,6 +39,11 @@ context.window.FIGHTEYE_ATHLETES[0].annualResults=[{year:2026,organisation:'WAKO
 assert(context.__events.passportView().includes('2026 • WAKO'),'organisation and year shown in Passport');
 assert(context.__events.passportView().includes('🥇 2 · 🥈 1 · 🥉 3'),'medal totals shown in Passport');
 assert(context.__events.clubView().includes('data-weight-form="test-athlete"'),'manual weight entry in ClubOS');
+assert(context.__events.clubView().includes('data-weight-range="30"'),'weight history ranges present');
+assert(context.__events.clubView().includes('data-export-weight="test-athlete"'),'weight-only backup action present');
+assert(context.__events.clubView().includes('data-import-weight="test-athlete"'),'weight backup restore present');
+assert.strictEqual(context.__events.validateWeightBackup({schema:'fighteye-weight-v1',athlete:{name:'Test Athlete'},records:[{date:'2026-09-20',kg:43,source:'Manual'}]}).length,1,'valid weight backup accepted');
+assert.throws(()=>context.__events.validateWeightBackup({schema:'fighteye-weight-v1',athlete:{name:'Test Athlete'},records:[{date:'2026-09-20',kg:43,source:'Manual'},{date:'2026-09-20',kg:44,source:'Manual'}]}),'duplicate backup dates rejected');
 assert(context.__events.passportView().includes('data-health-import="test-athlete"'),'Health XML import in Passport');
 assert(context.__events.passportView().includes('Connect Apple Health'),'native Health connection offered');
 context.__events.receiveHealthResult({athleteId:'test-athlete',status:'syncing'});
@@ -52,6 +57,11 @@ context.__events.state.weightRecords['test-athlete'].push({date:'2026-09-28',kg:
 context.__events.receiveHealthResult({athleteId:'test-athlete',samples:[{date:'2026-09-28',kg:50},{date:'2026-09-27',kg:43.5},{date:'2026-09-27',kg:41}]});
 assert.strictEqual(context.__events.state.weightRecords['test-athlete'].find(r=>r.date==='2026-09-28').kg,44,'manual weight takes precedence');
 assert.strictEqual(context.__events.state.weightRecords['test-athlete'].find(r=>r.date==='2026-09-27').kg,43.5,'newest Health sample for a date wins');
+context.__events.receiveHealthResult({athleteId:'test-athlete',status:'synced',complete:true,windowStart:'2026-09-01',samples:[{date:'2026-09-27',kg:43.5}]});
+assert(!context.__events.state.weightRecords['test-athlete'].some(r=>r.date==='2026-09-26'),'deleted Health date reconciled');
+assert.strictEqual(context.__events.state.weightRecords['test-athlete'].find(r=>r.date==='2026-09-28').kg,44,'manual date survives reconciliation');
+context.__events.state.weightUnit='lb';
+assert.strictEqual(context.__events.weightText(50),'110.2 lb','pounds display conversion');
 context.__events.receiveHealthResult({athleteId:'unknown',samples:[{date:'2026-09-27',kg:99}]});
 assert(!context.__events.state.weightRecords.unknown,'unknown athlete ignored');
 context.__events.receiveHealthResult({athleteId:'',status:'disconnected'});

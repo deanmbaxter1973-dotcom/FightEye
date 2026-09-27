@@ -163,8 +163,27 @@ struct FightEyeWebView: UIViewRepresentable {
                 UserDefaults.standard.removeObject(forKey: syncKey)
                 HealthBackgroundObserver.shared.stop()
                 send(["athleteId": "", "status": "disconnected", "backgroundEnabled": false])
+            case "exportWeights":
+                guard !id.isEmpty, id.count < 120, let content = body["content"], content.utf8.count < 2_000_000 else { return }
+                shareWeightBackup(content, athleteId: id)
             default: break
             }
+        }
+
+        private func shareWeightBackup(_ content: String, athleteId: String) {
+            let cleanId = athleteId.replacingOccurrences(of: "[^A-Za-z0-9-]", with: "", options: .regularExpression)
+            guard !cleanId.isEmpty, let data = content.data(using: .utf8),
+                  let backup = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  backup["schema"] as? String == "fighteye-weight-v1",
+                  let athlete = backup["athlete"] as? [String: String], athlete["id"] == athleteId else { return }
+            let url = FileManager.default.temporaryDirectory.appendingPathComponent("fighteye-weights-\(cleanId).json")
+            do { try data.write(to: url, options: [.atomic, .completeFileProtection]) }
+            catch { send(["error": "Could not prepare the weight backup for sharing."]); return }
+            guard let view = webView, let presenter = view.window?.rootViewController else { return }
+            let sheet = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+            sheet.popoverPresentationController?.sourceView = view
+            sheet.completionWithItemsHandler = { _, _, _, _ in try? FileManager.default.removeItem(at: url) }
+            (presenter.presentedViewController ?? presenter).present(sheet, animated: true)
         }
 
         private func requestAccess(for id: String) {
@@ -214,7 +233,10 @@ struct FightEyeWebView: UIViewRepresentable {
                         let synced = ISO8601DateFormatter().string(from: Date())
                         UserDefaults.standard.set(synced, forKey: self.syncKey)
                         UserDefaults.standard.removeObject(forKey: "fighteye.health.pendingRefresh")
-                        self.send(["athleteId": id, "status": "synced", "lastSync": synced, "samples": rows])
+                        var payload: [String: Any] = ["athleteId": id, "status": "synced", "lastSync": synced,
+                                                       "samples": rows, "complete": rows.count < 1000]
+                        if let start { payload["windowStart"] = formatter.string(from: start) }
+                        self.send(payload)
                     }
                     if self.refreshAgain { self.refreshAgain = false; self.refresh() }
                 }
