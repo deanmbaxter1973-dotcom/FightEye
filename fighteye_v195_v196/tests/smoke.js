@@ -8,6 +8,8 @@ assert.strictEqual(events.find(e=>e.id==='peterborough-series-3-2026').closing,'
 assert.strictEqual(events.find(e=>e.id==='wku-english-open-2027').start,'2027-01-30','WKU 2027 date');
 assert(app.includes('seriesFilter'),'organiser filter present');
 assert(app.includes('kindFilter'),'activity filter present');
+assert.strictEqual(events.find(e=>e.id==='gb-grand-slam-2-2026').start,'2026-07-11','Crawley Grand Slam corrected');
+assert.strictEqual(events.filter(e=>e.series==='GB Grand Slam').length,4,'four dated GB Grand Slams');
 assert.strictEqual(events.find(e=>e.id==='ico-england-squad-oct-2026').access,'Open','ICO squad is open');
 assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'Eligibility to confirm','GB eligibility not assumed');
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
