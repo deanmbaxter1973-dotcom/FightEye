@@ -16,7 +16,7 @@ assert.strictEqual(events.find(e=>e.id==='ico-england-squad-oct-2026').access,'O
 assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'Eligibility to confirm','GB eligibility not assumed');
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[{id:'test-athlete',name:'Test Athlete',ranking:'Cadet',weight:'42 kg'}],addEventListener:()=>{}},document:{getElementById:()=>({})},localStorage:{getItem:()=>null},navigator:{},URL};
-vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,clubView,passportView,nav,registrationOpen,calendarText,clubWebsite,state};})();'),context);
+vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,clubView,passportView,nav,registrationOpen,calendarText,clubWebsite,parseHealthWeightXML,state};})();'),context);
 assert.strictEqual(context.__events.statusFor({start:'2099-01-01',end:'2099-01-02',closing:null}),'Date confirmed • entry TBC');
 assert(context.__events.eventsView().includes('data-event-period="past"'),'past events tab present');
 assert(context.__events.eventsView().includes('data-event-period="open"'),'registration tab present');
@@ -36,6 +36,11 @@ assert(context.__events.clubView().includes('data-result-form="test-athlete"'),'
 context.window.FIGHTEYE_ATHLETES[0].annualResults=[{year:2026,organisation:'WAKO',gold:2,silver:1,bronze:3}];
 assert(context.__events.passportView().includes('2026 • WAKO'),'organisation and year shown in Passport');
 assert(context.__events.passportView().includes('🥇 2 · 🥈 1 · 🥉 3'),'medal totals shown in Passport');
+assert(context.__events.clubView().includes('data-weight-form="test-athlete"'),'manual weight entry in ClubOS');
+assert(context.__events.passportView().includes('data-health-import="test-athlete"'),'Health XML import in Passport');
+const weights=context.__events.parseHealthWeightXML('<HealthData><Record type="HKQuantityTypeIdentifierBodyMass" startDate="2026-09-20 07:00:00 +0100" unit="lb" value="110"/><Record type="HKQuantityTypeIdentifierHeartRate" startDate="2026-09-20 07:00:00 +0100" unit="count/min" value="70"/></HealthData>');
+assert.strictEqual(weights.length,1,'only body mass records imported');
+assert.strictEqual(weights[0].kg,49.9,'pounds converted to kilograms');
 context.window.FIGHTEYE_ATHLETES[0].photo='data:image/jpeg;base64,YWJj';
 assert(context.__events.passportView().includes('class="avatar athlete-photo"'),'passport shows athlete photo');
 context.__events.state.editAthlete='';

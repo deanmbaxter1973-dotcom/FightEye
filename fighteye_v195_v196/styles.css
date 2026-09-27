@@ -65,7 +65,18 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--blue
 .annual-form label{min-width:0}
 .annual-form label:nth-child(2){grid-column:span 2}
 .annual-form button{grid-column:span 2}
+.weight-panel{margin:18px 0;padding-top:12px;border-top:1px solid var(--muted);text-align:left}
+.weight-panel h4{margin:0 0 8px}
+.weight-chart{display:block;width:100%;max-width:420px;height:90px;margin:8px 0;color:#f6c654;background:rgba(150,160,180,.08);border-radius:10px}
+.weight-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.weight-form>*{min-width:0}
+.weight-form button{grid-column:span 2}
+.weight-history>div{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(150,160,180,.25)}
+.weight-history span{min-width:0;overflow-wrap:anywhere}
+.weight-import-label{display:block;margin:14px 0 5px;font-weight:600}
+.weight-import-label input{display:block;width:100%;margin-top:7px;max-width:100%}
 @media(max-width:400px){.annual-row{align-items:flex-start;flex-direction:column}.annual-form{grid-template-columns:minmax(0,1fr)}.annual-form label:nth-child(2),.annual-form button{grid-column:auto}}
+@media(max-width:400px){.weight-form{grid-template-columns:minmax(0,1fr)}.weight-form button{grid-column:auto}}
 .athlete-card-head{display:flex;align-items:center;gap:12px;min-width:0}
 .athlete-card-head h3{min-width:0;overflow-wrap:anywhere}
 .athlete-photo{width:58px;height:58px;flex:0 0 58px;border-radius:50%;object-fit:cover;background:rgba(255,255,255,.12)}
