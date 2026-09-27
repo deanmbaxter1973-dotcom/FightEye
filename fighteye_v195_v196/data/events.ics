@@ -1,0 +1,619 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FightEye//UK Competition Calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:FightEye Events
+X-WR-CALDESC:FightEye competition and training dates. Check organiser links
+  for changes.
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:PT24H
+BEGIN:VEVENT
+UID:wku-worlds-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20260803
+DTEND;VALUE=DATE:20260810
+SUMMARY:WKU World Championships
+LOCATION:ADNEC Centre\, Abu Dhabi\, United Arab Emirates
+DESCRIPTION:WKU • PF • LC • KL
+END:VEVENT
+BEGIN:VEVENT
+UID:gb-grand-slam-2-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20260711
+DTEND;VALUE=DATE:20260713
+SUMMARY:GB Grand Slam — K2 Crawley 2026
+LOCATION:K2 Sports Centre\, Crawley\, United Kingdom
+DESCRIPTION:GB Grand Slam • PF • LC • KL • https://www.sportdata.or
+ g/kickboxing/set-online/veranstaltung_info_main.php?active_menu=calendar&v
+ ernr=2827
+URL:https://www.sportdata.org/kickboxing/set-online/veranstaltung_info_main
+ .php?active_menu=calendar&vernr=2827
+END:VEVENT
+BEGIN:VEVENT
+UID:wako-junior-worlds-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20260918
+DTEND;VALUE=DATE:20260928
+SUMMARY:WAKO Youth World Championships
+LOCATION:Palazzo del Turismo\, Jesolo\, Italy
+DESCRIPTION:WAKO • PF • LC • KL • https://www.sportdata.org/kickbox
+ ing/event_list_prod/events.html
+URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:top-ten-norwegian-cup-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261002
+DTEND;VALUE=DATE:20261005
+SUMMARY:Top Ten Norwegian Cup 2026
+LOCATION:See organiser listing\, See organiser listing\, Norway
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/event_list_prod/events.html
+URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:lithuania-open-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261005
+SUMMARY:Lithuania Open 2026
+LOCATION:See organiser listing\, See organiser listing\, Lithuania
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/set-online/veranstaltung_info_main.php?active_menu=calendar
+ &vernr=2932
+URL:https://www.sportdata.org/kickboxing/set-online/veranstaltung_info_main
+ .php?active_menu=calendar&vernr=2932
+END:VEVENT
+BEGIN:VEVENT
+UID:czech-open-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261009
+DTEND;VALUE=DATE:20261011
+SUMMARY:Czech Open 2026
+LOCATION:See organiser listing\, See organiser listing\, Czech Republic
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/set-online/veranstaltung_info_main.php?active_menu=calendar
+ &vernr=2582
+URL:https://www.sportdata.org/kickboxing/set-online/veranstaltung_info_main
+ .php?active_menu=calendar&vernr=2582
+END:VEVENT
+BEGIN:VEVENT
+UID:celtic-open-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261011
+DTEND;VALUE=DATE:20261012
+SUMMARY:The Celtic Open 2026
+LOCATION:See organiser listing\, See organiser listing\, Ireland
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/set-online/veranstaltung_info_main.php?active_menu=calendar
+ &vernr=2909
+URL:https://www.sportdata.org/kickboxing/set-online/veranstaltung_info_main
+ .php?active_menu=calendar&vernr=2909
+END:VEVENT
+BEGIN:VEVENT
+UID:uzbekistan-world-cup-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261013
+DTEND;VALUE=DATE:20261019
+SUMMARY:Uzbekistan Kickboxing World Cup 2026
+LOCATION:See organiser listing\, See organiser listing\, Uzbekistan
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/set-online/veranstaltung_info_main.php?active_menu=calendar
+ &vernr=2859
+URL:https://www.sportdata.org/kickboxing/set-online/veranstaltung_info_main
+ .php?active_menu=calendar&vernr=2859
+END:VEVENT
+BEGIN:VEVENT
+UID:wartburg-classics-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261016
+DTEND;VALUE=DATE:20261018
+SUMMARY:Adidas Wartburg Classics 2026
+LOCATION:See organiser listing\, See organiser listing\, Germany
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/event_list_prod/events.html
+URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:belgrade-trophy-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261016
+DTEND;VALUE=DATE:20261018
+SUMMARY:Belgrade Trophy 2026
+LOCATION:See organiser listing\, See organiser listing\, Serbia
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/event_list_prod/events.html
+URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:alpe-adria-junior-cup-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261017
+DTEND;VALUE=DATE:20261018
+SUMMARY:Alpe Adria Schüler und Junioren Cup 2026
+LOCATION:See organiser listing\, See organiser listing\, Austria
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/event_list_prod/events.html
+URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:north-american-century-cup-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261022
+DTEND;VALUE=DATE:20261026
+SUMMARY:North American Century Cup 2026
+LOCATION:See organiser listing\, See organiser listing\, Canada
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/event_list_prod/events.html
+URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:bristol-open-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261023
+DTEND;VALUE=DATE:20261026
+SUMMARY:The Bristol Open 2026
+LOCATION:See organiser listing\, Bristol\, United Kingdom
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/set-online/veranstaltung_info_main.php?active_menu=calendar
+ &vernr=2891
+URL:https://www.sportdata.org/kickboxing/set-online/veranstaltung_info_main
+ .php?active_menu=calendar&vernr=2891
+END:VEVENT
+BEGIN:VEVENT
+UID:slovenia-open-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:Slovenia Open 2026
+LOCATION:See organiser listing\, See organiser listing\, Slovenia
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/event_list_prod/events.html
+URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:wako-balkan-open-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:WAKO Balkan Open 2026
+LOCATION:See organiser listing\, See organiser listing\, Bosnia and Herzego
+ vina
+DESCRIPTION:WAKO • Categories TBC • https://www.sportdata.org/kickboxin
+ g/event_list_prod/events.html
+URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:pointfighting-grand-prix-polski-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261026
+SUMMARY:Pointfighting Grand Prix Polski 2026
+LOCATION:See organiser listing\, See organiser listing\, Poland
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/event_list_prod/events.html
+URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:bavarian-open-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:Bavarian Open 2026
+LOCATION:See organiser listing\, See organiser listing\, Germany
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/event_list_prod/events.html
+URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:ypres-open-cup-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:Ypres Open Cup 2026
+LOCATION:See organiser listing\, See organiser listing\, Belgium
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/event_list_prod/events.html
+URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:wako-europeans-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261106
+DTEND;VALUE=DATE:20261116
+SUMMARY:WAKO European Championships 2026
+LOCATION:See organiser listing\, Skopje\, North Macedonia
+DESCRIPTION:WAKO • Categories TBC • https://www.sportdata.org/kickboxin
+ g/set-online/veranstaltung_info_main.php?active_menu=calendar&vernr=2875
+URL:https://www.sportdata.org/kickboxing/set-online/veranstaltung_info_main
+ .php?active_menu=calendar&vernr=2875
+END:VEVENT
+BEGIN:VEVENT
+UID:wako-para-europeans-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261106
+DTEND;VALUE=DATE:20261116
+SUMMARY:WAKO Para & Inclusive European Championships 2026
+LOCATION:See organiser listing\, Skopje\, North Macedonia
+DESCRIPTION:WAKO • Categories TBC • https://www.sportdata.org/kickboxin
+ g/event_list_prod/events.html
+URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:westfalen-open-cup-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261114
+DTEND;VALUE=DATE:20261115
+SUMMARY:Westfalen Open Cup 2026
+LOCATION:See organiser listing\, See organiser listing\, Germany
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/event_list_prod/events.html
+URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:senshi-christmas-cup-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:Senshi Christmas Cup 2026
+LOCATION:See organiser listing\, See organiser listing\, Denmark
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/event_list_prod/events.html
+URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:kutina-open-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:Kutina Open 2026
+LOCATION:See organiser listing\, See organiser listing\, Croatia
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/event_list_prod/events.html
+URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:silesian-kickboxing-championships-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261127
+DTEND;VALUE=DATE:20261130
+SUMMARY:Silesian Kickboxing Championships 2026
+LOCATION:See organiser listing\, See organiser listing\, Poland
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/event_list_prod/events.html
+URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:swedish-open-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261128
+DTEND;VALUE=DATE:20261129
+SUMMARY:Swedish Open 2026
+LOCATION:See organiser listing\, See organiser listing\, Sweden
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/set-online/veranstaltung_info_main.php?active_menu=calendar
+ &vernr=2868
+URL:https://www.sportdata.org/kickboxing/set-online/veranstaltung_info_main
+ .php?active_menu=calendar&vernr=2868
+END:VEVENT
+BEGIN:VEVENT
+UID:danish-open-2027@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20270205
+DTEND;VALUE=DATE:20270207
+SUMMARY:Danish Open 2027
+LOCATION:See organiser listing\, See organiser listing\, Denmark
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/event_list_prod/events.html
+URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:chikudo-cup-2027@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20270227
+DTEND;VALUE=DATE:20270228
+SUMMARY:Chikudo Kickboxing Cup 2027
+LOCATION:See organiser listing\, See organiser listing\, Liechtenstein
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/event_list_prod/events.html
+URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:yokoso-dutch-open-2027@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20270402
+DTEND;VALUE=DATE:20270405
+SUMMARY:Yokoso Dutch Open 2027
+LOCATION:See organiser listing\, See organiser listing\, Netherlands
+DESCRIPTION:Sportdata listing • Categories TBC • https://www.sportdata.
+ org/kickboxing/set-online/veranstaltung_info_main.php?active_menu=calendar
+ &vernr=2929
+URL:https://www.sportdata.org/kickboxing/set-online/veranstaltung_info_main
+ .php?active_menu=calendar&vernr=2929
+END:VEVENT
+BEGIN:VEVENT
+UID:wko-british-open-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261002
+DTEND;VALUE=DATE:20261005
+SUMMARY:2026 WKO British Open Championships
+LOCATION:Metrodome Leisure Complex\, Barnsley\, United Kingdom
+DESCRIPTION:WKO • Kickboxing • https://www.kihapp.com/tournaments/22422
+ -2026-wko-british-open-championships
+URL:https://www.kihapp.com/tournaments/22422-2026-wko-british-open-champion
+ ships
+END:VEVENT
+BEGIN:VEVENT
+UID:titans-collide-open-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261004
+DTEND;VALUE=DATE:20261005
+SUMMARY:Titans Collide Open 2026
+LOCATION:Rainbow Leisure Centre\, Epsom\, United Kingdom
+DESCRIPTION:Titans Collide • PF • LC • KL • https://www.kihapp.com/
+ tournaments/23866-titans-collide-open-2026-competition-3
+URL:https://www.kihapp.com/tournaments/23866-titans-collide-open-2026-compe
+ tition-3
+END:VEVENT
+BEGIN:VEVENT
+UID:ico-world-championships-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261014
+DTEND;VALUE=DATE:20261019
+SUMMARY:ICO World Championships 2026
+LOCATION:Maison des Sports\, Thonon-les-Bains\, France
+DESCRIPTION:ICO • National team invitation • https://www.kihapp.com/tou
+ rnaments/25341-ico-world-championships-2026
+URL:https://www.kihapp.com/tournaments/25341-ico-world-championships-2026
+END:VEVENT
+BEGIN:VEVENT
+UID:urban-combat-winter-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261122
+DTEND;VALUE=DATE:20261123
+SUMMARY:Urban Combat Winter Showdown 2026
+LOCATION:Urban Combat\, Ipswich\, United Kingdom
+DESCRIPTION:Urban Combat • Combat sports • https://smoothcomp.com/en/ev
+ ent/33964
+URL:https://smoothcomp.com/en/event/33964
+END:VEVENT
+BEGIN:VEVENT
+UID:wtka-southern-open-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261205
+DTEND;VALUE=DATE:20261207
+SUMMARY:WTKA Southern Open
+LOCATION:See organiser listing\, Ipswich\, United Kingdom
+DESCRIPTION:WTKA • Kickboxing • https://smoothcomp.com/en/event/33717
+URL:https://smoothcomp.com/en/event/33717
+END:VEVENT
+BEGIN:VEVENT
+UID:usa-open-jic-2027@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20270506
+DTEND;VALUE=DATE:20270510
+SUMMARY:2027 USA Open Karate Championships & Junior International Cup
+LOCATION:Westgate Las Vegas Resort & Casino\, Las Vegas\, United States
+DESCRIPTION:USA Karate • Karate • https://www.usankf.org/news/2026/may/
+ 22/usa-karate-announces-2027-usa-open-karate-championships-junior-internat
+ ional-cup-in-las-vegas
+URL:https://www.usankf.org/news/2026/may/22/usa-karate-announces-2027-usa-o
+ pen-karate-championships-junior-international-cup-in-las-vegas
+END:VEVENT
+BEGIN:VEVENT
+UID:peterborough-series-3-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261108
+DTEND;VALUE=DATE:20261109
+SUMMARY:Peterborough Championship Series 2026 — No 3
+LOCATION:Kettering Leisure Arena\, Kettering\, United Kingdom
+DESCRIPTION:Peterborough Series • Points • Light Continuous • Kata 
+ • https://smoothcomp.com/en/event/32647
+URL:https://smoothcomp.com/en/event/32647
+END:VEVENT
+BEGIN:VEVENT
+UID:ico-english-open-2027@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20270213
+DTEND;VALUE=DATE:20270215
+SUMMARY:ICO English Open 2027
+LOCATION:White Horse Leisure Centre\, Abingdon\, United Kingdom
+DESCRIPTION:ICO • Kickboxing • https://www.instagram.com/p/DdrBXrgoRob/
+URL:https://www.instagram.com/p/DdrBXrgoRob/
+END:VEVENT
+BEGIN:VEVENT
+UID:wku-english-open-2027@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20270130
+DTEND;VALUE=DATE:20270131
+SUMMARY:WKU English Open 2027
+LOCATION:University of Warwick — Sports & Wellness Hub\, Coventry\, Unite
+ d Kingdom
+DESCRIPTION:WKU • Points • Light Contact • Kick Light • https://www
+ .kihapp.com/tournaments/27839-wku-english-open-2027
+URL:https://www.kihapp.com/tournaments/27839-wku-english-open-2027
+END:VEVENT
+BEGIN:VEVENT
+UID:wko-english-open-2027@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20270129
+DTEND;VALUE=DATE:20270201
+SUMMARY:2027 WKO English Open Championships
+LOCATION:Cannon Medical Arena\, Sheffield\, United Kingdom
+DESCRIPTION:WKO • Tatami • Ringsports • https://www.kihapp.com/tourna
+ ments/25489-2027-wko-english-open-championships
+URL:https://www.kihapp.com/tournaments/25489-2027-wko-english-open-champion
+ ships
+END:VEVENT
+BEGIN:VEVENT
+UID:wko-worlds-2027@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20270716
+DTEND;VALUE=DATE:20270719
+SUMMARY:2027 WKO Open World Championships
+LOCATION:Ponds Forge International Arena\, Sheffield\, United Kingdom
+DESCRIPTION:WKO • Tatami • Ringsports • https://www.kihapp.com/tourna
+ ments/26986-2027-wko-open-world-championships
+URL:https://www.kihapp.com/tournaments/26986-2027-wko-open-world-championsh
+ ips
+END:VEVENT
+BEGIN:VEVENT
+UID:wko-ringsports-2027@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20270612
+DTEND;VALUE=DATE:20270613
+SUMMARY:2027 WKO National Ringsports Championships
+LOCATION:Basildon Sporting Village\, Basildon\, United Kingdom
+DESCRIPTION:WKO • Ringsports • https://www.kihapp.com/tournaments/26378
+ -2027-wko-national-ringsports-championships
+URL:https://www.kihapp.com/tournaments/26378-2027-wko-national-ringsports-c
+ hampionships
+END:VEVENT
+BEGIN:VEVENT
+UID:exeter-open-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261129
+DTEND;VALUE=DATE:20261130
+SUMMARY:Exeter Open Kickboxing Championship
+LOCATION:Broadclyst Sports Centre\, Exeter\, United Kingdom
+DESCRIPTION:Exeter Open • Points • Light Contact • https://www.kihapp
+ .com/tournaments/26155-exeter-open-kickboxing-championship
+URL:https://www.kihapp.com/tournaments/26155-exeter-open-kickboxing-champio
+ nship
+END:VEVENT
+BEGIN:VEVENT
+UID:afmo-british-open-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261213
+DTEND;VALUE=DATE:20261214
+SUMMARY:AFMO British Open K1 & Muay Thai Championships 2026
+LOCATION:Martial Arts Centre\, Leicester\, United Kingdom
+DESCRIPTION:AFMO • K1 • Muay Thai • No head contact • https://www.k
+ ihapp.com/tournaments/27697-2026-afmo-british-open-k1-muay-thai-championsh
+ ips-no-head-contact
+URL:https://www.kihapp.com/tournaments/27697-2026-afmo-british-open-k1-muay
+ -thai-championships-no-head-contact
+END:VEVENT
+BEGIN:VEVENT
+UID:leeds-open-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20260628
+DTEND;VALUE=DATE:20260629
+SUMMARY:Leeds Open Championships 2026
+LOCATION:See organiser listing\, Leeds\, United Kingdom
+DESCRIPTION:Leeds Open • Points • Light Continuous • https://smoothco
+ mp.com/en/event/29215
+URL:https://smoothcomp.com/en/event/29215
+END:VEVENT
+BEGIN:VEVENT
+UID:iska-british-open-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20260621
+DTEND;VALUE=DATE:20260622
+SUMMARY:ISKA British Open 2026
+LOCATION:See organiser listing\, See organiser listing\, United Kingdom
+DESCRIPTION:ISKA • Points • Light Contact • K1 • https://www.kihapp
+ .com/tournaments/25614-iska-british-open-2026
+URL:https://www.kihapp.com/tournaments/25614-iska-british-open-2026
+END:VEVENT
+BEGIN:VEVENT
+UID:wkkc-ippon-challenge-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20260920
+DTEND;VALUE=DATE:20260921
+SUMMARY:WKKC Ippon Challenge 2026
+LOCATION:Doncaster Racecourse Exhibition Hall\, Doncaster\, United Kingdom
+DESCRIPTION:WKKC England • Points • Continuous • Kata • https://www
+ .localgymsandfitness.com/GB/Bolton/412031388899311/WKKC-England
+URL:https://www.localgymsandfitness.com/GB/Bolton/412031388899311/WKKC-Engl
+ and
+END:VEVENT
+BEGIN:VEVENT
+UID:ico-england-squad-oct-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261004
+SUMMARY:ICO Team England World Championship Squad Training
+LOCATION:USKA Fight Factory\, Birmingham\, United Kingdom
+DESCRIPTION:ICO • Strategy • Pads • Sparring • 14:00–17:00 • £
+ 10 • Bring gloves and sparring equipment • https://www.uskakickboxing.
+ co.uk/forthcomingevent/ico-team-england-2026-10th-world-championship-squad
+ -training
+URL:https://www.uskakickboxing.co.uk/forthcomingevent/ico-team-england-2026
+ -10th-world-championship-squad-training
+END:VEVENT
+BEGIN:VEVENT
+UID:kbgb-tatami-squad-nov-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261101
+DTEND;VALUE=DATE:20261102
+SUMMARY:Kickboxing GB Tatami Squad Training — Adults & Juniors Elite
+LOCATION:Venue to be confirmed\, See organiser listing\, United Kingdom
+DESCRIPTION:Kickboxing GB • Tatami • Elite squad • Venue and eligibil
+ ity: check with Kickboxing GB • https://www.fighting-falcons.co.uk/Event
+ s%20Calendar/
+URL:https://www.fighting-falcons.co.uk/Events%20Calendar/
+END:VEVENT
+BEGIN:VEVENT
+UID:kbgb-referee-oct-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261004
+DTEND;VALUE=DATE:20261005
+SUMMARY:Kickboxing GB Tatami Referee Course
+LOCATION:Bradley Pavilions\, See organiser listing\, United Kingdom
+DESCRIPTION:Kickboxing GB • Tatami officiating • 12:00–15:00 • Chec
+ k organiser listing for places and fees • https://www.eventbrite.co.uk/e
+ /kickboxing-gb-tatami-referee-course-tickets-2000853654141
+URL:https://www.eventbrite.co.uk/e/kickboxing-gb-tatami-referee-course-tick
+ ets-2000853654141
+END:VEVENT
+BEGIN:VEVENT
+UID:wuma-seminar-oct-2026@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20261017
+DTEND;VALUE=DATE:20261019
+SUMMARY:WUMA Two-Day Black Belt Grading & Seminar
+LOCATION:Somerset Kickboxing Academy\, Bridgwater\, United Kingdom
+DESCRIPTION:WUMA • Black belt seminar • Grading • 17–18 October •
+  WUMA licence and pre-registration details on organiser page • https://w
+ ww.wumawebsite.com/events
+URL:https://www.wumawebsite.com/events
+END:VEVENT
+BEGIN:VEVENT
+UID:gb-grand-slam-western-2027@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20270206
+DTEND;VALUE=DATE:20270208
+SUMMARY:GB Grand Slam League Western 2027
+LOCATION:Venue to be confirmed\, Bath\, United Kingdom
+DESCRIPTION:GB Grand Slam • PF • LC • KL • Calendar date published\
+ ; registration details to confirm with organiser • https://www.carrerass
+ tudio.co.uk/timetable-events/events
+URL:https://www.carrerasstudio.co.uk/timetable-events/events
+END:VEVENT
+BEGIN:VEVENT
+UID:gb-grand-slam-northern-2027@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20270508
+DTEND;VALUE=DATE:20270510
+SUMMARY:GB Grand Slam League Northern 2027
+LOCATION:Venue to be confirmed\, Barnsley\, United Kingdom
+DESCRIPTION:GB Grand Slam • PF • LC • KL • Calendar date published\
+ ; registration details to confirm with organiser • https://www.carrerass
+ tudio.co.uk/timetable-events/events
+URL:https://www.carrerasstudio.co.uk/timetable-events/events
+END:VEVENT
+BEGIN:VEVENT
+UID:gb-grand-slam-southeastern-2027@fighteye.app
+DTSTAMP:20260927T000000Z
+DTSTART;VALUE=DATE:20270710
+DTEND;VALUE=DATE:20270712
+SUMMARY:GB Grand Slam League Southeastern 2027
+LOCATION:K2 Sports Centre\, Crawley\, United Kingdom
+DESCRIPTION:GB Grand Slam • PF • LC • KL • Calendar date published\
+ ; registration details to confirm with organiser • https://www.carrerass
+ tudio.co.uk/timetable-events/events
+URL:https://www.carrerasstudio.co.uk/timetable-events/events
+END:VEVENT
+END:VCALENDAR

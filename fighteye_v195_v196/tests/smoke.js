@@ -9,6 +9,7 @@ assert.strictEqual(events.find(e=>e.id==='wku-english-open-2027').start,'2027-01
 assert(app.includes('seriesFilter'),'organiser filter present');
 assert(app.includes('kindFilter'),'activity filter present');
 assert(app.includes('refreshPublishedEvents();'),'weekly client refresh present');
+assert(app.includes('Subscribe in Calendar')&&app.includes('ICLOUD_FEED'),'iCloud subscription action present');
 assert.strictEqual(events.find(e=>e.id==='gb-grand-slam-2-2026').start,'2026-07-11','Crawley Grand Slam corrected');
 assert.strictEqual(events.filter(e=>e.series==='GB Grand Slam').length,4,'four dated GB Grand Slams');
 assert.strictEqual(events.find(e=>e.id==='ico-england-squad-oct-2026').access,'Open','ICO squad is open');
