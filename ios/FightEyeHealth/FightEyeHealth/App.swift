@@ -166,6 +166,9 @@ struct FightEyeWebView: UIViewRepresentable {
             case "exportWeights":
                 guard !id.isEmpty, id.count < 120, let content = body["content"], content.utf8.count < 2_000_000 else { return }
                 shareWeightBackup(content, athleteId: id)
+            case "exportProfiles":
+                guard let content = body["content"], content.utf8.count < 9_000_000 else { return }
+                shareProfileBackup(content)
             default: break
             }
         }
@@ -179,6 +182,21 @@ struct FightEyeWebView: UIViewRepresentable {
             let url = FileManager.default.temporaryDirectory.appendingPathComponent("fighteye-weights-\(cleanId).json")
             do { try data.write(to: url, options: [.atomic, .completeFileProtection]) }
             catch { send(["error": "Could not prepare the weight backup for sharing."]); return }
+            guard let view = webView, let presenter = view.window?.rootViewController else { return }
+            let sheet = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+            sheet.popoverPresentationController?.sourceView = view
+            sheet.completionWithItemsHandler = { _, _, _, _ in try? FileManager.default.removeItem(at: url) }
+            (presenter.presentedViewController ?? presenter).present(sheet, animated: true)
+        }
+
+        private func shareProfileBackup(_ content: String) {
+            guard let data = content.data(using: .utf8),
+                  let backup = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  backup["schema"] as? String == "fighteye-profile-encrypted-v1" else { return }
+            let stamp = ISO8601DateFormatter().string(from: Date()).prefix(10)
+            let url = FileManager.default.temporaryDirectory.appendingPathComponent("fighteye-profiles-\(stamp).json")
+            do { try data.write(to: url, options: [.atomic, .completeFileProtection]) }
+            catch { send(["error": "Could not prepare the profile backup for sharing."]); return }
             guard let view = webView, let presenter = view.window?.rootViewController else { return }
             let sheet = UIActivityViewController(activityItems: [url], applicationActivities: nil)
             sheet.popoverPresentationController?.sourceView = view

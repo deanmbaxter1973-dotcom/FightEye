@@ -1,0 +1,27 @@
+const fs=require('fs');
+const path=require('path');
+const vm=require('vm');
+const assert=require('assert');
+const {webcrypto}=require('crypto');
+const app=fs.readFileSync(path.join(__dirname,'../app.js'),'utf8');
+const rows=JSON.parse(fs.readFileSync(path.join(__dirname,'../data/events-api.json'),'utf8'));
+const store=new Map();
+const localStorage={getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v),removeItem:k=>store.delete(k)};
+const context={window:{FIGHTEYE_EVENTS:rows,FIGHTEYE_ATHLETES:[{id:'one',name:'Athlete One'}],addEventListener(){}},document:{getElementById:()=>({}),querySelector:()=>null,querySelectorAll:()=>[]},localStorage,navigator:{},crypto:webcrypto,TextEncoder,TextDecoder,URL,btoa,atob,Date,setTimeout,clearTimeout};
+vm.runInNewContext(app.replace('})();','globalThis.__release={profileSnapshot,encryptProfileSnapshot,decryptProfileSnapshot,detectEventChanges,eventBaseline,readEventBaseline,state};})();'),context);
+const api=context.__release;
+(async()=>{
+ const snapshot=api.profileSnapshot();
+ assert.strictEqual(snapshot.profile.groups[0].name,'Prestige Martial Arts');
+ assert(!JSON.stringify(snapshot).includes('injur'),'injury records excluded');
+ const cipher=await api.encryptProfileSnapshot(snapshot,'a long test passphrase');
+ assert(!cipher.includes('Athlete One'),'backup is encrypted');
+ const restored=await api.decryptProfileSnapshot(cipher,'a long test passphrase');
+ assert.strictEqual(restored.profile.groups[0].name,'Prestige Martial Arts');
+ await assert.rejects(api.decryptProfileSnapshot(cipher,'wrong passphrase'));
+ const changed=rows.map(e=>({...e}));changed[0].start='2027-01-01';
+ assert(api.detectEventChanges(changed).some(x=>x.id===rows[0].id&&x.field==='start'));
+ store.set('fighteye-event-baseline-v1',JSON.stringify(api.eventBaseline(changed)));
+ assert.strictEqual(api.detectEventChanges(changed).length,0,'stored baseline prevents duplicate alerts');
+ console.log('Profile release checks passed: encrypted round trip, wrong passphrase, injury exclusion and date alerts.');
+})().catch(error=>{console.error(error);process.exitCode=1});

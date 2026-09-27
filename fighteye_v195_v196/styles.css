@@ -103,3 +103,27 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--blue
 .nav button span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 .injury-panel{margin:16px 0}.injury-panel .section-head{align-items:start}.injury-panel form label{display:block;margin:10px 0}.injury-panel .budget{width:100%;margin-top:5px}.injury-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 14px}.injury-form label:nth-child(4){grid-column:1/-1}.injury-form button{grid-column:1/-1}.injury-list{display:grid;gap:10px;margin:16px 0}.injury-record{border:1px solid var(--line);border-radius:16px;padding:12px;background:rgba(255,255,255,.05)}.injury-record small{display:block;color:var(--muted);margin-top:6px}.injury-record .ghost{margin-top:10px}@media(max-width:600px){.injury-form{grid-template-columns:1fr}.injury-form label:nth-child(4){grid-column:auto}}
+
+/* Phone release: keep each event card inside one horizontal scroll track. */
+.carousel{min-width:0;max-width:100%;overscroll-behavior-x:contain}
+.carousel>.event-card{min-width:0;box-sizing:border-box}
+.event-changes{margin:12px 0;overflow-wrap:anywhere}
+.event-changes .section-head{align-items:center}
+.event-changes .ghost{flex:0 0 auto}
+.event-changes p{border-top:1px solid var(--line);padding-top:8px}
+.season-summary{display:grid;gap:5px;padding:12px;margin:10px 0;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.05)}
+.profile-backup{display:grid;gap:12px;margin:14px 0}
+.profile-backup form{display:grid;gap:10px;max-width:540px}
+.profile-backup label{display:grid;gap:6px;min-width:0}
+.profile-backup input{min-width:0;max-width:100%}
+@media(max-width:620px){
+ .carousel{grid-auto-columns:minmax(0,100%);width:100%;-webkit-overflow-scrolling:touch}
+ .carousel>.event-card{width:100%;max-width:100%;min-width:0}
+ .event-card,.event-card *{min-width:0}
+ .event-card h3,.event-card p,.event-card small{overflow-wrap:anywhere}
+ .event-card .meta{min-width:0}
+ .event-card .meta div{min-width:0}
+ .event-changes .section-head{align-items:flex-start}
+ .event-changes h3{font-size:18px}
+ .event-changes .ghost{width:auto}
+}

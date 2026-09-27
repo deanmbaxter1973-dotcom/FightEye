@@ -25,3 +25,11 @@ FightEye beta: athlete profiles, local club management, events and optional Appl
 ## Release evidence
 
 The GitHub `iPhone Health bridge build` workflow validates the web bridge, compiles unsigned simulator and release device targets, and checks bundled files and the icon. It cannot produce a signed archive or verify Apple Health permission and background delivery. Record the signed TestFlight build number and physical device results with the release before wider testing.
+
+## v221 recovery and event checks
+
+- Export an encrypted profile backup from Settings, save it through the iOS share sheet, then restore it on a second test device. Check club membership, photos, annual results and weight provenance. The second device must not gain injury records.
+- Enter an incorrect passphrase and a malformed file. Existing profiles and weights must remain untouched. Restore a valid backup only after exporting current test data, because restoration replaces those records.
+- Refresh a changed event catalogue and check the date change notice names the event and old/new dates. Dismiss it and confirm it stays dismissed until a further change.
+- Check the event carousel on small iPhones in portrait and landscape, at standard and larger text sizes. Each full card should be reachable by horizontal swipe without overlapping its neighbour or the bottom navigation.
+- Review TestFlight crash reports and screenshot feedback after the signed physical-device build. Keep the Xcode archive for symbols; record model, iOS version and build number for each issue.
