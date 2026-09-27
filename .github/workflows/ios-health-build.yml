@@ -34,3 +34,19 @@ jobs:
         run: |
           test -f "$RUNNER_TEMP/FightEyeBuild/Debug-iphonesimulator/FightEyeHealth.app/WebApp/index.html"
           test -f "$RUNNER_TEMP/FightEyeBuild/Debug-iphonesimulator/FightEyeHealth.app/WebApp/app.js"
+      - name: Compile release device target without signing
+        run: |
+          xcodebuild \
+            -project ios/FightEyeHealth/FightEyeHealth.xcodeproj \
+            -target FightEyeHealth \
+            -configuration Release \
+            -sdk iphoneos \
+            CODE_SIGNING_ALLOWED=NO \
+            SYMROOT="$RUNNER_TEMP/FightEyeBuild" \
+            build
+      - name: Verify release icon and bundled app
+        run: |
+          APP="$RUNNER_TEMP/FightEyeBuild/Release-iphoneos/FightEyeHealth.app"
+          test -f "$APP/Assets.car"
+          test -f "$APP/WebApp/index.html"
+          /usr/libexec/PlistBuddy -c 'Print :CFBundleIcons:CFBundlePrimaryIcon:CFBundleIconName' "$APP/Info.plist" | grep -Fx AppIcon
