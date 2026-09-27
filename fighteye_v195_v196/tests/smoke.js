@@ -32,6 +32,10 @@ assert(context.__events.clubView().includes('name="photo" type="file"'),'athlete
 assert(context.__events.clubView().includes('name="emergencyPhone"'),'emergency contact editable');
 assert(context.__events.clubView().includes('name="groups"'),'club membership editable');
 assert(context.__events.passportView().includes('Edit profile'),'passport profile editing present');
+assert(context.__events.clubView().includes('data-result-form="test-athlete"'),'annual record editor in ClubOS');
+context.window.FIGHTEYE_ATHLETES[0].annualResults=[{year:2026,organisation:'WAKO',gold:2,silver:1,bronze:3}];
+assert(context.__events.passportView().includes('2026 • WAKO'),'organisation and year shown in Passport');
+assert(context.__events.passportView().includes('🥇 2 · 🥈 1 · 🥉 3'),'medal totals shown in Passport');
 context.window.FIGHTEYE_ATHLETES[0].photo='data:image/jpeg;base64,YWJj';
 assert(context.__events.passportView().includes('class="avatar athlete-photo"'),'passport shows athlete photo');
 context.__events.state.editAthlete='';

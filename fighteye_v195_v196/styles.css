@@ -56,6 +56,16 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--blue
 .profile-membership input{margin-right:8px}
 .profile-emergency label{display:block}
 .athlete .avatar.athlete-photo{display:block;margin:0 auto 10px;width:76px;height:76px}
+.annual-results{margin:18px 0;text-align:left;border-top:1px solid var(--muted);padding-top:12px}
+.annual-results h4{margin:0 0 10px}
+.annual-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid rgba(150,160,180,.25)}
+.annual-row div{display:grid;gap:3px;min-width:0;overflow-wrap:anywhere}
+.annual-row .ghost{flex:0 0 auto}
+.annual-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 10px;margin-top:12px}
+.annual-form label{min-width:0}
+.annual-form label:nth-child(2){grid-column:span 2}
+.annual-form button{grid-column:span 2}
+@media(max-width:400px){.annual-row{align-items:flex-start;flex-direction:column}.annual-form{grid-template-columns:minmax(0,1fr)}.annual-form label:nth-child(2),.annual-form button{grid-column:auto}}
 .athlete-card-head{display:flex;align-items:center;gap:12px;min-width:0}
 .athlete-card-head h3{min-width:0;overflow-wrap:anywhere}
 .athlete-photo{width:58px;height:58px;flex:0 0 58px;border-radius:50%;object-fit:cover;background:rgba(255,255,255,.12)}
