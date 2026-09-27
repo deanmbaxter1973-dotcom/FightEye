@@ -27,6 +27,9 @@ assert(context.__events.nav().includes('data-tab="settings"'),'Settings in botto
 assert(context.__events.clubView().includes('Injury tracker'),'injury option in ClubOS');
 assert(context.__events.clubView().includes('Edit club details'),'club title edit present');
 assert(context.__events.clubView().includes('data-edit-athlete="test-athlete"'),'athlete edit present');
+context.__events.state.editAthlete='test-athlete';
+assert(context.__events.clubView().includes('name="photo" type="file"'),'athlete photo upload present');
+context.__events.state.editAthlete='';
 context.__events.state.clubForm='details';
 assert(context.__events.clubView().includes('name="logo"'),'club logo upload present');
 assert.strictEqual(context.__events.clubWebsite('javascript:alert(1)'),'','unsafe website rejected');

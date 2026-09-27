@@ -50,6 +50,10 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--blue
 .club-contact{display:flex;flex-wrap:wrap;gap:7px 16px}
 .club-contact>*{overflow-wrap:anywhere;max-width:100%}
 .athlete-edit{margin:12px 0;padding:12px;border:1px solid var(--muted);border-radius:12px}
+.athlete-card-head{display:flex;align-items:center;gap:12px;min-width:0}
+.athlete-card-head h3{min-width:0;overflow-wrap:anywhere}
+.athlete-photo{width:58px;height:58px;flex:0 0 58px;border-radius:50%;object-fit:cover;background:rgba(255,255,255,.12)}
+.athlete-photo-placeholder{display:grid;place-items:center;font-size:18px;font-weight:800}
 .club-remove{margin-top:8px;width:100%}
 @media(max-width:620px){.club-tools{display:grid;grid-template-columns:minmax(0,1fr)}.club-tools button{width:100%;min-width:0}.club-os .section-head h2{overflow-wrap:anywhere}.club-logo{width:64px;height:64px;flex-basis:64px}.club-identity{gap:10px}.club-title>.ghost{width:100%}}
 
