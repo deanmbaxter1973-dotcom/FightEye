@@ -7,6 +7,9 @@ assert(events.filter(e=>e.country==='United Kingdom').length>=15,'UK competition
 assert.strictEqual(events.find(e=>e.id==='peterborough-series-3-2026').closing,'2026-10-25','Peterborough published closing date');
 assert.strictEqual(events.find(e=>e.id==='wku-english-open-2027').start,'2027-01-30','WKU 2027 date');
 assert(app.includes('seriesFilter'),'organiser filter present');
+assert(app.includes('kindFilter'),'activity filter present');
+assert.strictEqual(events.find(e=>e.id==='ico-england-squad-oct-2026').access,'Open','ICO squad is open');
+assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'Eligibility to confirm','GB eligibility not assumed');
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[],addEventListener:()=>{}},document:{getElementById:()=>({})},localStorage:{getItem:()=>null},navigator:{}};
 vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView};})();'),context);
