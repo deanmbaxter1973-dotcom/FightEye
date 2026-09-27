@@ -3,6 +3,10 @@ const html=fs.readFileSync(path.join(root,'index.html'),'utf8');const app=fs.rea
 assert(html.includes('app.js'),'index references app.js');assert(app.includes('analyticsView'),'analytics view present');assert(app.includes('productionView'),'production view present');
 assert(events.length>=25,'expanded event dataset present');assert.strictEqual(new Set(events.map(e=>e.id)).size,events.length,'event IDs unique');
 for(const e of events){for(const k of ['id','name','org','start','end'])assert(e[k],`missing ${k}`);assert(e.start<=e.end,`invalid dates: ${e.id}`);if(e.source)assert(e.sourceUrl?.startsWith('https://'),`missing listing: ${e.id}`);}
+assert(events.filter(e=>e.country==='United Kingdom').length>=15,'UK competition coverage');
+assert.strictEqual(events.find(e=>e.id==='peterborough-series-3-2026').closing,'2026-10-25','Peterborough published closing date');
+assert.strictEqual(events.find(e=>e.id==='wku-english-open-2027').start,'2027-01-30','WKU 2027 date');
+assert(app.includes('seriesFilter'),'organiser filter present');
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[],addEventListener:()=>{}},document:{getElementById:()=>({})},localStorage:{getItem:()=>null},navigator:{}};
 vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView};})();'),context);
