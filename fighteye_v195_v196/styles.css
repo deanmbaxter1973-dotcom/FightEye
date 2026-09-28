@@ -148,3 +148,5 @@ body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
 @media(max-width:600px){.injury-form h4,.injury-form label:has(textarea){grid-column:auto}.injury-facts{display:grid;grid-template-columns:minmax(0,1fr)}}
 
 .club-switch-logo{width:22px;height:22px;object-fit:contain;vertical-align:middle;border-radius:5px;margin-right:4px}
+
+.install-guide{max-width:720px;margin:16px auto 22px;border-color:rgba(214,164,65,.6);background:linear-gradient(135deg,#12335a,#0a244b);color:#fff}.install-guide>div{display:flex;align-items:center;gap:12px}.install-guide h2{font-size:clamp(20px,5vw,27px);line-height:1.15;margin:0}.install-guide-icon{font-size:32px}.install-guide p{line-height:1.45;margin:12px 0}.install-guide .ghost{flex:none;min-width:110px}.install-settings{margin-bottom:16px}
