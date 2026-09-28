@@ -38,6 +38,13 @@ assert(context.__events.passportView().includes('name="treatment"'),'treatment f
 assert(context.__events.passportView().includes('name="duration"'),'expected injury length field present');
 context.__events.state.clubForm='';context.__events.state.injuryAthleteId='';context.__events.state.injuryKey=null;
 assert(context.__events.clubView().includes('Edit club details'),'club title edit present');
+assert(context.__events.clubView().includes('assets/prestige-martial-arts.webp'),'verified Prestige logo shown');
+assert(context.__events.clubView().includes('Radford Road, Nottingham NG7 7AB'),'verified address shown');
+assert(context.__events.clubView().includes('07533 713584')&&context.__events.clubView().includes('prestigemartialart@icloud.com'),'verified contacts shown');
+assert(context.__events.passportView().includes('assets/prestige-martial-arts.webp'),'athlete affiliation shows club logo');
+context.__events.state.groups[0].email='custom@example.org';
+assert(context.__events.clubView().includes('custom@example.org'),'edited club contact overrides official listing');
+delete context.__events.state.groups[0].email;
 assert(context.__events.clubView().includes('data-edit-athlete="test-athlete"'),'athlete edit present');
 context.__events.state.editAthlete='test-athlete';
 assert(context.__events.clubView().includes('name="photo" type="file"'),'athlete photo upload present');

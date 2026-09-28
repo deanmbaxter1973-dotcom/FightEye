@@ -146,3 +146,5 @@ body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
 @media(max-width:620px){.athlete-affiliations>span{max-width:100%}.athlete .injury-panel{min-width:0}.athlete .injury-panel .section-head{align-items:flex-start}}
 .injury-form h4{grid-column:1/-1;margin:3px 0;font-size:18px}.injury-form label:has(textarea){grid-column:1/-1}.injury-facts{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0}.injury-facts span{padding:7px 9px;border-radius:10px;background:rgba(255,255,255,.08);font-size:12px}.injury-record label{display:block;margin:8px 0}.injury-record .budget{width:100%;max-width:100%}
 @media(max-width:600px){.injury-form h4,.injury-form label:has(textarea){grid-column:auto}.injury-facts{display:grid;grid-template-columns:minmax(0,1fr)}}
+
+.club-switch-logo{width:22px;height:22px;object-fit:contain;vertical-align:middle;border-radius:5px;margin-right:4px}
