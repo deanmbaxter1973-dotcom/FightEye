@@ -1,5 +1,9 @@
 "use client";
 import dynamic from "next/dynamic";
+import Image from "next/image";
+import InjuryTracker from "./injury-tracker";
+import {nationalityFlag,readClubAthletes} from "./club-data";
+import {defaultOrganisationBrand,readOrganisationBrand} from "./organisation-brand";
 import {FormEvent,useEffect,useMemo,useRef,useState} from "react";
 import {saveActiveLiveEvent} from "./event-club-links";
 import InstallApp from "./install-app";
@@ -86,6 +90,9 @@ const readDeviceList=(key:string)=>{if(typeof window==="undefined")return [] as 
 export default function Home(){
  const[view,setView]=useState<View>("competitions"),[query,setQuery]=useState(""),[cat,setCat]=useState("All"),[federation,setFederation]=useState<Federation>("WAKO"),[discipline,setDiscipline]=useState<Discipline>("PF"),[modal,setModal]=useState<null|"athlete"|"club"|"competition"|"role"|"video">(null),[mobileMore,setMobileMore]=useState(false),[finderOpen,setFinderOpen]=useState(false),[quickOpen,setQuickOpen]=useState(false),[favourites,setFavourites]=useState<string[]>([]),[recents,setRecents]=useState<string[]>([]),[deviceStateReady,setDeviceStateReady]=useState(false),[toast,setToast]=useState(""),[busy,setBusy]=useState(false),[dupes,setDupes]=useState([{id:1,a:"Máté Horváth",b:"Mate Horvath",type:"Athlete",score:96,reasons:"Name, birth year and club match"},{id:2,a:"Prestige Martial Arts",b:"Prestige MA Nottingham",type:"Club",score:88,reasons:"Name, city and contact match"},{id:3,a:"GB Grand Slam 2 · Bout 41",b:"Imported bout #0041",type:"Fight",score:92,reasons:"Athletes, category and score match"}]);const file=useRef<HTMLInputElement>(null);const toastTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
  const[clubAddRequest,setClubAddRequest]=useState(0);
+ const[injuryFighter,setInjuryFighter]=useState<{id:string;name:string}|null>(null);
+ const[clubBrand,setClubBrand]=useState(defaultOrganisationBrand);
+ useEffect(()=>{setClubBrand(readOrganisationBrand())},[view]);
  const workspaceRef=useRef<HTMLElement>(null);
  const filtered=useMemo(()=>bouts.filter(b=>(cat==="All"||b.cat===cat)&&Object.values(b).join(" ").toLowerCase().includes(query.toLowerCase())),[cat,query]);
  useEffect(()=>{if(!mobileMore)return;const previous=document.body.style.overflow;document.body.style.overflow="hidden";const close=(event:KeyboardEvent)=>{if(event.key==="Escape")setMobileMore(false)};window.addEventListener("keydown",close);return()=>{document.body.style.overflow=previous;window.removeEventListener("keydown",close)}},[mobileMore]);
@@ -129,7 +136,7 @@ export default function Home(){
  {view==="clubMission"&&<ClubMissionBoard notice={notice}/>} 
  {view==="eventReplay"&&<MobileEventReplay notice={notice}/>} 
  {view==="athletes"&&<ListHeader title="Athlete registry" text="Identity-controlled profiles linked to clubs, categories and fight history." query={query} setQuery={setQuery}/>} 
- {view==="athletes"&&<section className="cards">{athletes.filter(a=>Object.values(a).join(" ").toLowerCase().includes(query.toLowerCase())).map(a=><article className="athlete" key={a.id}><div className="initial">{a.name.split(" ").map(x=>x[0]).join("")}</div><div><Badge tone={a.status==="Verified"?"green":"gold"}>{a.status}</Badge><h3>{a.name}</h3><p>{a.club}</p><div><span><b>{a.record}</b>record</span><span><b>{a.grade}</b>grade</span></div><small>{a.id} · {a.nation}</small></div><button>•••</button></article>)}</section>}
+ {view==="athletes"&&<><section className="cards">{athletes.filter(a=>Object.values(a).join(" ").toLowerCase().includes(query.toLowerCase())).map(a=><article className="athlete" key={a.id}><div className="initial">{a.name.split(" ").map(x=>x[0]).join("")}</div><div><Badge tone={a.status==="Verified"?"green":"gold"}>{a.status}</Badge><h3>{a.name}</h3><p>{a.club}</p><section className="fighter-affiliations"><span aria-label={`Club: ${a.club}`}>{a.club===clubBrand.name&&clubBrand.logoDataUrl?<Image src={clubBrand.logoDataUrl} alt={`${a.club} logo`} width={25} height={25} unoptimized/>:<i aria-hidden="true">{a.club.split(" ").map(x=>x[0]).join("").slice(0,3)}</i>}<small>{a.club}</small></span><span aria-label={`Nationality: ${a.nation}`}><i aria-hidden="true">{nationalityFlag(a.nation)}</i><small>{a.nation}</small></span></section><div><span><b>{a.record}</b>record</span><span><b>{a.grade}</b>grade</span></div><small>{a.id}</small></div><button className="fighter-injury-button" onClick={()=>{const linked=readClubAthletes().find(item=>item.name.toLocaleLowerCase()===a.name.toLocaleLowerCase()&&a.club===clubBrand.name);setInjuryFighter({id:linked?.id||a.id,name:a.name})}}>🩹 Injury tracker</button></article>)}</section>{injuryFighter&&<InjuryTracker athlete={injuryFighter} onClose={()=>setInjuryFighter(null)}/>}</>}
  {view==="competitions"&&<CompetitionDiscovery notice={notice} openLiveEvent={openLiveEvent}/>}
  {view==="entryPlanner"&&<EntryReadiness notice={notice}/>}
  {view==="eventPack"&&<CompetitionOperations notice={notice}/>}

@@ -1,5 +1,5 @@
 export type MembershipStatus="Active"|"Trial"|"Paused";
-export type ClubAthlete={id:string;name:string;dateOfBirth:string;category:string;weight:string;grade:string;disciplines:string[];licence:string;membership:MembershipStatus;guardian:string;emergencyPhone:string;notes:string};
+export type ClubAthlete={id:string;name:string;nationality?:string;dateOfBirth:string;category:string;weight:string;grade:string;disciplines:string[];licence:string;membership:MembershipStatus;guardian:string;emergencyPhone:string;notes:string};
 
 export const clubAthletesKey="fighteye-club-athletes-v1";
 
@@ -18,3 +18,5 @@ export function readClubAthletes(){
  if(typeof window==="undefined")return defaultClubAthletes;
  try{const value=JSON.parse(localStorage.getItem(clubAthletesKey)||"null");return Array.isArray(value)?value as ClubAthlete[]:defaultClubAthletes}catch{return defaultClubAthletes}
 }
+
+export function nationalityFlag(value:string){const code=value.trim().toUpperCase();const normalized=code==="UK"?"GB":code;if(!/^[A-Z]{2}$/.test(normalized))return "🌍";return String.fromCodePoint(...[...normalized].map(char=>127397+char.charCodeAt(0)))}
