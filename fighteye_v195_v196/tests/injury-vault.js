@@ -6,15 +6,18 @@ vm.runInNewContext(app.replace('})();','globalThis.vault={openInjuryVault,saveIn
 (async()=>{
  const {openInjuryVault,saveInjuries,state,INJURY_STORE}=context.vault;
  await openInjuryVault('strong passphrase 123');
- state.injuries.push({id:'test',athleteId:'athlete-1',note:'Private ankle note',status:'Active'});
+ state.injuries.push({id:'test',athleteId:'athlete-1',date:'2026-09-28',area:'Ankle',severity:'Moderate',treatment:'Rest and clinician review',duration:3,durationUnit:'weeks',resolvedDate:'',note:'Private ankle note',status:'Active'});
  await saveInjuries();
  const stored=localStorage.getItem(INJURY_STORE);
  assert(stored&&!stored.includes('Private ankle note'),'no plaintext injury in storage');
+ assert(!stored.includes('Rest and clinician review'),'treatment is encrypted');
  assert(!localStorage.getItem('fighteye-v192')?.includes('Private ankle note'),'club store stays separate');
  state.injuries=[];state.injuryKey=null;
  await assert.rejects(openInjuryVault('incorrect passphrase'),'wrong passphrase rejected');
  await openInjuryVault('strong passphrase 123');
  assert.strictEqual(state.injuries[0].note,'Private ankle note');
+ assert.strictEqual(state.injuries[0].severity,'Moderate');
+ assert.strictEqual(state.injuries[0].durationUnit,'weeks');
  assert(!app.includes('fetch(INJURY_STORE'),'no injury upload path');
  console.log('Injury vault tests passed: encryption, local storage and passphrase.');
 })().catch(error=>{console.error(error);process.exitCode=1});

@@ -32,7 +32,11 @@ assert(context.__events.passportView().includes('data-injury-athlete="test-athle
 assert(context.__events.passportView().includes('athlete-affiliations'),'club and nationality marks on Passport');
 context.__events.state.clubForm='injury';context.__events.state.injuryAthleteId='test-athlete';
 assert(context.__events.passportView().includes('Private injury tracker'),'selected athlete opens private tracker inline');
-context.__events.state.clubForm='';context.__events.state.injuryAthleteId='';
+context.__events.state.injuryKey={};
+assert(context.__events.passportView().includes('name="severity"'),'injury severity field present');
+assert(context.__events.passportView().includes('name="treatment"'),'treatment field present');
+assert(context.__events.passportView().includes('name="duration"'),'expected injury length field present');
+context.__events.state.clubForm='';context.__events.state.injuryAthleteId='';context.__events.state.injuryKey=null;
 assert(context.__events.clubView().includes('Edit club details'),'club title edit present');
 assert(context.__events.clubView().includes('data-edit-athlete="test-athlete"'),'athlete edit present');
 context.__events.state.editAthlete='test-athlete';
