@@ -27,6 +27,12 @@ assert(context.__events.settingsView().includes('Subscribe in Calendar'),'subscr
 assert(context.__events.settingsView().includes('Apple Health privacy notice'),'Health privacy link in Settings');
 assert(context.__events.nav().includes('data-tab="settings"'),'Settings in bottom navigation');
 assert(context.__events.clubView().includes('Injury tracker'),'injury option in ClubOS');
+assert(context.__events.clubView().includes('data-injury-athlete="test-athlete"'),'injury action on club athlete card');
+assert(context.__events.passportView().includes('data-injury-athlete="test-athlete"'),'injury action on Passport card');
+assert(context.__events.passportView().includes('athlete-affiliations'),'club and nationality marks on Passport');
+context.__events.state.clubForm='injury';context.__events.state.injuryAthleteId='test-athlete';
+assert(context.__events.passportView().includes('Private injury tracker'),'selected athlete opens private tracker inline');
+context.__events.state.clubForm='';context.__events.state.injuryAthleteId='';
 assert(context.__events.clubView().includes('Edit club details'),'club title edit present');
 assert(context.__events.clubView().includes('data-edit-athlete="test-athlete"'),'athlete edit present');
 context.__events.state.editAthlete='test-athlete';
