@@ -17,7 +17,7 @@ assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'E
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const store=new Map();
 const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[{id:'test-athlete',name:'Test Athlete',ranking:'Cadet',weight:'42 kg'}],addEventListener:()=>{},webkit:{messageHandlers:{fighteyeHealth:{postMessage:()=>{}}}}},document:{getElementById:()=>({}),querySelector:()=>null,querySelectorAll:()=>[]},localStorage:{getItem:key=>store.get(key)||null,setItem:(key,value)=>store.set(key,value)},navigator:{userAgent:'Mozilla/5.0 (iPhone) AppleWebKit Safari',standalone:false},URL};
-vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
+vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,competitionSchedule,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
 assert.strictEqual(context.__events.statusFor({start:'2099-01-01',end:'2099-01-02',closing:null}),'Date confirmed • entry TBC');
 assert(context.__events.eventsView().includes('data-event-period="past"'),'past events tab present');
 assert(context.__events.eventsView().includes('data-event-period="open"'),'registration tab present');
@@ -30,6 +30,15 @@ assert(context.__events.settingsView().includes('Install on iPhone'),'instructio
 assert(context.__events.settingsView().includes('Apple Health privacy notice'),'Health privacy link in Settings');
 assert(context.__events.nav().includes('data-tab="settings"'),'Settings in bottom navigation');
 assert(context.__events.clubView().includes('Injury tracker'),'injury option in ClubOS');
+assert(context.__events.clubView().includes('Live competition tracker'),'club competition tracker shown');
+assert(context.__events.clubView().includes('Match list ↗')&&context.__events.clubView().includes('Draws &amp; results ↗'),'Sportdata views linked');
+const selectedEvent=context.__events.state.competitionEventId;
+assert(selectedEvent,'Sportdata event selected');
+const competitionKey=`prestige-martial-arts:${selectedEvent}`;
+context.__events.state.competitionPlans[competitionKey]={fighterIds:['test-athlete'],bouts:[{id:'b1',athleteId:'test-athlete',date:'2026-10-11',time:'14:00',area:'Tatami 3',category:'OC -42 kg PF',phase:'Final',opponent:'Opponent',result:'Win'}]};
+assert(context.__events.clubView().includes('Tatami 3')&&context.__events.clubView().includes('data-bout-result="b1"'),'fighter fight schedule and result controls shown');
+assert.strictEqual(context.__events.sportdataId({sourceUrl:'https://evil.example/kickboxing/?vernr=123'}),'','untrusted Sportdata host rejected');
+delete context.__events.state.competitionPlans[competitionKey];
 assert(context.__events.clubView().includes('data-injury-athlete="test-athlete"'),'injury action on club athlete card');
 assert(context.__events.passportView().includes('data-injury-athlete="test-athlete"'),'injury action on Passport card');
 assert(context.__events.passportView().includes('athlete-affiliations'),'club and nationality marks on Passport');
