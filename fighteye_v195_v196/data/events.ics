@@ -10,7 +10,7 @@ REFRESH-INTERVAL;VALUE=DURATION:P1D
 X-PUBLISHED-TTL:PT24H
 BEGIN:VEVENT
 UID:wku-worlds-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20260803
 DTEND;VALUE=DATE:20260810
 SUMMARY:WKU World Championships
@@ -19,7 +19,7 @@ DESCRIPTION:WKU • PF • LC • KL
 END:VEVENT
 BEGIN:VEVENT
 UID:gb-grand-slam-2-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20260711
 DTEND;VALUE=DATE:20260713
 SUMMARY:GB Grand Slam — K2 Crawley 2026
@@ -32,7 +32,7 @@ URL:https://www.sportdata.org/kickboxing/set-online/veranstaltung_info_main
 END:VEVENT
 BEGIN:VEVENT
 UID:wako-junior-worlds-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20260918
 DTEND;VALUE=DATE:20260928
 SUMMARY:WAKO Youth World Championships
@@ -43,7 +43,7 @@ URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
 END:VEVENT
 BEGIN:VEVENT
 UID:top-ten-norwegian-cup-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261002
 DTEND;VALUE=DATE:20261005
 SUMMARY:Top Ten Norwegian Cup 2026
@@ -54,7 +54,7 @@ URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
 END:VEVENT
 BEGIN:VEVENT
 UID:lithuania-open-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261003
 DTEND;VALUE=DATE:20261005
 SUMMARY:Lithuania Open 2026
@@ -67,7 +67,7 @@ URL:https://www.sportdata.org/kickboxing/set-online/veranstaltung_info_main
 END:VEVENT
 BEGIN:VEVENT
 UID:czech-open-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261009
 DTEND;VALUE=DATE:20261011
 SUMMARY:Czech Open 2026
@@ -80,7 +80,7 @@ URL:https://www.sportdata.org/kickboxing/set-online/veranstaltung_info_main
 END:VEVENT
 BEGIN:VEVENT
 UID:celtic-open-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261011
 DTEND;VALUE=DATE:20261012
 SUMMARY:The Celtic Open 2026
@@ -93,7 +93,7 @@ URL:https://www.sportdata.org/kickboxing/set-online/veranstaltung_info_main
 END:VEVENT
 BEGIN:VEVENT
 UID:uzbekistan-world-cup-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261013
 DTEND;VALUE=DATE:20261019
 SUMMARY:Uzbekistan Kickboxing World Cup 2026
@@ -106,7 +106,7 @@ URL:https://www.sportdata.org/kickboxing/set-online/veranstaltung_info_main
 END:VEVENT
 BEGIN:VEVENT
 UID:wartburg-classics-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261016
 DTEND;VALUE=DATE:20261018
 SUMMARY:Adidas Wartburg Classics 2026
@@ -117,7 +117,7 @@ URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
 END:VEVENT
 BEGIN:VEVENT
 UID:belgrade-trophy-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261016
 DTEND;VALUE=DATE:20261018
 SUMMARY:Belgrade Trophy 2026
@@ -128,7 +128,7 @@ URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
 END:VEVENT
 BEGIN:VEVENT
 UID:alpe-adria-junior-cup-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261017
 DTEND;VALUE=DATE:20261018
 SUMMARY:Alpe Adria Schüler und Junioren Cup 2026
@@ -139,7 +139,7 @@ URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
 END:VEVENT
 BEGIN:VEVENT
 UID:north-american-century-cup-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261022
 DTEND;VALUE=DATE:20261026
 SUMMARY:North American Century Cup 2026
@@ -150,7 +150,7 @@ URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
 END:VEVENT
 BEGIN:VEVENT
 UID:bristol-open-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261023
 DTEND;VALUE=DATE:20261026
 SUMMARY:The Bristol Open 2026
@@ -163,7 +163,7 @@ URL:https://www.sportdata.org/kickboxing/set-online/veranstaltung_info_main
 END:VEVENT
 BEGIN:VEVENT
 UID:slovenia-open-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261024
 DTEND;VALUE=DATE:20261025
 SUMMARY:Slovenia Open 2026
@@ -174,7 +174,7 @@ URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
 END:VEVENT
 BEGIN:VEVENT
 UID:wako-balkan-open-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261024
 DTEND;VALUE=DATE:20261025
 SUMMARY:WAKO Balkan Open 2026
@@ -186,7 +186,7 @@ URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
 END:VEVENT
 BEGIN:VEVENT
 UID:pointfighting-grand-prix-polski-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261024
 DTEND;VALUE=DATE:20261026
 SUMMARY:Pointfighting Grand Prix Polski 2026
@@ -197,7 +197,7 @@ URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
 END:VEVENT
 BEGIN:VEVENT
 UID:bavarian-open-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261031
 DTEND;VALUE=DATE:20261101
 SUMMARY:Bavarian Open 2026
@@ -208,7 +208,7 @@ URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
 END:VEVENT
 BEGIN:VEVENT
 UID:ypres-open-cup-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261031
 DTEND;VALUE=DATE:20261101
 SUMMARY:Ypres Open Cup 2026
@@ -219,7 +219,7 @@ URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
 END:VEVENT
 BEGIN:VEVENT
 UID:wako-europeans-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261106
 DTEND;VALUE=DATE:20261116
 SUMMARY:WAKO European Championships 2026
@@ -231,7 +231,7 @@ URL:https://www.sportdata.org/kickboxing/set-online/veranstaltung_info_main
 END:VEVENT
 BEGIN:VEVENT
 UID:wako-para-europeans-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261106
 DTEND;VALUE=DATE:20261116
 SUMMARY:WAKO Para & Inclusive European Championships 2026
@@ -242,7 +242,7 @@ URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
 END:VEVENT
 BEGIN:VEVENT
 UID:westfalen-open-cup-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261114
 DTEND;VALUE=DATE:20261115
 SUMMARY:Westfalen Open Cup 2026
@@ -253,7 +253,7 @@ URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
 END:VEVENT
 BEGIN:VEVENT
 UID:senshi-christmas-cup-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261121
 DTEND;VALUE=DATE:20261122
 SUMMARY:Senshi Christmas Cup 2026
@@ -264,7 +264,7 @@ URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
 END:VEVENT
 BEGIN:VEVENT
 UID:kutina-open-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261121
 DTEND;VALUE=DATE:20261122
 SUMMARY:Kutina Open 2026
@@ -275,7 +275,7 @@ URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
 END:VEVENT
 BEGIN:VEVENT
 UID:silesian-kickboxing-championships-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261127
 DTEND;VALUE=DATE:20261130
 SUMMARY:Silesian Kickboxing Championships 2026
@@ -286,7 +286,7 @@ URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
 END:VEVENT
 BEGIN:VEVENT
 UID:swedish-open-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261128
 DTEND;VALUE=DATE:20261129
 SUMMARY:Swedish Open 2026
@@ -299,7 +299,7 @@ URL:https://www.sportdata.org/kickboxing/set-online/veranstaltung_info_main
 END:VEVENT
 BEGIN:VEVENT
 UID:danish-open-2027@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20270205
 DTEND;VALUE=DATE:20270207
 SUMMARY:Danish Open 2027
@@ -310,7 +310,7 @@ URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
 END:VEVENT
 BEGIN:VEVENT
 UID:chikudo-cup-2027@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20270227
 DTEND;VALUE=DATE:20270228
 SUMMARY:Chikudo Kickboxing Cup 2027
@@ -321,7 +321,7 @@ URL:https://www.sportdata.org/kickboxing/event_list_prod/events.html
 END:VEVENT
 BEGIN:VEVENT
 UID:yokoso-dutch-open-2027@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20270402
 DTEND;VALUE=DATE:20270405
 SUMMARY:Yokoso Dutch Open 2027
@@ -334,7 +334,7 @@ URL:https://www.sportdata.org/kickboxing/set-online/veranstaltung_info_main
 END:VEVENT
 BEGIN:VEVENT
 UID:wko-british-open-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261002
 DTEND;VALUE=DATE:20261005
 SUMMARY:2026 WKO British Open Championships
@@ -346,7 +346,7 @@ URL:https://www.kihapp.com/tournaments/22422-2026-wko-british-open-champion
 END:VEVENT
 BEGIN:VEVENT
 UID:titans-collide-open-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261004
 DTEND;VALUE=DATE:20261005
 SUMMARY:Titans Collide Open 2026
@@ -358,7 +358,7 @@ URL:https://www.kihapp.com/tournaments/23866-titans-collide-open-2026-compe
 END:VEVENT
 BEGIN:VEVENT
 UID:ico-world-championships-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261014
 DTEND;VALUE=DATE:20261019
 SUMMARY:ICO World Championships 2026
@@ -369,7 +369,7 @@ URL:https://www.kihapp.com/tournaments/25341-ico-world-championships-2026
 END:VEVENT
 BEGIN:VEVENT
 UID:urban-combat-winter-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261122
 DTEND;VALUE=DATE:20261123
 SUMMARY:Urban Combat Winter Showdown 2026
@@ -380,7 +380,7 @@ URL:https://smoothcomp.com/en/event/33964
 END:VEVENT
 BEGIN:VEVENT
 UID:wtka-southern-open-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261205
 DTEND;VALUE=DATE:20261207
 SUMMARY:WTKA Southern Open
@@ -390,7 +390,7 @@ URL:https://smoothcomp.com/en/event/33717
 END:VEVENT
 BEGIN:VEVENT
 UID:usa-open-jic-2027@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20270506
 DTEND;VALUE=DATE:20270510
 SUMMARY:2027 USA Open Karate Championships & Junior International Cup
@@ -403,7 +403,7 @@ URL:https://www.usankf.org/news/2026/may/22/usa-karate-announces-2027-usa-o
 END:VEVENT
 BEGIN:VEVENT
 UID:peterborough-series-3-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261108
 DTEND;VALUE=DATE:20261109
 SUMMARY:Peterborough Championship Series 2026 — No 3
@@ -414,7 +414,7 @@ URL:https://smoothcomp.com/en/event/32647
 END:VEVENT
 BEGIN:VEVENT
 UID:ico-english-open-2027@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20270213
 DTEND;VALUE=DATE:20270215
 SUMMARY:ICO English Open 2027
@@ -424,7 +424,7 @@ URL:https://www.instagram.com/p/DdrBXrgoRob/
 END:VEVENT
 BEGIN:VEVENT
 UID:wku-english-open-2027@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20270130
 DTEND;VALUE=DATE:20270131
 SUMMARY:WKU English Open 2027
@@ -436,7 +436,7 @@ URL:https://www.kihapp.com/tournaments/27839-wku-english-open-2027
 END:VEVENT
 BEGIN:VEVENT
 UID:wko-english-open-2027@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20270129
 DTEND;VALUE=DATE:20270201
 SUMMARY:2027 WKO English Open Championships
@@ -448,7 +448,7 @@ URL:https://www.kihapp.com/tournaments/25489-2027-wko-english-open-champion
 END:VEVENT
 BEGIN:VEVENT
 UID:wko-worlds-2027@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20270716
 DTEND;VALUE=DATE:20270719
 SUMMARY:2027 WKO Open World Championships
@@ -460,7 +460,7 @@ URL:https://www.kihapp.com/tournaments/26986-2027-wko-open-world-championsh
 END:VEVENT
 BEGIN:VEVENT
 UID:wko-ringsports-2027@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20270612
 DTEND;VALUE=DATE:20270613
 SUMMARY:2027 WKO National Ringsports Championships
@@ -472,7 +472,7 @@ URL:https://www.kihapp.com/tournaments/26378-2027-wko-national-ringsports-c
 END:VEVENT
 BEGIN:VEVENT
 UID:exeter-open-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261129
 DTEND;VALUE=DATE:20261130
 SUMMARY:Exeter Open Kickboxing Championship
@@ -484,7 +484,7 @@ URL:https://www.kihapp.com/tournaments/26155-exeter-open-kickboxing-champio
 END:VEVENT
 BEGIN:VEVENT
 UID:afmo-british-open-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261213
 DTEND;VALUE=DATE:20261214
 SUMMARY:AFMO British Open K1 & Muay Thai Championships 2026
@@ -497,7 +497,7 @@ URL:https://www.kihapp.com/tournaments/27697-2026-afmo-british-open-k1-muay
 END:VEVENT
 BEGIN:VEVENT
 UID:leeds-open-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20260628
 DTEND;VALUE=DATE:20260629
 SUMMARY:Leeds Open Championships 2026
@@ -508,7 +508,7 @@ URL:https://smoothcomp.com/en/event/29215
 END:VEVENT
 BEGIN:VEVENT
 UID:iska-british-open-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20260621
 DTEND;VALUE=DATE:20260622
 SUMMARY:ISKA British Open 2026
@@ -519,7 +519,7 @@ URL:https://www.kihapp.com/tournaments/25614-iska-british-open-2026
 END:VEVENT
 BEGIN:VEVENT
 UID:wkkc-ippon-challenge-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20260920
 DTEND;VALUE=DATE:20260921
 SUMMARY:WKKC Ippon Challenge 2026
@@ -531,7 +531,7 @@ URL:https://www.localgymsandfitness.com/GB/Bolton/412031388899311/WKKC-Engl
 END:VEVENT
 BEGIN:VEVENT
 UID:ico-england-squad-oct-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261003
 DTEND;VALUE=DATE:20261004
 SUMMARY:ICO Team England World Championship Squad Training
@@ -545,7 +545,7 @@ URL:https://www.uskakickboxing.co.uk/forthcomingevent/ico-team-england-2026
 END:VEVENT
 BEGIN:VEVENT
 UID:kbgb-tatami-squad-nov-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261101
 DTEND;VALUE=DATE:20261102
 SUMMARY:Kickboxing GB Tatami Squad Training — Adults & Juniors Elite
@@ -557,7 +557,7 @@ URL:https://www.fighting-falcons.co.uk/Events%20Calendar/
 END:VEVENT
 BEGIN:VEVENT
 UID:kbgb-referee-oct-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261004
 DTEND;VALUE=DATE:20261005
 SUMMARY:Kickboxing GB Tatami Referee Course
@@ -570,7 +570,7 @@ URL:https://www.eventbrite.co.uk/e/kickboxing-gb-tatami-referee-course-tick
 END:VEVENT
 BEGIN:VEVENT
 UID:wuma-seminar-oct-2026@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20261017
 DTEND;VALUE=DATE:20261019
 SUMMARY:WUMA Two-Day Black Belt Grading & Seminar
@@ -582,7 +582,7 @@ URL:https://www.wumawebsite.com/events
 END:VEVENT
 BEGIN:VEVENT
 UID:gb-grand-slam-western-2027@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20270206
 DTEND;VALUE=DATE:20270208
 SUMMARY:GB Grand Slam League Western 2027
@@ -594,7 +594,7 @@ URL:https://www.carrerasstudio.co.uk/timetable-events/events
 END:VEVENT
 BEGIN:VEVENT
 UID:gb-grand-slam-northern-2027@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20270508
 DTEND;VALUE=DATE:20270510
 SUMMARY:GB Grand Slam League Northern 2027
@@ -606,7 +606,7 @@ URL:https://www.carrerasstudio.co.uk/timetable-events/events
 END:VEVENT
 BEGIN:VEVENT
 UID:gb-grand-slam-southeastern-2027@fighteye.app
-DTSTAMP:20260928T000000Z
+DTSTAMP:20261005T000000Z
 DTSTART;VALUE=DATE:20270710
 DTEND;VALUE=DATE:20270712
 SUMMARY:GB Grand Slam League Southeastern 2027
