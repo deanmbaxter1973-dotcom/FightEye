@@ -17,7 +17,16 @@ assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'E
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const store=new Map();
 const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[{id:'test-athlete',name:'Test Athlete',ranking:'Cadet',weight:'42 kg'}],addEventListener:()=>{},webkit:{messageHandlers:{fighteyeHealth:{postMessage:()=>{}}}}},document:{getElementById:()=>({}),querySelector:()=>null,querySelectorAll:()=>[]},localStorage:{getItem:key=>store.get(key)||null,setItem:(key,value)=>store.set(key,value)},navigator:{userAgent:'Mozilla/5.0 (iPhone) AppleWebKit Safari',standalone:false},URL,setTimeout:()=>1,clearTimeout:()=>{}};
-vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,competitionSchedule,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
+vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
+const official='https://www.sportdata.org/kickboxing/sportsid/veranstaltung_info_main.php?vernr=2488';
+const timetable='https://www.sportdata.org/setglinc/dtm/dtm_timetable.php?eventid=2488&system=kickboxing';
+assert.strictEqual(context.__events.parseSportdataLink(official).id,'2488','official event URL accepted');
+assert.strictEqual(context.__events.parseSportdataLink(timetable).id,'2488','official timetable URL accepted');
+assert.strictEqual(context.__events.parseSportdataLink('https://www.sportdata.org.evil.example/kickboxing/event?vernr=2488'),null,'lookalike host rejected');
+assert.strictEqual(context.__events.parseSportdataLink('https://www.sportdata.org/setglinc/dtm/dtm_timetable.php?eventid=2488&system=karate'),null,'other sport rejected');
+assert.strictEqual(context.__events.buildSportdataEvent(timetable,'Test Open','2027-04-03','2027-04-04').id,'sportdata-manual-2488','new event created');
+assert.throws(()=>context.__events.buildSportdataEvent(official,'Test Open','2027-04-04','2027-04-03'),'reverse dates rejected');
+assert(context.__events.clubView().includes('id="addSportdataEvent"'),'Sportdata add form visible');
 assert.strictEqual(context.__events.statusFor({start:'2099-01-01',end:'2099-01-02',closing:null}),'Date confirmed • entry TBC');
 assert(context.__events.eventsView().includes('data-event-period="past"'),'past events tab present');
 assert(context.__events.eventsView().includes('data-event-period="open"'),'registration tab present');
