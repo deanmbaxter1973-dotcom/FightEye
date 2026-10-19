@@ -31,6 +31,7 @@ assert(context.__events.settingsView().includes('Apple Health privacy notice'),'
 assert(context.__events.nav().includes('data-tab="settings"'),'Settings in bottom navigation');
 assert(context.__events.clubView().includes('Injury tracker'),'injury option in ClubOS');
 assert(context.__events.clubView().includes('Live competition tracker'),'club competition tracker shown');
+assert(context.__events.clubView().includes('Find a team or athlete')&&context.__events.clubView().includes('competitionWatchForm'),'team and athlete tracker available');
 assert(context.__events.clubView().includes('Fight day')&&context.__events.clubView().includes('Due soon'),'fight day board visible');
 assert(context.__events.clubView().includes('Match list ↗')&&context.__events.clubView().includes('Draws &amp; results ↗'),'Sportdata views linked');
 const selectedEvent=context.__events.state.competitionEventId;
@@ -43,6 +44,10 @@ context.__events.markBoutChecked(demoBout);
 assert(context.__events.boutCheckText(demoBout).includes('reviewed'),'manual source check recorded');
 assert.strictEqual(context.__events.fightDayGroup({...demoBout,result:'Win'}),'finished','result moves fight to finished');
 const competitionKey=`prestige-martial-arts:${selectedEvent}`;
+context.__events.state.competitionPlans[competitionKey]={fighterIds:[],bouts:[],watched:[{id:'watch-1',team:'Prestige Martial Arts',athlete:'Charlie Baxter'},{id:'watch-2',team:'Other Team',athlete:'Jane'}]};
+context.__events.state.competitionSearch='Charlie';
+assert(context.__events.clubView().includes('Charlie Baxter')&&!context.__events.clubView().includes('data-remove-watch="watch-2"'),'tracked athlete search filters by name');
+context.__events.state.competitionSearch='';
 context.__events.state.competitionPlans[competitionKey]={fighterIds:['test-athlete'],bouts:[{id:'b1',athleteId:'test-athlete',date:'2026-10-11',time:'14:00',area:'Tatami 3',category:'OC -42 kg PF',phase:'Final',opponent:'Opponent',result:'Win'}]};
 context.__events.state.fightView='all';
 assert(context.__events.clubView().includes('Tatami 3')&&context.__events.clubView().includes('data-bout-result="b1"'),'fighter fight schedule and result controls shown');
