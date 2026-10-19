@@ -17,7 +17,7 @@ assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'E
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const store=new Map();
 const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[{id:'test-athlete',name:'Test Athlete',ranking:'Cadet',weight:'42 kg'}],addEventListener:()=>{},webkit:{messageHandlers:{fighteyeHealth:{postMessage:()=>{}}}}},document:{getElementById:()=>({}),querySelector:()=>null,querySelectorAll:()=>[]},localStorage:{getItem:key=>store.get(key)||null,setItem:(key,value)=>store.set(key,value)},navigator:{userAgent:'Mozilla/5.0 (iPhone) AppleWebKit Safari',standalone:false},URL,setTimeout:()=>1,clearTimeout:()=>{}};
-vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
+vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
 const official='https://www.sportdata.org/kickboxing/sportsid/veranstaltung_info_main.php?vernr=2488';
 const timetable='https://www.sportdata.org/setglinc/dtm/dtm_timetable.php?eventid=2488&system=kickboxing';
 assert.strictEqual(context.__events.parseSportdataLink(official).id,'2488','official event URL accepted');
@@ -27,6 +27,15 @@ assert.strictEqual(context.__events.parseSportdataLink('https://www.sportdata.or
 assert.strictEqual(context.__events.buildSportdataEvent(timetable,'Test Open','2027-04-03','2027-04-04').id,'sportdata-manual-2488','new event created');
 assert.throws(()=>context.__events.buildSportdataEvent(official,'Test Open','2027-04-04','2027-04-03'),'reverse dates rejected');
 assert(context.__events.clubView().includes('id="addSportdataEvent"'),'Sportdata add form visible');
+const custom=context.__events.buildSportdataEvent(timetable,'Test Open','2027-04-03','2027-04-04');
+context.__events.state.adminEvents.push(custom);context.__events.events.push(custom);
+context.__events.state.competitionEventId=custom.id;
+assert(context.__events.clubView().includes('id="editSportdataEvent"'),'added event can be edited');
+assert(context.__events.clubView().includes('id="watchClubRoster"'),'club roster watch action visible');
+assert(context.__events.clubView().includes('id="exportFightDay"'),'fight day export action visible');
+context.__events.saveStore();
+assert.strictEqual(JSON.parse(store.get('fighteye-v192')).competitionEventId,custom.id,'selected event persists');
+
 assert.strictEqual(context.__events.statusFor({start:'2099-01-01',end:'2099-01-02',closing:null}),'Date confirmed • entry TBC');
 assert(context.__events.eventsView().includes('data-event-period="past"'),'past events tab present');
 assert(context.__events.eventsView().includes('data-event-period="open"'),'registration tab present');
