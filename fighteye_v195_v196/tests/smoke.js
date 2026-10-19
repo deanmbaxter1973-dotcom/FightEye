@@ -17,7 +17,7 @@ assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'E
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const store=new Map();
 const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[{id:'test-athlete',name:'Test Athlete',ranking:'Cadet',weight:'42 kg'}],addEventListener:()=>{},webkit:{messageHandlers:{fighteyeHealth:{postMessage:()=>{}}}}},document:{getElementById:()=>({}),querySelector:()=>null,querySelectorAll:()=>[]},localStorage:{getItem:key=>store.get(key)||null,setItem:(key,value)=>store.set(key,value)},navigator:{userAgent:'Mozilla/5.0 (iPhone) AppleWebKit Safari',standalone:false},URL,setTimeout:()=>1,clearTimeout:()=>{}};
-vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,filterFightDayBouts,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
+vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,filterFightDayBouts,priorityFightBouts,fightDayBriefing,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
 const official='https://www.sportdata.org/kickboxing/sportsid/veranstaltung_info_main.php?vernr=2488';
 const timetable='https://www.sportdata.org/setglinc/dtm/dtm_timetable.php?eventid=2488&system=kickboxing';
 assert.strictEqual(context.__events.parseSportdataLink(official).id,'2488','official event URL accepted');
@@ -40,6 +40,21 @@ const sampleBouts=[{date:'2027-04-03',area:'Tatami 1',athleteId:'test-athlete'},
 assert.strictEqual(context.__events.filterFightDayBouts(sampleBouts,'2027-04-03','','','Test Club').length,1,'date filter selects one day');
 assert.strictEqual(context.__events.filterFightDayBouts(sampleBouts,'','Tatami 2','','Test Club').length,1,'area filter selects one ring');
 assert.strictEqual(context.__events.filterFightDayBouts(sampleBouts,'2027-04-03','Tatami 2','','Test Club').length,0,'date and ring combine');
+const now=Date.parse('2027-04-03T10:00:00Z'),queueBouts=[
+ {date:'2027-04-03',time:'10:15',startAt:now+15*60000,status:'Scheduled',athleteId:'test-athlete',area:'Tatami 2'},
+ {date:'2027-04-03',time:'',status:'Called to ring',athleteId:'test-athlete',area:'Tatami 1'},
+ {date:'2027-04-03',time:'09:45',startAt:now-15*60000,status:'In progress',athleteId:'test-athlete'},
+ {date:'2027-04-03',time:'10:05',startAt:now+5*60000,status:'Finished',athleteId:'test-athlete'}];
+assert.strictEqual(context.__events.priorityFightBouts(queueBouts,now).length,3,'finished fight omitted from queue');
+assert.strictEqual(context.__events.priorityFightBouts(queueBouts,now)[0].status,'In progress','live fight prioritised');
+assert.strictEqual(context.__events.priorityFightBouts(queueBouts,now)[1].status,'Called to ring','called fight follows live');
+const brief=context.__events.fightDayBriefing(custom,{name:'Test Club',memberIds:['test-athlete']},{fighterIds:['test-athlete'],checkIns:{'test-athlete':'Ready'}},queueBouts.slice(0,2),'2027-04-03','Tatami 1',now);
+assert(brief.includes('Test Athlete: Ready'),'check-in appears in briefing');
+assert(brief.includes('View: 2027-04-03 · Tatami 1'),'briefing describes filters');
+context.__events.state.competitionPlans[`${context.__events.state.selectedGroup}:${custom.id}`]={fighterIds:['test-athlete'],bouts:[]};
+assert(context.__events.clubView().includes('data-fighter-checkin'),'fighter check-in controls visible');
+assert(context.__events.clubView().includes('id="downloadFightBriefing"'),'briefing download visible');
+
 
 context.__events.saveStore();
 assert.strictEqual(JSON.parse(store.get('fighteye-v192')).competitionEventId,custom.id,'selected event persists');
