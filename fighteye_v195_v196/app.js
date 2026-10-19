@@ -447,7 +447,7 @@ function bind(){
  const dayFilter=$('#fightDayDate');if(dayFilter)dayFilter.onchange=()=>{state.fightDayDate=dayFilter.value;render()};
  const areaFilter=$('#fightDayArea');if(areaFilter)areaFilter.onchange=()=>{state.fightDayArea=areaFilter.value;render()};
  const resetDayFilters=$('#resetFightDayFilters');if(resetDayFilters)resetDayFilters.onclick=()=>{state.fightDayDate='';state.fightDayArea='';render()};
- $('[data-competition-fighter]').forEach(input=>input.onchange=()=>{const current=currentCompetitionPlan();if(!current||!current.group.memberIds.includes(input.dataset.competitionFighter))return;const ids=new Set(current.plan.fighterIds);input.checked?ids.add(input.dataset.competitionFighter):ids.delete(input.dataset.competitionFighter);current.plan.fighterIds=[...ids];saveStore();render();});
+ $$('[data-competition-fighter]').forEach(input=>input.onchange=()=>{const current=currentCompetitionPlan();if(!current||!current.group.memberIds.includes(input.dataset.competitionFighter))return;const ids=new Set(current.plan.fighterIds);input.checked?ids.add(input.dataset.competitionFighter):ids.delete(input.dataset.competitionFighter);current.plan.fighterIds=[...ids];saveStore();render();});
  const fightExport=$('#exportFightDay');if(fightExport)fightExport.onclick=()=>{
  const current=currentCompetitionPlan();if(!current)return;
  const rows=filterFightDayBouts((current.plan.bouts||[]).filter(b=>current.plan.fighterIds.includes(b.athleteId)&&current.group.memberIds.includes(b.athleteId)),state.fightDayDate,state.fightDayArea,state.competitionSearch,current.group.name).sort((a,b)=>(a.date||'').localeCompare(b.date||'')||(a.time||'').localeCompare(b.time||''));
