@@ -17,7 +17,7 @@ assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'E
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const store=new Map();
 const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[{id:'test-athlete',name:'Test Athlete',ranking:'Cadet',weight:'42 kg'}],addEventListener:()=>{},webkit:{messageHandlers:{fighteyeHealth:{postMessage:()=>{}}}}},document:{getElementById:()=>({}),querySelector:()=>null,querySelectorAll:()=>[]},localStorage:{getItem:key=>store.get(key)||null,setItem:(key,value)=>store.set(key,value)},navigator:{userAgent:'Mozilla/5.0 (iPhone) AppleWebKit Safari',standalone:false},URL,setTimeout:()=>1,clearTimeout:()=>{}};
-vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
+vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,filterFightDayBouts,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
 const official='https://www.sportdata.org/kickboxing/sportsid/veranstaltung_info_main.php?vernr=2488';
 const timetable='https://www.sportdata.org/setglinc/dtm/dtm_timetable.php?eventid=2488&system=kickboxing';
 assert.strictEqual(context.__events.parseSportdataLink(official).id,'2488','official event URL accepted');
@@ -33,6 +33,14 @@ context.__events.state.competitionEventId=custom.id;
 assert(context.__events.clubView().includes('id="editSportdataEvent"'),'added event can be edited');
 assert(context.__events.clubView().includes('id="watchClubRoster"'),'club roster watch action visible');
 assert(context.__events.clubView().includes('id="exportFightDay"'),'fight day export action visible');
+assert(context.__events.clubView().includes('id="fightDayDate"'),'fight day date filter visible');
+assert(context.__events.clubView().includes('id="fightDayArea"'),'fight day area filter visible');
+assert(context.__events.clubView().includes('id="selectAllEventFighters"'),'bulk fighter selection visible');
+const sampleBouts=[{date:'2027-04-03',area:'Tatami 1',athleteId:'test-athlete'},{date:'2027-04-04',area:'Tatami 2',athleteId:'test-athlete'}];
+assert.strictEqual(context.__events.filterFightDayBouts(sampleBouts,'2027-04-03','','','Test Club').length,1,'date filter selects one day');
+assert.strictEqual(context.__events.filterFightDayBouts(sampleBouts,'','Tatami 2','','Test Club').length,1,'area filter selects one ring');
+assert.strictEqual(context.__events.filterFightDayBouts(sampleBouts,'2027-04-03','Tatami 2','','Test Club').length,0,'date and ring combine');
+
 context.__events.saveStore();
 assert.strictEqual(JSON.parse(store.get('fighteye-v192')).competitionEventId,custom.id,'selected event persists');
 
