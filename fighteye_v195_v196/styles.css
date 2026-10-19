@@ -157,3 +157,5 @@ body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
 
 .fight-check-cadence{display:block;color:var(--gold);font-weight:750;margin:8px 0}.competition-bout label{margin-top:8px}#fightCheckStatus{margin:0;color:var(--muted);font-size:14px}
 
+
+.fight-day-tabs,.fight-day-actions{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.fight-day-tabs button{min-height:44px;flex:1 1 105px}.fight-day-tabs button[aria-pressed="true"]{border-color:#ffcd4a;background:rgba(255,205,74,.22)}.fight-day-actions button{min-height:44px;flex:1 1 130px}.fight-day-actions button:disabled{opacity:.45;cursor:not-allowed}.competition-source{font-size:.86rem;opacity:.88;overflow-wrap:anywhere}
