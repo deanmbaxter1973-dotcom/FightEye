@@ -198,7 +198,7 @@ function parseSportdataLink(value){
   const live=['/setglinc/dtm/dtm_timetable.php','/setglinc/live/session_matchlist.php','/setglinc/live/event_dashboard.php'].includes(u.pathname)&&u.searchParams.get('system')==='kickboxing';
   if(!listing&&!live)return null;
   const id=u.searchParams.get(listing?'vernr':'eventid');
-  if(!/^\\d{1,7}$/.test(id||''))return null;
+  if(!/^\d{1,7}$/.test(id||''))return null;
   return {id,url:listing?`https://www.sportdata.org/kickboxing/sportsid/veranstaltung_info_main.php?vernr=${id}&ver_info_action=info`:`https://www.sportdata.org/setglinc/dtm/dtm_timetable.php?eventid=${id}&system=kickboxing`,listing};
  }catch{return null}
 }
@@ -207,7 +207,7 @@ function buildSportdataEvent(link,name,start,end){
  const parsed=parseSportdataLink(link),title=String(name||'').trim().slice(0,120);
  if(!parsed)throw new Error('Enter a valid HTTPS Sportdata kickboxing event or timetable link.');
  if(!title)throw new Error('Enter an event name.');
- if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(start)||!/^\\d{4}-\\d{2}-\\d{2}$/.test(end)||!Number.isFinite(Date.parse(start))||!Number.isFinite(Date.parse(end))||new Date(start).toISOString().slice(0,10)!==start||new Date(end).toISOString().slice(0,10)!==end||start<'2000-01-01'||end>'2100-12-31'||end<start||(Date.parse(end)-Date.parse(start))/86400000>31)throw new Error('Enter valid event dates, up to 32 days, with the end on or after the start.');
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(start)||!/^\d{4}-\d{2}-\d{2}$/.test(end)||!Number.isFinite(Date.parse(start))||!Number.isFinite(Date.parse(end))||new Date(start).toISOString().slice(0,10)!==start||new Date(end).toISOString().slice(0,10)!==end||start<'2000-01-01'||end>'2100-12-31'||end<start||(Date.parse(end)-Date.parse(start))/86400000>31)throw new Error('Enter valid event dates, up to 32 days, with the end on or after the start.');
  return {id:`sportdata-manual-${parsed.id}`,name:title,org:'Sportdata event',city:'See organiser',venue:'See organiser',country:'',flag:'🥋',start,end,source:'Sportdata',sourceUrl:parsed.url};
 }
 function fightCheckCadence(bout,now=Date.now()){
