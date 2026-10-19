@@ -44,7 +44,9 @@ assert(context.__events.boutCheckText(demoBout).includes('reviewed'),'manual sou
 assert.strictEqual(context.__events.fightDayGroup({...demoBout,result:'Win'}),'finished','result moves fight to finished');
 const competitionKey=`prestige-martial-arts:${selectedEvent}`;
 context.__events.state.competitionPlans[competitionKey]={fighterIds:['test-athlete'],bouts:[{id:'b1',athleteId:'test-athlete',date:'2026-10-11',time:'14:00',area:'Tatami 3',category:'OC -42 kg PF',phase:'Final',opponent:'Opponent',result:'Win'}]};
+context.__events.state.fightView='all';
 assert(context.__events.clubView().includes('Tatami 3')&&context.__events.clubView().includes('data-bout-result="b1"'),'fighter fight schedule and result controls shown');
+context.__events.state.fightView='active';
 assert.strictEqual(context.__events.sportdataId({sourceUrl:'https://evil.example/kickboxing/?vernr=123'}),'','untrusted Sportdata host rejected');
 delete context.__events.state.competitionPlans[competitionKey];
 assert(context.__events.clubView().includes('data-injury-athlete="test-athlete"'),'injury action on club athlete card');
