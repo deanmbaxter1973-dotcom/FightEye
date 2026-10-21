@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VERSION='v249';
+const VERSION='v250';
 const ICLOUD_FEED='https://raw.githubusercontent.com/deanmbaxter1973-dotcom/FightEye/main/fighteye_v195_v196/data/events.ics';
 const events=(window.FIGHTEYE_EVENTS||[]).map(e=>({...e,status:statusFor(e)})).sort((a,b)=>new Date(a.start)-new Date(b.start));
 const athletes=[...(window.FIGHTEYE_ATHLETES||[])];
@@ -171,6 +171,28 @@ function seedMoreBristolPrestigeEntries(){
  try{saveStore();localStorage.setItem(marker,'done')}catch{}
 }
 seedMoreBristolPrestigeEntries();
+function seedVerifiedPrestigeRoster(){
+ const marker='fighteye-prestige-2026-roster-v1';
+ if(localStorage.getItem(marker)==='done')return;
+ const group=state.groups.find(g=>g.id==='prestige-martial-arts'||g.name?.trim().toLowerCase()==='prestige martial arts');
+ if(!group)return;
+ group.memberIds=Array.isArray(group.memberIds)?group.memberIds:[];
+ const wku='https://www.kihapp.com/tournaments/24374-wku-british-international-open/clubs/72234-prestige-martial-art/results';
+ const ico='https://www.kihapp.com/tournaments/25003-ico-welsh-open-2026/clubs/72234-prestige-martial-art/results';
+ for(const entry of [
+  {id:'harlee-hooker',name:'Harlee Hooker',ranking:'2026 WKU British International Open · PF, LC, KL',sourceUrl:wku},
+  {id:'noah-careford',name:'Noah Careford',ranking:'2026 WKU British International Open · light contact',sourceUrl:wku},
+  {id:'athika-kadar',name:'Athika Kadar',ranking:'2026 WKU British International Open · kick light and light contact',sourceUrl:wku},
+  {id:'owen-gargan',name:'Owen Gargan',ranking:'2026 WKU British International Open · PF, LC, KL',sourceUrl:wku},
+  {id:'arun-longia',name:'Arun Longia',ranking:'2026 ICO Welsh Open · advanced point and blitz combat',sourceUrl:ico}
+ ]){
+  let athlete=athletes.find(a=>String(a.name||'').trim().toLowerCase()===entry.name.toLowerCase());
+  if(!athlete){athlete={...entry,club:group.name,flag:'🇬🇧',weight:'Not recorded',record:'Not recorded',medals:'Not recorded',next:'Not scheduled',form:'',licence:'Not recorded',insurance:'Not recorded',passport:'Not recorded',medical:'Not recorded'};athletes.push(athlete);state.customAthletes.push(athlete)}
+  if(!group.memberIds.includes(athlete.id))group.memberIds.push(athlete.id);
+ }
+ try{saveStore();localStorage.setItem(marker,'done')}catch{}
+}
+seedVerifiedPrestigeRoster();
 function readWeightStore(){try{const value=JSON.parse(localStorage.getItem('fighteye-weights-v1')||'{}');return value&&typeof value==='object'&&!Array.isArray(value)?value:{}}catch{return{}}}
 function saveWeightStore(){localStorage.setItem('fighteye-weights-v1',JSON.stringify(state.weightRecords))}
 function athleteWeights(id){return (state.weightRecords[id]||[]).slice().sort((a,b)=>a.date.localeCompare(b.date))}
