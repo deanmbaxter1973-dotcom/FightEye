@@ -1,7 +1,12 @@
 {
-  "name":"fighteye-v195-v196",
-  "private":true,
-  "version":"227.0.0",
-  "scripts":{"test":"node tests/smoke.js && node tests/injury-vault.js && node tests/profile-release.js && node tests/club-candidates.js","check":"node --check app.js && node --check netlify/functions/health.js && node --check netlify/functions/events.js && node --check netlify/functions/sync.js && node --check netlify/functions/analytics.js && node --check netlify/functions/metrics.js && node --check netlify/functions/club-candidates.js && node tests/smoke.js && node tests/injury-vault.js && node tests/profile-release.js && node tests/club-candidates.js"},
-  "engines":{"node":">=18"}
+  "name": "fighteye-v195-v196",
+  "private": true,
+  "version": "253.0.0",
+  "scripts": {
+    "test": "node tests/smoke.js && node tests/injury-vault.js && node tests/profile-release.js && node tests/club-candidates.js && node tests/club-workflow.js",
+    "check": "node --check app.js && node --check netlify/functions/health.js && node --check netlify/functions/events.js && node --check netlify/functions/sync.js && node --check netlify/functions/analytics.js && node --check netlify/functions/metrics.js && node --check netlify/functions/club-candidates.js && node tests/smoke.js && node tests/injury-vault.js && node tests/profile-release.js && node tests/club-candidates.js && node tests/club-workflow.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }
