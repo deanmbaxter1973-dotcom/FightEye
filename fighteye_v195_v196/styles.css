@@ -174,7 +174,31 @@ body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
 
 /* Phases 251–253: roster review, bulk imports and event preparation. */
 .club-section-nav{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}.club-section-nav a{display:flex;align-items:center;justify-content:center;flex:1 1 110px;min-height:44px;border:1px solid var(--line);border-radius:12px;color:var(--gold);text-decoration:none;background:rgba(255,255,255,.04)}
-#clubRosterWorkspace,#clubEventTracker,#clubDiscovery{scroll-margin-top:16px}
+#clubRosterWorkspace,#clubEventTracker,#clubDiscovery,#eventOperations{scroll-margin-top:16px}
+.event-operations{margin:16px 0;padding:16px;border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:16px;background:rgba(255,255,255,.04);min-width:0}
+.event-operations>.section-head,.schedule-clashes>.section-head{flex-wrap:wrap;align-items:flex-start;gap:12px}
+.event-operations h4{margin:0 0 8px}.event-operations button{min-height:44px}
+.event-operations>.section-head .squad-actions{margin:0;flex:1 1 280px}
+.operations-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}
+.operations-metrics>span{display:grid;gap:4px;min-width:0;padding:12px;border:1px solid var(--line);border-radius:12px;font-size:13px;color:var(--muted)}
+.operations-metrics strong{font-size:24px;color:var(--gold)}
+.event-operations details{border-top:1px solid var(--line);padding:10px 0;margin-top:10px}
+.event-operations summary{font-weight:700;min-height:44px;line-height:1.5;cursor:pointer}
+.coach-briefing-preview pre{white-space:pre-wrap;overflow-wrap:anywhere;font-family:inherit;font-size:14px;line-height:1.6;margin:8px 0;max-height:420px;overflow:auto;background:rgba(0,0,0,.12);padding:12px;border-radius:12px}
+.preparation-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.preparation-list article{padding:12px;min-width:0;border:1px solid var(--line);border-radius:12px}
+.preparation-list article>div{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+.preparation-list strong,.preparation-list small{overflow-wrap:anywhere}
+.preparation-list .task{min-height:44px;display:flex;gap:9px;align-items:center}
+.preparation-list .task input{flex:0 0 auto;width:20px;height:20px;accent-color:var(--gold)}
+.preparation-list form{display:grid;gap:8px;margin:10px 0}.preparation-list form label,.schedule-clashes label{display:grid;gap:6px;min-width:0}
+.preparation-list .budget,.schedule-clashes .budget{width:100%;max-width:100%;min-width:0;font-size:16px;box-sizing:border-box}
+.schedule-clashes{border-top:1px solid var(--line);margin-top:12px;padding-top:14px}
+.schedule-clashes>.section-head>label{max-width:260px}
+.schedule-warning{padding:10px 12px;border-left:3px solid var(--gold);background:rgba(255,205,74,.08);border-radius:8px;overflow-wrap:anywhere}
+.clash-warning-list{list-style:none;padding:0;display:grid;gap:8px}.clash-warning-list li{padding:12px;border:1px solid rgba(255,205,74,.4);border-radius:12px;background:rgba(255,205,74,.08);overflow-wrap:anywhere}
+.clash-warning-list p{margin:6px 0}.clash-warning-list small{color:var(--muted)}
+@media(max-width:620px){.event-operations{padding:14px}.operations-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.preparation-list{grid-template-columns:minmax(0,1fr)}.schedule-clashes>.section-head>label{max-width:none;width:100%}.event-operations>.section-head .squad-actions{width:100%}}
 .roster-workspace{margin:20px 0;border-top:3px solid var(--gold)}
 .roster-workspace .section-head,.event-squad .section-head{gap:12px;flex-wrap:wrap;align-items:flex-start}
 .roster-workspace h3,.event-squad h4{margin:0 0 8px}
