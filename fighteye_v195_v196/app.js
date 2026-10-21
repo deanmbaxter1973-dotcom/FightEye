@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VERSION='v247';
+const VERSION='v248';
 const ICLOUD_FEED='https://raw.githubusercontent.com/deanmbaxter1973-dotcom/FightEye/main/fighteye_v195_v196/data/events.ics';
 const events=(window.FIGHTEYE_EVENTS||[]).map(e=>({...e,status:statusFor(e)})).sort((a,b)=>new Date(a.start)-new Date(b.start));
 const athletes=[...(window.FIGHTEYE_ATHLETES||[])];
@@ -134,6 +134,24 @@ function injuryPanel(group,members){
 }
 function readStore(){try{return JSON.parse(localStorage.getItem('fighteye-v192')||'{}')}catch{return{}}}
 function saveStore(){localStorage.setItem('fighteye-v192',JSON.stringify({saved:[...state.saved],budget:state.budget,attendance:state.attendance,parentAthlete:state.parentAthlete,adminEvents:state.adminEvents,analyticsAthlete:state.analyticsAthlete,analyticsGoal:state.analyticsGoal,groups:state.groups,competitionPlans:state.competitionPlans,competitionEventId:state.competitionEventId,customAthletes:state.customAthletes,selectedGroup:state.selectedGroup,rosterCache:state.rosterCache,weightRange:state.weightRange,weightUnit:state.weightUnit}));}
+function seedBristolPrestigeEntry(){
+ const marker='fighteye-bristol-prestige-2026-v1';
+ if(localStorage.getItem(marker)==='done')return;
+ const group=state.groups.find(g=>g.id==='prestige-martial-arts'||g.name?.trim().toLowerCase()==='prestige martial arts');
+ if(!group)return;
+ const sameName=a=>/^(ayaaz ali|ali ayaaz)$/i.test(String(a.name||'').trim());
+ let athlete=athletes.find(sameName);
+ if(!athlete){athlete={id:'ayaaz-ali-bristol-2026',name:'Ayaaz Ali',club:group.name,flag:'🇬🇧',ranking:'Older cadet male −52 kg · advanced · point fighting and light contact',weight:'Not recorded',record:'Not recorded',medals:'Not recorded',next:'Bristol Open 2026',form:'',licence:'Not recorded',insurance:'Not recorded',passport:'Not recorded',medical:'Not recorded'};athletes.push(athlete);state.customAthletes.push(athlete)}
+ if(!Array.isArray(group.memberIds))group.memberIds=[];
+ if(!group.memberIds.includes(athlete.id))group.memberIds.push(athlete.id);
+ const key=`${group.id}:bristol-open-2026`,plan=state.competitionPlans[key]||(state.competitionPlans[key]={fighterIds:[],bouts:[]});
+ if(!Array.isArray(plan.fighterIds))plan.fighterIds=[];
+ if(!plan.fighterIds.includes(athlete.id))plan.fighterIds.push(athlete.id);
+ if(!Array.isArray(plan.watched))plan.watched=[];
+ if(!plan.watched.some(item=>sameName({name:item.athlete})))plan.watched.push({id:'watch-ayaaz-ali-bristol-2026',team:group.name,athlete:'Ayaaz Ali'});
+ try{saveStore();localStorage.setItem(marker,'done')}catch{}
+}
+seedBristolPrestigeEntry();
 function readWeightStore(){try{const value=JSON.parse(localStorage.getItem('fighteye-weights-v1')||'{}');return value&&typeof value==='object'&&!Array.isArray(value)?value:{}}catch{return{}}}
 function saveWeightStore(){localStorage.setItem('fighteye-weights-v1',JSON.stringify(state.weightRecords))}
 function athleteWeights(id){return (state.weightRecords[id]||[]).slice().sort((a,b)=>a.date.localeCompare(b.date))}
@@ -364,6 +382,7 @@ function renderCompetitionExtras(){
  filters.insertAdjacentHTML('beforeend',`<label>Fighter<select class="budget" id="fightDayAthlete"><option value="">All fighters</option>${selected.map(id=>`<option value="${esc(id)}" ${state.fightDayAthlete===id?'selected':''}>${esc(athletes.find(a=>a.id===id)?.name||'Athlete')}</option>`).join('')}</select></label>`);
  const summary=fightResultsSummary(plan.bouts||[],selected),total=summary.reduce((n,row)=>n+row.wins+row.losses+row.walkovers,0);
  agenda.insertAdjacentHTML('afterend',`<section class="competition-results"><div class="section-head"><div><h4>Club results</h4><small>${total} recorded outcomes · ${esc(event.name)}</small></div><button type="button" class="ghost" id="downloadResultsReport" ${summary.length?'':'disabled'}>Download results report</button></div><div class="competition-results-list">${summary.length?summary.map(row=>`<div><strong>${esc(row.name)}</strong><span>${row.wins} W · ${row.losses} L · ${row.walkovers} walkovers · ${row.pending} pending</span></div>`).join(''):'<p class="muted">Select fighters to see their event results.</p>'}</div><small>Locally recorded outcomes. Check Sportdata for official results.</small></section>`);
+ if(event.id==='bristol-open-2026'&&(group.id==='prestige-martial-arts'||group.name?.trim().toLowerCase()==='prestige martial arts')&&athletes.some(a=>selected.includes(a.id)&&/^(ayaaz ali|ali ayaaz)$/i.test(a.name.trim())))agenda.insertAdjacentHTML('beforebegin',`<section class="panel"><h4>Confirmed Bristol entry · Ayaaz Ali</h4><p>Older cadet male −52 kg, advanced: point fighting (PF 037) and light contact (LC 099).</p><p class="muted">Entries confirmed from the public Sportdata index. Bout times and opponents have not been published here.</p><a href="https://www.sportdata.org/kickboxing/set-online/popup_nennungen_main.php?popup_action=nennungenall&amp;verid=2891" target="_blank" rel="noopener noreferrer">Review official entries ↗</a></section>`);
  const fighterSelect=document.querySelector('#fightDayAthlete');fighterSelect.onchange=()=>{state.fightDayAthlete=fighterSelect.value;render()};
  const reset=document.querySelector('#resetFightDayFilters');if(reset){reset.disabled=!(state.fightDayDate||state.fightDayArea||state.fightDayAthlete);reset.onclick=()=>{state.fightDayDate='';state.fightDayArea='';state.fightDayAthlete='';render()}}
  const report=document.querySelector('#downloadResultsReport');if(report)report.onclick=()=>download(`fighteye-${event.id}-results.txt`,fightResultsReport(event,group,summary));
