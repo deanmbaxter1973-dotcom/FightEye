@@ -53,6 +53,7 @@ assert.equal(summary.missingSchedules.length,2);assert.equal(summary.report.unre
 assert.equal(o.preparationSummary(g,event,{fighterIds:['a'],bouts:[bout('a','','',{status:'Finished'})]}).missingSchedules.length,0,'A completed fighter does not appear as awaiting a new time');
 plan.bouts=[bout('a','10:00'),bout('a','10:10'),bout('b','')];
 const briefing=o.coachEventBriefing(g,event,plan,Date.parse('2026-10-21T12:00:00Z'));
+assert(briefing.includes('Prepared (UK time): 21/10/2026, 13:00:00'));
 assert(briefing.includes('Bring spare gloves'));assert(briefing.includes('Tight fighter turnaround'));assert(briefing.includes('FIGHTERS NEEDING TIMES'));assert(briefing.includes('INCOMPLETE BOUT DETAILS'));assert(briefing.includes('Entry confirmed by club'));
 assert(o.squadCsv(g,event,plan).includes('Kit packed'));assert(o.squadCsv(g,event,plan).includes('Bring spare gloves'));
 assert(!briefing.includes('PRIVATE MEDICAL'));assert(!briefing.includes('PRIVATE PHONE'),'Coach exports omit private profile fields');
