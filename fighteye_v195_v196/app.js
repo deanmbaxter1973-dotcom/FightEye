@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VERSION='v256';
+const VERSION='v259';
 const ICLOUD_FEED='https://raw.githubusercontent.com/deanmbaxter1973-dotcom/FightEye/main/fighteye_v195_v196/data/events.ics';
 const events=(window.FIGHTEYE_EVENTS||[]).map(e=>({...e,status:statusFor(e)})).sort((a,b)=>new Date(a.start)-new Date(b.start));
 const athletes=[...(window.FIGHTEYE_ATHLETES||[])];
@@ -538,6 +538,16 @@ function bindEventOperations(){
  const downloadButton=$('#downloadCoachBriefing');if(downloadButton)downloadButton.onclick=()=>download(`fighteye-${event.id}-coach-briefing.txt`,coachEventBriefing(group,event,plan));
  const copy=$('#copyCoachBriefing');if(copy)copy.onclick=async()=>{try{if(!navigator.clipboard?.writeText)throw new Error('Clipboard unavailable');await navigator.clipboard.writeText(coachEventBriefing(group,event,plan));notify('Coach briefing copied.')}catch{notify('Copy is unavailable in this browser. Use Download coach briefing.')}};
 }
+
+function renderCoachHandover(){
+ if(state.tab!=='club')return;const current=currentCompetitionPlan(),host=document.querySelector('#eventOperations');if(!current||!host)return;
+ const {group,event,plan}=current,rows=activeEventSquad(group,event,plan),records=plan.coachHandover||{};
+ const text=()=>[`Coach handover — ${event.name}`,group.name,`Prepared: ${eventOperationsTime(Date.now())}`,...rows.map(a=>{const r=records[a.id]||{};return `${a.name} | Coach: ${r.coach||'Unassigned'} | Warm-up: ${r.warmup?'checked':'pending'} | Equipment: ${r.equipment?'checked':'pending'} | ${r.note||''}`})].join('\n');
+ host.insertAdjacentHTML('beforeend',`<details class="coach-handover"><summary>Coach assignments and handover</summary><p>Assign a coach and record bout preparation for each active fighter. These checks are saved for this event on this device.</p><button class="ghost" id="exportCoachHandover">Download handover</button>${rows.map(a=>{const r=records[a.id]||{};return `<form data-coach-handover="${esc(a.id)}" class="panel"><h4>${esc(a.name)}</h4><label>Assigned coach<input class="budget" name="coach" maxlength="80" value="${esc(r.coach||'')}"></label><label class="task"><input name="warmup" type="checkbox" ${r.warmup?'checked':''}> Warm-up checked</label><label class="task"><input name="equipment" type="checkbox" ${r.equipment?'checked':''}> Bout equipment checked</label><label>Handover note<input class="budget" name="note" maxlength="160" value="${esc(r.note||'')}" placeholder="e.g. coach waiting at Tatami 2"></label><button class="button" type="submit">Save handover for ${esc(a.name)}</button>${r.at?`<small>Saved ${esc(eventOperationsTime(r.at))}</small>`:''}</form>`}).join('')||'<p>Select active fighters to create a handover.</p>'}</details>`);
+ host.querySelectorAll('[data-coach-handover]').forEach(form=>form.onsubmit=e=>{e.preventDefault();const fd=new FormData(form),previous=plan.coachHandover;plan.coachHandover={...previous,[form.dataset.coachHandover]:{coach:String(fd.get('coach')||'').trim().slice(0,80),warmup:fd.has('warmup'),equipment:fd.has('equipment'),note:String(fd.get('note')||'').trim().slice(0,160),at:new Date().toISOString()}};try{saveStore();notify('Coach handover saved.')}catch{plan.coachHandover=previous;notify('Could not save this handover on this device.')}});
+ document.querySelector('#exportCoachHandover').onclick=()=>download(`fighteye-${event.id}-coach-handover.txt`,text());
+}
+
 function clubView(){
  const group=state.groups.find(g=>g.id===state.selectedGroup)||state.groups[0];
  const members=athletes.filter(a=>(group.memberIds||[]).includes(a.id));
@@ -584,7 +594,7 @@ function duplicateIds(xs){return xs.length-new Set(xs.map(x=>x.id)).size;}
 function invalidEvents(){return events.filter(e=>!e.id||!e.name||!e.start||!e.end||new Date(e.start)>new Date(e.end));}
 function sheet(){return `<aside class="sheet" id="sheet" aria-label="Details panel"></aside>`;}
 function toast(){return state.toast?`<div class="toast" role="status">${esc(state.toast)}</div>`:'';}
-function render(){const views={events:eventsView,settings:settingsView,passport:passportView,travel:travelView,club:clubView,more:moreView,backend:backendView,integrations:integrationsView,analytics:analyticsView,production:productionView,sync:syncView,replay:replayView,rankings:rankingsView,parent:parentView,admin:adminView};if(state.tab==='club')loadRosterCache();app.innerHTML=header()+(state.installGuideVisible?installGuide():'')+(views[state.tab]||moreView)()+nav()+sheet()+toast();bind();renderCompetitionExtras();bindRosterWorkspace();bindEventSquad();bindEventOperations();scheduleFightChecks();if(state.tab==='club')maybeDiscoverClub();}
+function render(){const views={events:eventsView,settings:settingsView,passport:passportView,travel:travelView,club:clubView,more:moreView,backend:backendView,integrations:integrationsView,analytics:analyticsView,production:productionView,sync:syncView,replay:replayView,rankings:rankingsView,parent:parentView,admin:adminView};if(state.tab==='club')loadRosterCache();app.innerHTML=header()+(state.installGuideVisible?installGuide():'')+(views[state.tab]||moreView)()+nav()+sheet()+toast();bind();renderCompetitionExtras();bindRosterWorkspace();bindEventSquad();bindEventOperations();renderCoachHandover();scheduleFightChecks();if(state.tab==='club')maybeDiscoverClub();}
 function rosterEventIds(){return [...new Set(events.filter(e=>sportdataId(e)).sort((a,b)=>Math.abs(Date.parse(a.start)-Date.now())-Math.abs(Date.parse(b.start)-Date.now())).map(sportdataId))].slice(0,8)}
 function loadRosterCache(){const group=state.groups.find(g=>g.id===state.selectedGroup);if(!group||state.rosterGroup===group.id)return;const cached=state.rosterCache[group.id];state.rosterGroup=group.id;state.rosterCandidates=cached?.club===group.name&&Array.isArray(cached.candidates)?cached.candidates:[];state.rosterChecked=cached?.club===group.name?cached.checked||0:0;state.rosterTotal=cached?.club===group.name?cached.total||0:0;state.rosterError='';state.rosterLoading=false}
 function maybeDiscoverClub(){const group=state.groups.find(g=>g.id===state.selectedGroup),cached=group&&state.rosterCache[group.id];if(!group||state.rosterLoading||cached?.version===2&&cached.club===group.name&&Date.now()-Date.parse(cached.checkedAt)<86400000||Date.now()-(state.rosterAttempt[group.id]||0)<600000)return;runRosterDiscovery(group)}

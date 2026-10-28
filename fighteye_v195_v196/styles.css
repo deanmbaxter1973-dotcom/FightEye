@@ -232,3 +232,5 @@ body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
  .roster-workspace,.event-squad{padding:14px}
  .roster-workspace small,.event-squad small{line-height:1.5}
 }
+
+.coach-handover form{display:grid;gap:12px;margin:12px 0}.coach-handover label{display:grid;gap:6px}.coach-handover .task{display:flex;align-items:center}.coach-handover input{max-width:100%;min-width:0;font-size:16px}.coach-handover button{min-height:44px}.coach-handover small{overflow-wrap:anywhere}
