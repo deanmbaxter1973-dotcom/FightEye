@@ -96,8 +96,8 @@ window.FIGHTEYE_EVENTS = [
     "flag": "🇳🇴",
     "city": "See organiser listing",
     "venue": "See organiser listing",
-    "start": "2026-10-20",
-    "end": "2026-10-24",
+    "start": "2026-10-30",
+    "end": "2026-11-01",
     "closing": null,
     "collection": [
       "Europe"
@@ -114,7 +114,7 @@ window.FIGHTEYE_EVENTS = [
     "travel": "TBC",
     "sourceUrl": "https://www.sportdata.org/kickboxing/event_list_prod/events.html",
     "source": "Sportdata calendar",
-    "verifiedAt": "2026-10-26"
+    "verifiedAt": "2026-11-02"
   },
   {
     "id": "lithuania-open-2026",
@@ -236,8 +236,8 @@ window.FIGHTEYE_EVENTS = [
     "flag": "🇩🇪",
     "city": "See organiser listing",
     "venue": "See organiser listing",
-    "start": "2026-10-20",
-    "end": "2026-10-24",
+    "start": "2026-10-30",
+    "end": "2026-11-01",
     "closing": null,
     "collection": [
       "Europe"
@@ -254,7 +254,7 @@ window.FIGHTEYE_EVENTS = [
     "travel": "TBC",
     "sourceUrl": "https://www.sportdata.org/kickboxing/event_list_prod/events.html",
     "source": "Sportdata calendar",
-    "verifiedAt": "2026-10-26"
+    "verifiedAt": "2026-11-02"
   },
   {
     "id": "belgrade-trophy-2026",
@@ -402,8 +402,8 @@ window.FIGHTEYE_EVENTS = [
     "flag": "🇧🇦",
     "city": "See organiser listing",
     "venue": "See organiser listing",
-    "start": "2026-10-20",
-    "end": "2026-10-24",
+    "start": "2026-10-30",
+    "end": "2026-11-01",
     "closing": null,
     "collection": [
       "Europe"
@@ -420,7 +420,7 @@ window.FIGHTEYE_EVENTS = [
     "travel": "TBC",
     "sourceUrl": "https://www.sportdata.org/kickboxing/event_list_prod/events.html",
     "source": "Sportdata calendar",
-    "verifiedAt": "2026-10-26"
+    "verifiedAt": "2026-11-02"
   },
   {
     "id": "pointfighting-grand-prix-polski-2026",
@@ -458,8 +458,8 @@ window.FIGHTEYE_EVENTS = [
     "flag": "🇩🇪",
     "city": "See organiser listing",
     "venue": "See organiser listing",
-    "start": "2026-10-20",
-    "end": "2026-10-24",
+    "start": "2026-10-30",
+    "end": "2026-11-01",
     "closing": null,
     "collection": [
       "Europe"
@@ -476,7 +476,7 @@ window.FIGHTEYE_EVENTS = [
     "travel": "TBC",
     "sourceUrl": "https://www.sportdata.org/kickboxing/event_list_prod/events.html",
     "source": "Sportdata calendar",
-    "verifiedAt": "2026-10-26"
+    "verifiedAt": "2026-11-02"
   },
   {
     "id": "ypres-open-cup-2026",
@@ -486,8 +486,8 @@ window.FIGHTEYE_EVENTS = [
     "flag": "🇧🇪",
     "city": "See organiser listing",
     "venue": "See organiser listing",
-    "start": "2026-10-20",
-    "end": "2026-10-24",
+    "start": "2026-10-30",
+    "end": "2026-11-01",
     "closing": null,
     "collection": [
       "Europe"
@@ -504,7 +504,7 @@ window.FIGHTEYE_EVENTS = [
     "travel": "TBC",
     "sourceUrl": "https://www.sportdata.org/kickboxing/event_list_prod/events.html",
     "source": "Sportdata calendar",
-    "verifiedAt": "2026-10-26"
+    "verifiedAt": "2026-11-02"
   },
   {
     "id": "wako-europeans-2026",
@@ -542,8 +542,8 @@ window.FIGHTEYE_EVENTS = [
     "flag": "🇲🇰",
     "city": "Skopje",
     "venue": "See organiser listing",
-    "start": "2026-10-20",
-    "end": "2026-10-24",
+    "start": "2026-10-30",
+    "end": "2026-11-01",
     "closing": null,
     "collection": [
       "Europe"
@@ -560,7 +560,7 @@ window.FIGHTEYE_EVENTS = [
     "travel": "TBC",
     "sourceUrl": "https://www.sportdata.org/kickboxing/event_list_prod/events.html",
     "source": "Sportdata calendar",
-    "verifiedAt": "2026-10-26"
+    "verifiedAt": "2026-11-02"
   },
   {
     "id": "westfalen-open-cup-2026",
@@ -570,8 +570,8 @@ window.FIGHTEYE_EVENTS = [
     "flag": "🇩🇪",
     "city": "See organiser listing",
     "venue": "See organiser listing",
-    "start": "2026-10-20",
-    "end": "2026-10-24",
+    "start": "2026-10-30",
+    "end": "2026-11-01",
     "closing": null,
     "collection": [
       "Europe"
@@ -588,7 +588,7 @@ window.FIGHTEYE_EVENTS = [
     "travel": "TBC",
     "sourceUrl": "https://www.sportdata.org/kickboxing/event_list_prod/events.html",
     "source": "Sportdata calendar",
-    "verifiedAt": "2026-10-26"
+    "verifiedAt": "2026-11-02"
   },
   {
     "id": "senshi-christmas-cup-2026",
@@ -598,8 +598,8 @@ window.FIGHTEYE_EVENTS = [
     "flag": "🇩🇰",
     "city": "See organiser listing",
     "venue": "See organiser listing",
-    "start": "2026-10-20",
-    "end": "2026-10-24",
+    "start": "2026-10-30",
+    "end": "2026-11-01",
     "closing": null,
     "collection": [
       "Europe"
@@ -616,7 +616,7 @@ window.FIGHTEYE_EVENTS = [
     "travel": "TBC",
     "sourceUrl": "https://www.sportdata.org/kickboxing/event_list_prod/events.html",
     "source": "Sportdata calendar",
-    "verifiedAt": "2026-10-26"
+    "verifiedAt": "2026-11-02"
   },
   {
     "id": "kutina-open-2026",
@@ -626,8 +626,8 @@ window.FIGHTEYE_EVENTS = [
     "flag": "🇭🇷",
     "city": "See organiser listing",
     "venue": "See organiser listing",
-    "start": "2026-10-20",
-    "end": "2026-10-24",
+    "start": "2026-10-30",
+    "end": "2026-11-01",
     "closing": null,
     "collection": [
       "Europe"
@@ -644,7 +644,7 @@ window.FIGHTEYE_EVENTS = [
     "travel": "TBC",
     "sourceUrl": "https://www.sportdata.org/kickboxing/event_list_prod/events.html",
     "source": "Sportdata calendar",
-    "verifiedAt": "2026-10-26"
+    "verifiedAt": "2026-11-02"
   },
   {
     "id": "silesian-kickboxing-championships-2026",
@@ -654,8 +654,8 @@ window.FIGHTEYE_EVENTS = [
     "flag": "🇵🇱",
     "city": "See organiser listing",
     "venue": "See organiser listing",
-    "start": "2026-10-20",
-    "end": "2026-10-24",
+    "start": "2026-10-30",
+    "end": "2026-11-01",
     "closing": null,
     "collection": [
       "Europe"
@@ -672,7 +672,7 @@ window.FIGHTEYE_EVENTS = [
     "travel": "TBC",
     "sourceUrl": "https://www.sportdata.org/kickboxing/event_list_prod/events.html",
     "source": "Sportdata calendar",
-    "verifiedAt": "2026-10-26"
+    "verifiedAt": "2026-11-02"
   },
   {
     "id": "swedish-open-2026",
@@ -796,7 +796,7 @@ window.FIGHTEYE_EVENTS = [
     "registration": "#",
     "hotel": "TBC",
     "travel": "TBC",
-    "verifiedAt": "2026-10-26",
+    "verifiedAt": "2026-11-02",
     "id": "wko-british-open-2026",
     "name": "2026 WKO British Open Championships",
     "org": "WKO",
@@ -824,7 +824,7 @@ window.FIGHTEYE_EVENTS = [
     "registration": "#",
     "hotel": "TBC",
     "travel": "TBC",
-    "verifiedAt": "2026-10-26",
+    "verifiedAt": "2026-11-02",
     "id": "titans-collide-open-2026",
     "name": "Titans Collide Open 2026",
     "org": "Titans Collide",
@@ -1023,7 +1023,7 @@ window.FIGHTEYE_EVENTS = [
     "registration": "#",
     "hotel": "TBC",
     "travel": "TBC",
-    "verifiedAt": "2026-10-26",
+    "verifiedAt": "2026-11-02",
     "id": "wku-english-open-2027",
     "name": "WKU English Open 2027",
     "org": "WKU",
@@ -1052,7 +1052,7 @@ window.FIGHTEYE_EVENTS = [
     "registration": "#",
     "hotel": "TBC",
     "travel": "TBC",
-    "verifiedAt": "2026-10-26",
+    "verifiedAt": "2026-11-02",
     "id": "wko-english-open-2027",
     "name": "2027 WKO English Open Championships",
     "org": "WKO",
@@ -1081,7 +1081,7 @@ window.FIGHTEYE_EVENTS = [
     "registration": "#",
     "hotel": "TBC",
     "travel": "TBC",
-    "verifiedAt": "2026-10-26",
+    "verifiedAt": "2026-11-02",
     "id": "wko-worlds-2027",
     "name": "2027 WKO Open World Championships",
     "org": "WKO",
@@ -1110,7 +1110,7 @@ window.FIGHTEYE_EVENTS = [
     "registration": "#",
     "hotel": "TBC",
     "travel": "TBC",
-    "verifiedAt": "2026-10-26",
+    "verifiedAt": "2026-11-02",
     "id": "wko-ringsports-2027",
     "name": "2027 WKO National Ringsports Championships",
     "org": "WKO",
@@ -1139,7 +1139,7 @@ window.FIGHTEYE_EVENTS = [
     "registration": "#",
     "hotel": "TBC",
     "travel": "TBC",
-    "verifiedAt": "2026-10-26",
+    "verifiedAt": "2026-11-02",
     "id": "exeter-open-2026",
     "name": "Exeter Open Kickboxing Championship",
     "org": "Exeter Open",
@@ -1168,7 +1168,7 @@ window.FIGHTEYE_EVENTS = [
     "registration": "#",
     "hotel": "TBC",
     "travel": "TBC",
-    "verifiedAt": "2026-10-26",
+    "verifiedAt": "2026-11-02",
     "id": "afmo-british-open-2026",
     "name": "AFMO British Open K1 & Muay Thai Championships 2026",
     "org": "AFMO",
@@ -1226,7 +1226,7 @@ window.FIGHTEYE_EVENTS = [
     "registration": "#",
     "hotel": "TBC",
     "travel": "TBC",
-    "verifiedAt": "2026-10-26",
+    "verifiedAt": "2026-11-02",
     "id": "iska-british-open-2026",
     "name": "ISKA British Open 2026",
     "org": "ISKA",
