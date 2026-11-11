@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VERSION='v262';
+const VERSION='v265';
 const ICLOUD_FEED='https://raw.githubusercontent.com/deanmbaxter1973-dotcom/FightEye/main/fighteye_v195_v196/data/events.ics';
 const events=(window.FIGHTEYE_EVENTS||[]).map(e=>({...e,status:statusFor(e)})).sort((a,b)=>new Date(a.start)-new Date(b.start));
 const athletes=[...(window.FIGHTEYE_ATHLETES||[])];
@@ -564,23 +564,49 @@ function fightDayCalendar(group,event,rows,now=Date.now()){
  lines.push('END:VCALENDAR');
  return lines.map(line=>{let result='',bytes=0;for(const c of line){const n=c.codePointAt(0),width=n<128?1:n<2048?2:n<65536?3:4;if(bytes+width>75){result+='\r\n ';bytes=1}result+=c;bytes+=width}return result}).join('\r\n')+'\r\n';
 }
+function filterRunningOrder(rows,{date='',area='',fighter=''}={}){
+ return rows.filter(b=>(!date||b.date===date)&&(!area||String(b.area||'').trim()===area)&&(!fighter||String(b.athleteId)===fighter));
+}
+function runningOrderPrint(group,event,plan,rows){
+ return `<h1>${esc(event.name)} — Fight day running order</h1><p>${esc(group.name)} · ${rows.length} shown bouts</p><p>Check times and areas against the organiser’s running order.</p><table><thead><tr><th>Day</th><th>Time</th><th>Fighter</th><th>Area</th><th>Category</th><th>Coach</th><th>Time check</th></tr></thead><tbody>${rows.map(b=>`<tr><td>${esc(b.date)}</td><td>${esc(b.time)}</td><td>${esc(athletes.find(a=>a.id===b.athleteId)?.name||'Fighter')}</td><td>${esc(b.area||'TBC')}</td><td>${esc(b.category||'TBC')}</td><td>${esc(assignedCoach(plan,b.athleteId)||'Unassigned')}</td><td>${b.provisionalTime===true?'Provisional':'—'}</td></tr>`).join('')}</tbody></table>`;
+}
 function bindFightDayOrder(){
  if(state.tab!=='club')return;
  const current=currentCompetitionPlan(),host=document.querySelector('#eventOperations');if(!current||!host)return;
  const {group,event,plan}=current,{timed,unresolved}=eventClashReport(group,event,plan);
  host.insertAdjacentHTML('beforeend',`<details class="fight-day-order"><summary>Fight day running order · ${timed.length} timed, ${unresolved.length} awaiting details</summary>
  <label>Filter by area<select class="budget" id="runningOrderArea"><option value="">All areas</option>${[...new Set(timed.map(b=>String(b.area||'').trim()).filter(Boolean))].sort().map(area=>`<option>${esc(area)}</option>`).join('')}</select></label>
+ <label>Filter by day<select class="budget" id="runningOrderDay"><option value="">All days</option>${[...new Set(timed.map(b=>b.date))].map(date=>`<option>${esc(date)}</option>`).join('')}</select></label>
+ <label>Filter by fighter<select class="budget" id="runningOrderFighter"><option value="">All fighters</option>${activeEventSquad(group,event,plan).filter(a=>timed.some(b=>b.athleteId===a.id)).map(a=>`<option value="${esc(a.id)}">${esc(a.name)}</option>`).join('')}</select></label>
+ <p id="runningOrderCount" role="status"></p>
  <div id="fightDayOrderRows"></div>
+ <button class="ghost" id="printRunningOrder" type="button">Print shown bouts</button>
  <button class="ghost" id="exportBoutCalendar" type="button">Download shown bouts (.ics)</button>
  <small>Calendar times use the importing calendar’s local time zone. Import again only after reviewing any changes; FightEye does not sync previously imported bouts.</small>
  </details>`);
- const area=host.querySelector('#runningOrderArea'),list=host.querySelector('#fightDayOrderRows'),button=host.querySelector('#exportBoutCalendar');
- const shown=()=>timed.filter(b=>!area.value||String(b.area||'').trim()===area.value);
+ const area=host.querySelector('#runningOrderArea'),day=host.querySelector('#runningOrderDay'),fighter=host.querySelector('#runningOrderFighter'),list=host.querySelector('#fightDayOrderRows'),button=host.querySelector('#exportBoutCalendar'),print=host.querySelector('#printRunningOrder'),count=host.querySelector('#runningOrderCount');
+ const shown=()=>filterRunningOrder(timed,{date:day.value,area:area.value,fighter:fighter.value});
  const refresh=()=>{
-  const rows=shown();button.disabled=!rows.length;
-  list.innerHTML=rows.length?`<ol>${rows.map(b=>`<li><strong>${esc(b.date)} · ${esc(b.time)} · ${esc(athletes.find(a=>a.id===b.athleteId)?.name||'Fighter')}</strong><small>${esc(b.area||'Area TBC')} · ${esc(b.category||'Category TBC')} · ${esc(assignedCoach(plan,b.athleteId)||'Coach unassigned')}</small></li>`).join('')}</ol>`:'<p>No timed unfinished bouts to show.</p>';
+  const rows=shown();button.disabled=print.disabled=!rows.length;count.textContent=`${rows.length} of ${timed.length} timed bouts shown`;
+  list.innerHTML=rows.length?`<ol>${rows.map((b,i)=>`<li><strong>${esc(b.date)} · ${esc(b.time)} · ${esc(athletes.find(a=>a.id===b.athleteId)?.name||'Fighter')}</strong><small>${esc(b.area||'Area TBC')} · ${esc(b.category||'Category TBC')} · ${esc(assignedCoach(plan,b.athleteId)||'Coach unassigned')}</small><label class="provisional-time"><input type="checkbox" data-provisional-row="${i}" ${b.provisionalTime===true?'checked':''}> Provisional time — needs recheck</label></li>`).join('')}</ol>`:'<p>No timed unfinished bouts match these filters.</p>';
+  list.querySelectorAll('[data-provisional-row]').forEach(input=>input.onchange=()=>{
+   const bout=rows[Number(input.dataset.provisionalRow)],previous=bout.provisionalTime;bout.provisionalTime=input.checked;
+   try{saveStore();count.textContent=input.checked?'Bout marked provisional.':'Provisional flag cleared.'}
+   catch{if(previous===undefined)delete bout.provisionalTime;else bout.provisionalTime=previous;input.checked=previous===true;count.textContent='Could not save the provisional flag on this device.'}
+  });
  };
- area.onchange=refresh;button.onclick=()=>{const rows=shown();if(rows.length)download(`fighteye-${event.id}-bouts.ics`,fightDayCalendar(group,event,rows),'text/calendar;charset=utf-8')};refresh();
+ area.onchange=day.onchange=fighter.onchange=refresh;
+ button.onclick=()=>{const rows=shown();if(rows.length)download(`fighteye-${event.id}-bouts.ics`,fightDayCalendar(group,event,rows),'text/calendar;charset=utf-8')};
+ print.onclick=()=>{
+  const rows=shown();if(!rows.length)return;
+  document.querySelector('#runningOrderPrint')?.remove();
+  const sheet=document.createElement('section');sheet.id='runningOrderPrint';sheet.innerHTML=runningOrderPrint(group,event,plan,rows);document.body.appendChild(sheet);
+  document.body.classList.add('print-running-order');
+  const cleanup=()=>{sheet.remove();document.body.classList.remove('print-running-order')};
+  window.addEventListener('afterprint',cleanup,{once:true});
+  try{window.print()}catch{cleanup();count.textContent='Printing is unavailable in this browser.'}
+ };
+ refresh();
 }
 
 function clubView(){

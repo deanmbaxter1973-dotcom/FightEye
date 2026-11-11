@@ -236,3 +236,15 @@ body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
 .coach-handover form{display:grid;gap:12px;margin:12px 0}.coach-handover label{display:grid;gap:6px}.coach-handover .task{display:flex;align-items:center}.coach-handover input{max-width:100%;min-width:0;font-size:16px}.coach-handover button{min-height:44px}.coach-handover small{overflow-wrap:anywhere}
 
 .fight-day-order label,.fight-day-order small{display:block;margin:.5rem 0}.fight-day-order li{padding:.5rem 0;overflow-wrap:anywhere}.fight-day-order button{min-height:44px}.fight-day-order select{max-width:100%;font-size:16px}
+
+#runningOrderPrint{display:none}
+.fight-day-order .provisional-time{display:flex;align-items:center;gap:.5rem;min-height:44px;font-size:.9rem}
+.provisional-time input{width:20px;height:20px;flex:none}
+@media print{
+ body.print-running-order>*{display:none!important}
+ body.print-running-order #runningOrderPrint{display:block!important;color:#111;background:#fff;font:11pt system-ui,sans-serif}
+ #runningOrderPrint table{width:100%;border-collapse:collapse}
+ #runningOrderPrint th,#runningOrderPrint td{border:1px solid #bbb;padding:.35rem;text-align:left;overflow-wrap:anywhere}
+ #runningOrderPrint thead{display:table-header-group}
+ #runningOrderPrint tr{break-inside:avoid}
+}
