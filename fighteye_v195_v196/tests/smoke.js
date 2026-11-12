@@ -17,7 +17,7 @@ assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'E
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const store=new Map();
 const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[{id:'test-athlete',name:'Test Athlete',ranking:'Cadet',weight:'42 kg'}],addEventListener:()=>{},webkit:{messageHandlers:{fighteyeHealth:{postMessage:()=>{}}}}},document:{getElementById:()=>({}),querySelector:()=>null,querySelectorAll:()=>[]},localStorage:{getItem:key=>store.get(key)||null,setItem:(key,value)=>store.set(key,value)},navigator:{userAgent:'Mozilla/5.0 (iPhone) AppleWebKit Safari',standalone:false},URL,setTimeout:()=>1,clearTimeout:()=>{}};
-vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,filterFightDayBouts,fightResultsSummary,fightResultsReport,priorityFightBouts,fightDayBriefing,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
+vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,timelineMatches,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,filterFightDayBouts,fightResultsSummary,fightResultsReport,priorityFightBouts,fightDayBriefing,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
 const official='https://www.sportdata.org/kickboxing/sportsid/veranstaltung_info_main.php?vernr=2488';
 const timetable='https://www.sportdata.org/setglinc/dtm/dtm_timetable.php?eventid=2488&system=kickboxing';
 assert.strictEqual(context.__events.parseSportdataLink(official).id,'2488','official event URL accepted');
@@ -178,3 +178,22 @@ assert(!context.__events.registrationOpen({start:future,end:future,closing:expir
 assert(!context.__events.registrationOpen({kind:'Squad training',start:future,end:future,closing},new Date().toISOString().slice(0,10)),'training excluded');
 for(const f of ['styles.css','sw.js','manifest.json','netlify.toml','netlify/functions/analytics.js','netlify/functions/metrics.js'])assert(fs.existsSync(path.join(root,f)),`missing ${f}`);
 console.log(`Smoke tests passed: ${events.length} events, unique IDs, analytics and production modules present.`);
+
+const timeline=context.__events;
+const filters={query:'',eventPeriod:'upcoming',saved:new Set(['old']),filter:'All',sourceFilter:'All sources',seriesFilter:'All organisers',kindFilter:'All activities'};
+const timelineRows=[
+ {id:'old',name:'Old cup',start:'2026-08-01',end:'2026-08-01'},
+ {id:'recent',name:'Recent cup',start:'2026-10-01',end:'2026-10-02'},
+ {id:'live',name:'Live cup',start:'2026-11-11',end:'2026-11-12',venue:'River Hall'},
+ {id:'future',name:'Future cup',start:'2026-11-15',end:'2026-11-15',closing:'2026-11-12'}
+];
+const ids=(changes)=>Array.from(timeline.timelineMatches(timelineRows,{...filters,...changes},'2026-11-12'),e=>e.id);
+assert.deepEqual(ids({}),['live','future']);
+assert.deepEqual(ids({eventPeriod:'past'}),['recent','old']);
+assert.deepEqual(ids({eventPeriod:'saved'}),['old']);
+assert.deepEqual(ids({eventPeriod:'open'}),['future']);
+assert.deepEqual(ids({query:' river hall '}),['live']);
+timeline.state.eventPeriod='all';timeline.state.eventLayout='list';
+assert(timeline.eventsView().includes('class="timeline-row"'));
+assert(timeline.eventsView().includes('id="timelineMonth"'));
+console.log('Timeline checks passed: UK day boundaries, saved events, past ordering and venue search.');
