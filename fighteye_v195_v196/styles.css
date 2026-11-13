@@ -259,3 +259,8 @@ body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
 .timeline-row small{display:block;color:var(--muted);margin-top:.25rem}
 .timeline-row h3{margin:0;font-size:1rem}
 @media(max-width:540px){.timeline-row{grid-template-columns:minmax(0,1fr)}.timeline-navigation{width:100%}.timeline-navigation button{flex:1}}
+
+.timeline-month{display:grid;gap:.55rem;margin-bottom:1rem;min-width:0}
+.timeline-month>h3{margin:0;padding:.55rem .75rem;border-left:3px solid var(--gold);border-radius:5px;background:var(--card);font-size:1rem}
+.timeline-month>h3 small{color:var(--muted);font-weight:400;margin-left:.4rem}
+#countryFilter,#clearTimelineFilters{min-height:44px;max-width:100%}
