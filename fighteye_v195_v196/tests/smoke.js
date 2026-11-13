@@ -17,7 +17,7 @@ assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'E
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const store=new Map();
 const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[{id:'test-athlete',name:'Test Athlete',ranking:'Cadet',weight:'42 kg'}],addEventListener:()=>{},webkit:{messageHandlers:{fighteyeHealth:{postMessage:()=>{}}}}},document:{getElementById:()=>({}),querySelector:()=>null,querySelectorAll:()=>[]},localStorage:{getItem:key=>store.get(key)||null,setItem:(key,value)=>store.set(key,value)},navigator:{userAgent:'Mozilla/5.0 (iPhone) AppleWebKit Safari',standalone:false},URL,setTimeout:()=>1,clearTimeout:()=>{}};
-vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,timelineMatches,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,filterFightDayBouts,fightResultsSummary,fightResultsReport,priorityFightBouts,fightDayBriefing,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
+vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,timelineMatches,timelineMonthGroups,timelineEntryLabel,ukTimelineDay,timelinePreferences,readTimelinePreferences,saveTimelinePreferences,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,filterFightDayBouts,fightResultsSummary,fightResultsReport,priorityFightBouts,fightDayBriefing,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
 const official='https://www.sportdata.org/kickboxing/sportsid/veranstaltung_info_main.php?vernr=2488';
 const timetable='https://www.sportdata.org/setglinc/dtm/dtm_timetable.php?eventid=2488&system=kickboxing';
 assert.strictEqual(context.__events.parseSportdataLink(official).id,'2488','official event URL accepted');
@@ -197,3 +197,17 @@ timeline.state.eventPeriod='all';timeline.state.eventLayout='list';
 assert(timeline.eventsView().includes('class="timeline-row"'));
 assert(timeline.eventsView().includes('id="timelineMonth"'));
 console.log('Timeline checks passed: UK day boundaries, saved events, past ordering and venue search.');
+
+assert.equal(timeline.ukTimelineDay(new Date('2026-07-01T23:30:00Z')),'2026-07-02');
+const locations=[{...timelineRows[2],country:'United Kingdom'}, {...timelineRows[3],country:'Netherlands'}];
+assert.deepEqual(Array.from(timeline.timelineMatches(locations,{...filters,countryFilter:'Netherlands'},'2026-11-12'),e=>e.id),['future']);
+assert.equal(timeline.statusFor({...timelineRows[3],status:'Registration Closed'},'2026-11-12'),'Closing Soon');
+assert.equal(timeline.timelineEntryLabel(timelineRows[3],'2026-11-12'),'Closes today');
+assert.deepEqual(Array.from(timeline.timelineMonthGroups(timelineRows),([key])=>key),['2026-08','2026-10','2026-11']);
+timeline.state.countryFilter='United Kingdom';timeline.state.eventLayout='list';
+timeline.saveTimelinePreferences();
+assert.equal(timeline.readTimelinePreferences().eventLayout,'list');
+assert.equal(timeline.readTimelinePreferences().countryFilter,'United Kingdom');
+assert.equal(timeline.timelinePreferences({eventLayout:'broken',countryFilter:42}).countryFilter,'');
+assert(timeline.eventsView().includes('id="countryFilter"'));
+console.log('Timeline phases 267–269 passed: country filters, registration day, month grouping and preferences.');
