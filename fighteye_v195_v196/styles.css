@@ -264,3 +264,9 @@ body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
 .timeline-month>h3{margin:0;padding:.55rem .75rem;border-left:3px solid var(--gold);border-radius:5px;background:var(--card);font-size:1rem}
 .timeline-month>h3 small{color:var(--muted);font-weight:400;margin-left:.4rem}
 #countryFilter,#clearTimelineFilters{min-height:44px;max-width:100%}
+
+.timeline-tools input[type=date]{width:100%;min-width:0;max-width:100%;min-height:44px;font-size:16px;box-sizing:border-box}
+#exportTimelineCalendar{min-height:44px}
+.timeline-deadline{padding:.5rem;border:1px solid var(--line);border-radius:12px}
+.timeline-deadline p{margin:.25rem .25rem .5rem;color:var(--muted)}
+.timeline-deadline strong{color:var(--gold)}
