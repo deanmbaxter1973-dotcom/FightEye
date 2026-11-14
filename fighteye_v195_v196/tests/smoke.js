@@ -16,8 +16,8 @@ assert.strictEqual(events.find(e=>e.id==='ico-england-squad-oct-2026').access,'O
 assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'Eligibility to confirm','GB eligibility not assumed');
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const store=new Map();
-const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[{id:'test-athlete',name:'Test Athlete',ranking:'Cadet',weight:'42 kg'}],addEventListener:()=>{},webkit:{messageHandlers:{fighteyeHealth:{postMessage:()=>{}}}}},document:{getElementById:()=>({}),querySelector:()=>null,querySelectorAll:()=>[]},localStorage:{getItem:key=>store.get(key)||null,setItem:(key,value)=>store.set(key,value)},navigator:{userAgent:'Mozilla/5.0 (iPhone) AppleWebKit Safari',standalone:false},URL,setTimeout:()=>1,clearTimeout:()=>{}};
-vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,timelineMatches,timelineSelection,eventCalendarText,timelineMonthGroups,timelineEntryLabel,ukTimelineDay,timelinePreferences,readTimelinePreferences,saveTimelinePreferences,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,filterFightDayBouts,fightResultsSummary,fightResultsReport,priorityFightBouts,fightDayBriefing,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
+const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[{id:'test-athlete',name:'Test Athlete',ranking:'Cadet',weight:'42 kg'}],addEventListener:()=>{},webkit:{messageHandlers:{fighteyeHealth:{postMessage:()=>{}}}}},document:{getElementById:()=>({}),querySelector:()=>null,querySelectorAll:()=>[]},localStorage:{getItem:key=>store.get(key)||null,setItem:(key,value)=>store.set(key,value)},URLSearchParams,navigator:{userAgent:'Mozilla/5.0 (iPhone) AppleWebKit Safari',standalone:false},URL,setTimeout:()=>1,clearTimeout:()=>{}};
+vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,timelineQuickRange,savedTimelineConflicts,shareTimelineUrl,readSharedTimeline,timelineMatches,timelineSelection,eventCalendarText,timelineMonthGroups,timelineEntryLabel,ukTimelineDay,timelinePreferences,readTimelinePreferences,saveTimelinePreferences,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,filterFightDayBouts,fightResultsSummary,fightResultsReport,priorityFightBouts,fightDayBriefing,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
 const official='https://www.sportdata.org/kickboxing/sportsid/veranstaltung_info_main.php?vernr=2488';
 const timetable='https://www.sportdata.org/setglinc/dtm/dtm_timetable.php?eventid=2488&system=kickboxing';
 assert.strictEqual(context.__events.parseSportdataLink(official).id,'2488','official event URL accepted');
@@ -234,3 +234,27 @@ assert(folded.split('\r\n').every(line=>Buffer.byteLength(line)<=75));
 assert(!folded.includes('\r\nATTENDEE:'));
 assert(folded.replace(/\r\n /g,'').includes('\\, final'));
 console.log('Timeline phases 270–272 passed: inclusive dates, deadline ordering and scoped calendar export.');
+
+const quick=timeline.timelineQuickRange(7,'2026-12-29');
+assert.equal(quick.eventFrom,'2026-12-29');
+assert.equal(quick.eventTo,'2027-01-04');
+assert.equal(quick.eventPeriod,'upcoming');
+const clashRows=[
+ {id:'a',start:'2026-11-13',end:'2026-11-15'},
+ {id:'b',start:'2026-11-15',end:'2026-11-16'},
+ {id:'c',start:'2026-11-17',end:'2026-11-17'},
+ {id:'training',start:'2026-11-15',end:'2026-11-15',kind:'Squad training'},
+ {id:'unsaved',start:'2026-11-15',end:'2026-11-15'}
+];
+assert.deepEqual(Array.from(timeline.savedTimelineConflicts(clashRows,new Set(['a','b','c','training']),'2026-11-14'),pair=>Array.from(pair,e=>e.id)),[['a','b']]);
+assert.equal(timeline.savedTimelineConflicts(clashRows,new Set(['a','b']),'2026-11-17').length,0);
+const shared=new URL(timeline.shareTimelineUrl('https://example.test/?old=flag',{...filters,eventPeriod:'saved',saved:new Set(['private-id']),query:'Cup & Open',eventLayout:'deadlines',eventFrom:'2026-11-14',eventTo:'2026-02-30',countryFilter:'United Kingdom'}));
+const restored=timeline.readSharedTimeline(shared.hash);
+assert.equal(restored.query,'Cup & Open');
+assert.equal(restored.eventPeriod,'upcoming');
+assert.equal(restored.eventLayout,'deadlines');
+assert.equal(restored.eventFrom,'2026-11-14');
+assert.equal(restored.eventTo,'');
+assert(!shared.href.includes('private-id')&&!shared.search);
+assert.equal(timeline.readSharedTimeline('#profile'),null);
+console.log('Timeline phases 273–275 passed: inclusive shortcuts, saved clashes and privacy-scoped sharing.');
