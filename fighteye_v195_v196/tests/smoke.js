@@ -17,7 +17,7 @@ assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'E
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const store=new Map();
 const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[{id:'test-athlete',name:'Test Athlete',ranking:'Cadet',weight:'42 kg'}],addEventListener:()=>{},webkit:{messageHandlers:{fighteyeHealth:{postMessage:()=>{}}}}},document:{getElementById:()=>({}),querySelector:()=>null,querySelectorAll:()=>[]},localStorage:{getItem:key=>store.get(key)||null,setItem:(key,value)=>store.set(key,value)},URLSearchParams,navigator:{userAgent:'Mozilla/5.0 (iPhone) AppleWebKit Safari',standalone:false},URL,setTimeout:()=>1,clearTimeout:()=>{}};
-vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,timelineQuickRange,savedTimelineConflicts,shareTimelineUrl,readSharedTimeline,timelineMatches,timelineSelection,eventCalendarText,timelineMonthGroups,timelineEntryLabel,ukTimelineDay,timelinePreferences,readTimelinePreferences,saveTimelinePreferences,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,filterFightDayBouts,fightResultsSummary,fightResultsReport,priorityFightBouts,fightDayBriefing,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
+vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,timelineComparison,timelineChangeGroups,eventDeadlineCalendarText,timelineQuickRange,savedTimelineConflicts,shareTimelineUrl,readSharedTimeline,timelineMatches,timelineSelection,eventCalendarText,timelineMonthGroups,timelineEntryLabel,ukTimelineDay,timelinePreferences,readTimelinePreferences,saveTimelinePreferences,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,filterFightDayBouts,fightResultsSummary,fightResultsReport,priorityFightBouts,fightDayBriefing,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
 const official='https://www.sportdata.org/kickboxing/sportsid/veranstaltung_info_main.php?vernr=2488';
 const timetable='https://www.sportdata.org/setglinc/dtm/dtm_timetable.php?eventid=2488&system=kickboxing';
 assert.strictEqual(context.__events.parseSportdataLink(official).id,'2488','official event URL accepted');
@@ -258,3 +258,19 @@ assert.equal(restored.eventTo,'');
 assert(!shared.href.includes('private-id')&&!shared.search);
 assert.equal(timeline.readSharedTimeline('#profile'),null);
 console.log('Timeline phases 273–275 passed: inclusive shortcuts, saved clashes and privacy-scoped sharing.');
+
+const comparison=timeline.timelineComparison(planningRows.slice(0,2),'2026-11-13');
+assert(comparison.includes('Weekend')&&comparison.includes('Later')&&!comparison.includes('Unknown'));
+assert(!timeline.timelineComparison([planningRows[0]],'2026-11-13').includes('data-compare-open'));
+const changes=timeline.timelineChangeGroups([{id:'later'},{id:'weekend'},{id:'later'}],new Set(['later']));
+assert.equal(changes.saved.length,2);
+assert.equal(changes.other[0].id,'weekend');
+const baseDate='2026-11-13';
+const reminders=timeline.eventDeadlineCalendarText([...planningRows,planningRows[0]],baseDate,new Date(baseDate+'T12:00:00Z'));
+assert.equal((reminders.match(/BEGIN:VEVENT/g)||[]).length,2);
+assert.equal((reminders.match(/TRIGGER:-P2D/g)||[]).length,1,'Same-day closes cannot trigger an alarm in the past');
+assert(reminders.includes('UID:entry-deadline/weekend@fighteye.app'));
+assert(reminders.includes('DTSTART;VALUE=DATE:20261115'));
+assert(reminders.includes('DTEND;VALUE=DATE:20261116'));
+assert(!reminders.includes('entry-deadline/closed'));
+console.log('Timeline phases 276–278 passed: saved comparison, deadline alarms and saved change grouping.');
