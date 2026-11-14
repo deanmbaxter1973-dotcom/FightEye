@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VERSION='v275';
+const VERSION='v278';
 const ICLOUD_FEED='https://raw.githubusercontent.com/deanmbaxter1973-dotcom/FightEye/main/fighteye_v195_v196/data/events.ics';
 const UK_TIMELINE_DATE=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',year:'numeric',month:'2-digit',day:'2-digit'});
 const events=(window.FIGHTEYE_EVENTS||[]).map(e=>({...e,status:statusFor(e)})).sort((a,b)=>new Date(a.start)-new Date(b.start));
@@ -25,7 +25,7 @@ state.editAthlete='';state.clubDetailsError='';state.athleteEditError='';
 state.weightRecords=readWeightStore();state.weightError='';
 state.healthLinkedAthlete='';state.healthSyncAt='';state.healthSyncStatus='disconnected';state.healthBackgroundEnabled=false;
 state.injuries=[];state.injuryKey=null;state.injuryError='';state.injuryAthleteId='';
-state.eventPeriod='upcoming';state.eventMonth='';state.eventFrom='';state.eventTo='';Object.assign(state,readTimelinePreferences());
+state.eventPeriod='upcoming';state.timelineComparisonIds=new Set();state.eventMonth='';state.eventFrom='';state.eventTo='';Object.assign(state,readTimelinePreferences());
 const initialTimeline=typeof location==='undefined'?null:readSharedTimeline(location.hash);
 if(initialTimeline)Object.assign(state,initialTimeline);
 state.eventChanges=readEventChanges();
@@ -324,10 +324,39 @@ function shareTimelineUrl(url,filters){
 function timelineDeadlineRow(e){
  return `<div class="timeline-deadline"><p><strong>${esc(timelineEntryLabel(e))}</strong> · ${esc(fmt(e.closing))}</p>${timelineCompactRow(e)}</div>`;
 }
+function timelineComparison(rows,today=ukTimelineDay()){
+ if(rows.length<2)return '<p>Select two or three saved competitions to compare.</p>';
+ const fields=[
+  ['Dates',e=>fmt(e.start)+(e.end!==e.start?' – '+fmt(e.end):'')],
+  ['Location',e=>[...new Set([e.venue,e.city,e.country].filter(Boolean))].join(', ')||'TBC'],
+  ['Organiser',e=>e.series||e.org||'TBC'],
+  ['Entry status',e=>statusFor(e,today)],
+  ['Entry deadline',e=>timelineDateIsValid(e.closing||'')?fmt(e.closing):'TBC']
+ ];
+ return `<div class="timeline-compare-grid">${rows.map(e=>`<article class="panel"><h4>${esc(e.name)}</h4><dl>${fields.map(([label,value])=>`<dt>${label}</dt><dd>${esc(value(e))}</dd>`).join('')}</dl><button type="button" class="ghost" data-compare-open="${esc(e.id)}">Open event</button></article>`).join('')}</div>`;
+}
+function timelineComparePanel(){
+ const rows=events.filter(e=>state.saved.has(e.id)&&!e.kind&&timelineDateIsValid(e.start)&&timelineDateIsValid(e.end));
+ const selected=rows.filter(e=>state.timelineComparisonIds.has(e.id));
+ if(rows.length<2)return '';
+ return `<details class="panel timeline-compare" ${selected.length?'open':''}><summary>Compare saved competitions</summary><fieldset><legend>Select up to three</legend>${rows.map(e=>`<label><input type="checkbox" data-timeline-compare="${esc(e.id)}" ${state.timelineComparisonIds.has(e.id)?'checked':selected.length>=3?'disabled':''}> ${esc(e.name)}</label>`).join('')}</fieldset><div id="timelineComparisonResult">${timelineComparison(selected)}</div></details>`;
+}
+function timelineChangeGroups(changes,saved){
+ return {saved:changes.filter(c=>saved.has(c.id)),other:changes.filter(c=>!saved.has(c.id))};
+}
+function timelineChangesPanel(){
+ if(!state.eventChanges.length)return '';
+ const grouped=timelineChangeGroups(state.eventChanges,state.saved);
+ const rows=changes=>changes.map(c=>`<li><strong>${esc(c.name)}</strong> · ${esc(c.label)}: ${esc(c.previous)} → ${esc(c.current)} ${events.some(e=>e.id===c.id)?`<button type="button" class="ghost" data-open="${esc(c.id)}" aria-label="Open ${esc(c.name)}">Open</button>`:''}</li>`).join('');
+ return `<section class="panel event-changes"><div class="section-head"><h3>Event date updates</h3><button class="ghost" id="dismissEventChanges" type="button">Dismiss updates</button></div>${grouped.saved.length?`<h4>Saved competitions · ${grouped.saved.length} changes</h4><ul>${rows(grouped.saved)}</ul>`:''}${grouped.other.length?`<details ${grouped.saved.length?'':'open'}><summary>Other events · ${grouped.other.length} changes</summary><ul>${rows(grouped.other)}</ul></details>`:''}</section>`;
+}
+function timelineReminderRows(rows,today){
+ return rows.filter(e=>timelineDateIsValid(e.closing||'')&&registrationOpen(e,today));
+}
 function timelineResults(){
  const today=ukTimelineDay(),{months,month,invalidRange,list}=timelineSelection(events,state,today);
  const key=JSON.stringify([state.eventPeriod,month,state.eventFrom,state.eventTo,state.query,state.filter,state.sourceFilter,state.seriesFilter,state.kindFilter,state.countryFilter]);
- return `<section class="section" id="timelineResults"><div class="section-head"><div><h2>Competition calendar</h2><small>${list.length} matching events • ${esc(state.eventRefresh||'Published calendar')}</small></div><button class="ghost" id="refreshEvents" aria-label="Check for event updates">Check updates</button></div><div class="event-period" role="group" aria-label="Event period">${[['upcoming','Upcoming'],['open','Registration open'],['past','Past'],['saved','Saved'],['all','All']].map(([key,label])=>`<button data-event-period="${key}" class="chip ${state.eventPeriod===key?'active':''}" aria-pressed="${state.eventPeriod===key}">${label}</button>`).join('')}</div>${state.sourceFilter==='USA Combat Sports'?'<p class="muted">No dated USA Combat Sports event listings have been verified yet.</p>':''}${state.eventChanges.length?`<div class="panel event-changes" role="status"><div class="section-head"><h3>Event date updates</h3><button class="ghost" id="dismissEventChanges">Dismiss</button></div>${state.eventChanges.slice(0,5).map(c=>`<p><strong>${esc(c.name)}</strong> • ${esc(c.label)}: ${esc(c.previous)} → ${esc(c.current)}</p>`).join('')}</div>`:''}${timelineConflictsPanel(today)}<div class="timeline-shortcuts" role="group" aria-label="Quick date ranges">
+ return `<section class="section" id="timelineResults"><div class="section-head"><div><h2>Competition calendar</h2><small>${list.length} matching events • ${esc(state.eventRefresh||'Published calendar')}</small></div><button class="ghost" id="refreshEvents" aria-label="Check for event updates">Check updates</button></div><div class="event-period" role="group" aria-label="Event period">${[['upcoming','Upcoming'],['open','Registration open'],['past','Past'],['saved','Saved'],['all','All']].map(([key,label])=>`<button data-event-period="${key}" class="chip ${state.eventPeriod===key?'active':''}" aria-pressed="${state.eventPeriod===key}">${label}</button>`).join('')}</div>${state.sourceFilter==='USA Combat Sports'?'<p class="muted">No dated USA Combat Sports event listings have been verified yet.</p>':''}${timelineChangesPanel()}${state.eventPeriod==='saved'?timelineComparePanel():''}${timelineConflictsPanel(today)}<div class="timeline-shortcuts" role="group" aria-label="Quick date ranges">
  <button type="button" class="ghost" data-timeline-days="7">Next 7 days</button><button type="button" class="ghost" data-timeline-days="30">Next 30 days</button>
  <button type="button" class="ghost" id="clearTimelineDates">Clear dates</button>
  </div><div class="timeline-tools">
@@ -336,6 +365,7 @@ function timelineResults(){
  <label>To date<input id="timelineTo" class="search" type="date" value="${esc(state.eventTo)}"></label>
  <label>View<select id="timelineLayout" class="search"><option value="cards">Swipe cards</option><option value="list" ${state.eventLayout==='list'?'selected':''}>Compact list</option><option value="deadlines" ${state.eventLayout==='deadlines'?'selected':''}>Entry deadlines</option></select></label>
  <button class="ghost" type="button" id="exportTimelineCalendar" ${list.length?'':'disabled'}>Export shown events (.ics)</button>
+ <details class="timeline-reminders"><summary>Entry deadline reminders</summary><p>Export shown open entry deadlines as all-day calendar entries with an alert two days before when there is enough notice. Your calendar app controls whether alerts are enabled.</p><button class="ghost" type="button" id="exportTimelineReminders" ${timelineReminderRows(list,today).length?'':'disabled'}>Export deadline reminders (.ics)</button></details>
  <details class="timeline-share"><summary>Share view</summary><p>The link includes your filters and search text. Saved view opens as Upcoming for the recipient; your saved events stay on this device.</p><label>Shareable link<input id="timelineShareLink" class="search" type="url" readonly></label><button class="ghost" type="button" id="copyTimelineView">Copy view link</button><small id="timelineCopyStatus" role="status"></small></details>
  ${state.eventLayout==='cards'&&list.length>1?'<div class="timeline-navigation"><button class="ghost" type="button" id="timelinePrevious" aria-label="Previous event">← Previous</button><button class="ghost" type="button" id="timelineNext" aria-label="Next event">Next →</button></div>':''}
  </div>${invalidRange?'<p role="alert">Enter a valid date range. The to date must be on or after the from date.</p>':''}${state.eventLayout==='deadlines'?'<p class="muted">Shows open registrations with a published closing date, soonest deadline first. Date filters apply to event dates.</p>':''}${list.length?(state.eventLayout==='deadlines'?`<div class="timeline-list">${list.map(timelineDeadlineRow).join('')}</div>`:state.eventLayout==='list'?`<div class="timeline-list">${timelineMonthGroups(list).map(([month,rows])=>`<section class="timeline-month"><h3>${esc(timelineMonthLabel(month))} <small>${rows.length} ${rows.length===1?'event':'events'}</small></h3>${rows.map(timelineCompactRow).join('')}</section>`).join('')}</div>`:`<div class="carousel" id="timelineTrack" data-timeline-key="${esc(key)}" role="region" aria-label="Competition timeline" tabindex="0">${list.map(eventCard).join('')}</div>`):'<div class="panel"><h3>No matching events</h3><button class="button" id="reset">Reset filters</button></div>'}</section>`;}
@@ -800,6 +830,20 @@ function eventCalendarText(rows,now=new Date()){
  }
  return lines.concat('END:VCALENDAR').map(foldCalendarLine).join('\r\n')+'\r\n';
 }
+function eventDeadlineCalendarText(rows,today,now=new Date()){
+ const stamp=now.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
+ const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//FightEye//Entry Deadlines//EN','CALSCALE:GREGORIAN'];
+ const seen=new Set();
+ for(const e of timelineReminderRows(rows,today)){
+  if(!e.id||seen.has(e.id))continue;seen.add(e.id);
+  const end=new Date(e.closing+'T12:00:00Z');end.setUTCDate(end.getUTCDate()+1);
+  const title='Entry closes: '+e.name;
+  lines.push('BEGIN:VEVENT',`UID:entry-deadline/${encodeURIComponent(e.id)}@fighteye.app`,`DTSTAMP:${stamp}`,`DTSTART;VALUE=DATE:${e.closing.replace(/-/g,'')}`,`DTEND;VALUE=DATE:${end.toISOString().slice(0,10).replace(/-/g,'')}`,`SUMMARY:${icsEscape(title)}`,`DESCRIPTION:${icsEscape(['Check the organiser for the exact closing time.',e.sourceUrl].filter(Boolean).join(' '))}`);
+  if((Date.parse(e.closing)-Date.parse(today))/86400000>=2)lines.push('BEGIN:VALARM','ACTION:DISPLAY','TRIGGER:-P2D',`DESCRIPTION:${icsEscape(title)}`,'END:VALARM');
+  lines.push('END:VEVENT');
+ }
+ return lines.concat('END:VCALENDAR').map(foldCalendarLine).join('\r\n')+'\r\n';
+}
 function foldCalendarLine(line){
  let result='',bytes=0;
  for(const c of line){const n=c.codePointAt(0),width=n<128?1:n<2048?2:n<65536?3:4;if(bytes+width>75){result+='\r\n ';bytes=1}result+=c;bytes+=width}
@@ -831,7 +875,7 @@ function bind(){
  $$('[data-tab]').forEach(b=>b.onclick=()=>{state.tab=b.dataset.tab;render();});
  $$('[data-open]').forEach(b=>b.onclick=e=>{e.stopPropagation();openEvent(b.dataset.open);});
  $$('[data-calendar]').forEach(b=>b.onclick=e=>{e.stopPropagation();addToCalendar(b.dataset.calendar);});
- $$('[data-save]').forEach(b=>b.onclick=e=>{e.stopPropagation();const id=b.dataset.save;state.saved.has(id)?state.saved.delete(id):state.saved.add(id);saveStore();render();});
+ $$('[data-save]').forEach(b=>b.onclick=e=>{e.stopPropagation();const id=b.dataset.save;if(state.saved.has(id)){state.saved.delete(id);state.timelineComparisonIds.delete(id)}else state.saved.add(id);saveStore();render();});
  $$('[data-pass]').forEach(b=>b.onclick=()=>openPass(b.dataset.pass));
  $$('[data-replay]').forEach(b=>b.onclick=()=>openReplay(b.dataset.replay));
  $$('[data-report]').forEach(b=>b.onclick=()=>{const e=events.find(x=>x.id===b.dataset.report);download(`${e.id}-report.txt`,`${e.name}\n${fmt(e.start)}\nTeam medals: 3\nWins: 7\nHighlights: 4 personal bests`);});
@@ -848,6 +892,22 @@ function bind(){
  const fromDate=$('#timelineFrom'),toDate=$('#timelineTo');
  if(fromDate)fromDate.onchange=()=>{state.eventFrom=fromDate.value;render()};
  if(toDate)toDate.onchange=()=>{state.eventTo=toDate.value;render()};
+ const compareInputs=$$('[data-timeline-compare]'),compareResult=$('#timelineComparisonResult');
+ if(compareResult){
+ const bindCompareOpen=()=>compareResult.querySelectorAll('[data-compare-open]').forEach(button=>button.onclick=()=>openEvent(button.dataset.compareOpen));
+ bindCompareOpen();
+ compareInputs.forEach(input=>input.onchange=()=>{
+  const selected=new Set(compareInputs.filter(box=>box.checked).map(box=>box.dataset.timelineCompare)),rows=events.filter(e=>selected.has(e.id)&&state.saved.has(e.id));
+  state.timelineComparisonIds=selected;
+  compareInputs.forEach(box=>box.disabled=!box.checked&&selected.size>=3);
+  compareResult.innerHTML=timelineComparison(rows);
+  bindCompareOpen();
+ });
+ }
+ const reminders=$('#exportTimelineReminders');if(reminders)reminders.onclick=()=>{
+  const today=ukTimelineDay(),rows=timelineSelection(events,state,today).list;
+  return shareEventCalendar('fighteye-entry-deadlines.ics',eventDeadlineCalendarText(rows,today),'FightEye entry deadlines');
+ };
  const exportTimeline=$('#exportTimelineCalendar');if(exportTimeline)exportTimeline.onclick=()=>shareEventCalendar('fighteye-shown-events.ics',eventCalendarText(timelineSelection(events,state,ukTimelineDay()).list),'FightEye competition calendar');
  const month=$('#timelineMonth');if(month)month.onchange=()=>{state.eventMonth=month.value;render()};
  const layout=$('#timelineLayout');if(layout)layout.onchange=()=>{state.eventLayout=layout.value;saveTimelinePreferences();render()};

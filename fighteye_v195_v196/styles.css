@@ -278,3 +278,15 @@ body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
 .timeline-share summary,.timeline-conflicts summary{cursor:pointer;padding:.45rem 0}
 .timeline-conflicts{margin:.75rem 0;overflow-wrap:anywhere}
 .timeline-conflicts ul{padding-inline-start:1.5rem}
+
+.timeline-compare,.timeline-reminders{margin:.75rem 0}
+.timeline-compare summary,.timeline-reminders summary{cursor:pointer;min-height:44px;padding:.55rem 0}
+.timeline-compare fieldset{border:0;padding:0;margin:.55rem 0;display:flex;flex-wrap:wrap;gap:.5rem}
+.timeline-compare label{display:flex;align-items:center;gap:.4rem;min-height:44px;overflow-wrap:anywhere}
+.timeline-compare input{width:20px;height:20px;flex:none}
+.timeline-compare-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:.55rem}
+.timeline-compare-grid dt{font-weight:700;margin-top:.4rem}
+.timeline-compare-grid dd{margin:0;overflow-wrap:anywhere}
+.timeline-compare button,.timeline-reminders button{min-height:44px}
+.timeline-reminders{flex:1 0 100%}
+.event-changes li{margin:.4rem 0;overflow-wrap:anywhere}
