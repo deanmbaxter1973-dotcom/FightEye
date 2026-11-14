@@ -17,7 +17,7 @@ assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'E
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const store=new Map();
 const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[{id:'test-athlete',name:'Test Athlete',ranking:'Cadet',weight:'42 kg'}],addEventListener:()=>{},webkit:{messageHandlers:{fighteyeHealth:{postMessage:()=>{}}}}},document:{getElementById:()=>({}),querySelector:()=>null,querySelectorAll:()=>[]},localStorage:{getItem:key=>store.get(key)||null,setItem:(key,value)=>store.set(key,value)},navigator:{userAgent:'Mozilla/5.0 (iPhone) AppleWebKit Safari',standalone:false},URL,setTimeout:()=>1,clearTimeout:()=>{}};
-vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,timelineMatches,timelineMonthGroups,timelineEntryLabel,ukTimelineDay,timelinePreferences,readTimelinePreferences,saveTimelinePreferences,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,filterFightDayBouts,fightResultsSummary,fightResultsReport,priorityFightBouts,fightDayBriefing,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
+vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,timelineMatches,timelineSelection,eventCalendarText,timelineMonthGroups,timelineEntryLabel,ukTimelineDay,timelinePreferences,readTimelinePreferences,saveTimelinePreferences,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,filterFightDayBouts,fightResultsSummary,fightResultsReport,priorityFightBouts,fightDayBriefing,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
 const official='https://www.sportdata.org/kickboxing/sportsid/veranstaltung_info_main.php?vernr=2488';
 const timetable='https://www.sportdata.org/setglinc/dtm/dtm_timetable.php?eventid=2488&system=kickboxing';
 assert.strictEqual(context.__events.parseSportdataLink(official).id,'2488','official event URL accepted');
@@ -211,3 +211,26 @@ assert.equal(timeline.readTimelinePreferences().countryFilter,'United Kingdom');
 assert.equal(timeline.timelinePreferences({eventLayout:'broken',countryFilter:42}).countryFilter,'');
 assert(timeline.eventsView().includes('id="countryFilter"'));
 console.log('Timeline phases 267–269 passed: country filters, registration day, month grouping and preferences.');
+
+const planningRows=[
+ {id:'weekend',name:'Weekend',start:'2026-11-20',end:'2026-11-22',closing:'2026-11-15'},
+ {id:'later',name:'Later',start:'2026-12-02',end:'2026-12-02',closing:'2026-11-13'},
+ {id:'closed',name:'Closed',start:'2026-11-23',end:'2026-11-23',closing:'2026-11-10'},
+ {id:'unknown',name:'Unknown',start:'2026-11-24',end:'2026-11-24'}
+];
+const select=(changes)=>timeline.timelineSelection(planningRows,{...filters,...changes},'2026-11-13');
+assert.deepEqual(Array.from(select({eventFrom:'2026-11-22',eventTo:'2026-11-22'}).list,e=>e.id),['weekend']);
+assert(select({eventFrom:'2026-11-22',eventTo:'2026-11-20'}).invalidRange);
+assert(select({eventFrom:'2026-02-30'}).invalidRange);
+assert.deepEqual(Array.from(select({eventLayout:'deadlines'}).list,e=>e.id),['later','weekend']);
+assert.deepEqual(Array.from(select({eventLayout:'deadlines',eventMonth:'2026-11'}).list,e=>e.id),['weekend']);
+const exported=timeline.eventCalendarText([...select({eventLayout:'deadlines'}).list,planningRows[0],{...planningRows[0],id:'bad',end:'2026-02-30'}],new Date('2026-11-13T12:00:00Z'));
+assert.equal((exported.match(/BEGIN:VEVENT/g)||[]).length,2);
+assert(exported.includes('DTEND;VALUE=DATE:20261123'));
+assert(exported.includes('DTSTAMP:20261113T120000Z'));
+assert(!exported.includes('UID:closed')&&!exported.includes('UID:unknown')&&!exported.includes('UID:bad'));
+const folded=timeline.eventCalendarText([{...planningRows[0],name:'É'.repeat(80)+', final',sourceUrl:'https://example.test/\rATTENDEE:fake'}]);
+assert(folded.split('\r\n').every(line=>Buffer.byteLength(line)<=75));
+assert(!folded.includes('\r\nATTENDEE:'));
+assert(folded.replace(/\r\n /g,'').includes('\\, final'));
+console.log('Timeline phases 270–272 passed: inclusive dates, deadline ordering and scoped calendar export.');
