@@ -270,3 +270,11 @@ body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
 .timeline-deadline{padding:.5rem;border:1px solid var(--line);border-radius:12px}
 .timeline-deadline p{margin:.25rem .25rem .5rem;color:var(--muted)}
 .timeline-deadline strong{color:var(--gold)}
+
+.timeline-shortcuts{display:flex;flex-wrap:wrap;gap:.5rem;margin:.75rem 0}
+.timeline-shortcuts button,.timeline-share button,.timeline-conflicts button{min-height:44px}
+.timeline-share{flex:1 0 100%;min-width:0}
+.timeline-share input{width:100%;box-sizing:border-box;margin-bottom:.5rem}
+.timeline-share summary,.timeline-conflicts summary{cursor:pointer;padding:.45rem 0}
+.timeline-conflicts{margin:.75rem 0;overflow-wrap:anywhere}
+.timeline-conflicts ul{padding-inline-start:1.5rem}

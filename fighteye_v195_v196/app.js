@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VERSION='v272';
+const VERSION='v275';
 const ICLOUD_FEED='https://raw.githubusercontent.com/deanmbaxter1973-dotcom/FightEye/main/fighteye_v195_v196/data/events.ics';
 const UK_TIMELINE_DATE=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',year:'numeric',month:'2-digit',day:'2-digit'});
 const events=(window.FIGHTEYE_EVENTS||[]).map(e=>({...e,status:statusFor(e)})).sort((a,b)=>new Date(a.start)-new Date(b.start));
@@ -26,6 +26,8 @@ state.weightRecords=readWeightStore();state.weightError='';
 state.healthLinkedAthlete='';state.healthSyncAt='';state.healthSyncStatus='disconnected';state.healthBackgroundEnabled=false;
 state.injuries=[];state.injuryKey=null;state.injuryError='';state.injuryAthleteId='';
 state.eventPeriod='upcoming';state.eventMonth='';state.eventFrom='';state.eventTo='';Object.assign(state,readTimelinePreferences());
+const initialTimeline=typeof location==='undefined'?null:readSharedTimeline(location.hash);
+if(initialTimeline)Object.assign(state,initialTimeline);
 state.eventChanges=readEventChanges();
 state.adminEvents.forEach(e=>{if(!events.some(x=>x.id===e.id))events.push({...e,status:statusFor(e)});});
 events.sort((a,b)=>new Date(a.start)-new Date(b.start));
@@ -286,18 +288,55 @@ function timelineSelection(rows,filters,today){
  if(filters.eventLayout==='deadlines')return {months,month,invalidRange,list:list.filter(e=>timelineDateIsValid(e.closing||'')&&registrationOpen(e,today)).sort((a,b)=>a.closing.localeCompare(b.closing)||a.start.localeCompare(b.start)||a.name.localeCompare(b.name))};
  return {months,month,invalidRange,list};
 }
+function timelineQuickRange(days,today=ukTimelineDay()){
+ const end=new Date(today+'T12:00:00Z');end.setUTCDate(end.getUTCDate()+days-1);
+ return {eventPeriod:'upcoming',eventMonth:'',eventFrom:today,eventTo:end.toISOString().slice(0,10)};
+}
+function savedTimelineConflicts(rows,saved,today){
+ const active=rows.filter(e=>saved.has(e.id)&&!e.kind&&timelineDateIsValid(e.start)&&timelineDateIsValid(e.end)&&e.end>=e.start&&e.end>=today).sort((a,b)=>a.start.localeCompare(b.start));
+ const pairs=[];
+ for(let i=0;i<active.length;i++)for(let j=i+1;j<active.length&&active[j].start<=active[i].end;j++){
+  pairs.push([active[i],active[j]]);
+ }
+ return pairs;
+}
+function timelineConflictsPanel(today){
+ const pairs=savedTimelineConflicts(events,state.saved,today);
+ if(!pairs.length)return '';
+ return `<details class="panel timeline-conflicts"><summary>${pairs.length} possible date ${pairs.length===1?'clash':'clashes'} in saved competitions</summary><p>These competitions overlap by date. Check the actual sessions before choosing which to attend.</p><ul>${pairs.map(([a,b])=>`<li>${esc(fmt(a.start>b.start?a.start:b.start))} · <button class="ghost" data-open="${esc(a.id)}">${esc(a.name)}</button> and <button class="ghost" data-open="${esc(b.id)}">${esc(b.name)}</button></li>`).join('')}</ul></details>`;
+}
+function sharedTimelineState(value){
+ const date=key=>timelineDateIsValid(value[key]||'')?value[key]:'';
+ return {...timelinePreferences(value),
+  query:typeof value.query==='string'?value.query.slice(0,120):'',
+  eventPeriod:['upcoming','past','all','open'].includes(value.eventPeriod)?value.eventPeriod:'upcoming',
+  eventMonth:/^\d{4}-(0[1-9]|1[0-2])$/.test(value.eventMonth||'')?value.eventMonth:'',
+  eventFrom:date('eventFrom'),eventTo:date('eventTo')};
+}
+function readSharedTimeline(hash){
+ if(!hash?.startsWith('#timeline?'))return null;
+ return sharedTimelineState(Object.fromEntries(new URLSearchParams(hash.slice(10))));
+}
+function shareTimelineUrl(url,filters){
+ const link=new URL(url);link.search='';link.hash='timeline?'+new URLSearchParams(sharedTimelineState(filters));
+ return link.href;
+}
 function timelineDeadlineRow(e){
  return `<div class="timeline-deadline"><p><strong>${esc(timelineEntryLabel(e))}</strong> · ${esc(fmt(e.closing))}</p>${timelineCompactRow(e)}</div>`;
 }
 function timelineResults(){
- const {months,month,invalidRange,list}=timelineSelection(events,state,ukTimelineDay());
+ const today=ukTimelineDay(),{months,month,invalidRange,list}=timelineSelection(events,state,today);
  const key=JSON.stringify([state.eventPeriod,month,state.eventFrom,state.eventTo,state.query,state.filter,state.sourceFilter,state.seriesFilter,state.kindFilter,state.countryFilter]);
- return `<section class="section" id="timelineResults"><div class="section-head"><div><h2>Competition calendar</h2><small>${list.length} matching events • ${esc(state.eventRefresh||'Published calendar')}</small></div><button class="ghost" id="refreshEvents" aria-label="Check for event updates">Check updates</button></div><div class="event-period" role="group" aria-label="Event period">${[['upcoming','Upcoming'],['open','Registration open'],['past','Past'],['saved','Saved'],['all','All']].map(([key,label])=>`<button data-event-period="${key}" class="chip ${state.eventPeriod===key?'active':''}" aria-pressed="${state.eventPeriod===key}">${label}</button>`).join('')}</div>${state.sourceFilter==='USA Combat Sports'?'<p class="muted">No dated USA Combat Sports event listings have been verified yet.</p>':''}${state.eventChanges.length?`<div class="panel event-changes" role="status"><div class="section-head"><h3>Event date updates</h3><button class="ghost" id="dismissEventChanges">Dismiss</button></div>${state.eventChanges.slice(0,5).map(c=>`<p><strong>${esc(c.name)}</strong> • ${esc(c.label)}: ${esc(c.previous)} → ${esc(c.current)}</p>`).join('')}</div>`:''}<div class="timeline-tools">
+ return `<section class="section" id="timelineResults"><div class="section-head"><div><h2>Competition calendar</h2><small>${list.length} matching events • ${esc(state.eventRefresh||'Published calendar')}</small></div><button class="ghost" id="refreshEvents" aria-label="Check for event updates">Check updates</button></div><div class="event-period" role="group" aria-label="Event period">${[['upcoming','Upcoming'],['open','Registration open'],['past','Past'],['saved','Saved'],['all','All']].map(([key,label])=>`<button data-event-period="${key}" class="chip ${state.eventPeriod===key?'active':''}" aria-pressed="${state.eventPeriod===key}">${label}</button>`).join('')}</div>${state.sourceFilter==='USA Combat Sports'?'<p class="muted">No dated USA Combat Sports event listings have been verified yet.</p>':''}${state.eventChanges.length?`<div class="panel event-changes" role="status"><div class="section-head"><h3>Event date updates</h3><button class="ghost" id="dismissEventChanges">Dismiss</button></div>${state.eventChanges.slice(0,5).map(c=>`<p><strong>${esc(c.name)}</strong> • ${esc(c.label)}: ${esc(c.previous)} → ${esc(c.current)}</p>`).join('')}</div>`:''}${timelineConflictsPanel(today)}<div class="timeline-shortcuts" role="group" aria-label="Quick date ranges">
+ <button type="button" class="ghost" data-timeline-days="7">Next 7 days</button><button type="button" class="ghost" data-timeline-days="30">Next 30 days</button>
+ <button type="button" class="ghost" id="clearTimelineDates">Clear dates</button>
+ </div><div class="timeline-tools">
  <label>Starting month<select id="timelineMonth" class="search"><option value="">All months</option>${months.map(m=>`<option value="${m}" ${m===month?'selected':''}>${esc(timelineMonthLabel(m))}</option>`).join('')}</select></label>
  <label>From date<input id="timelineFrom" class="search" type="date" value="${esc(state.eventFrom)}"></label>
  <label>To date<input id="timelineTo" class="search" type="date" value="${esc(state.eventTo)}"></label>
  <label>View<select id="timelineLayout" class="search"><option value="cards">Swipe cards</option><option value="list" ${state.eventLayout==='list'?'selected':''}>Compact list</option><option value="deadlines" ${state.eventLayout==='deadlines'?'selected':''}>Entry deadlines</option></select></label>
  <button class="ghost" type="button" id="exportTimelineCalendar" ${list.length?'':'disabled'}>Export shown events (.ics)</button>
+ <details class="timeline-share"><summary>Share view</summary><p>The link includes your filters and search text. Saved view opens as Upcoming for the recipient; your saved events stay on this device.</p><label>Shareable link<input id="timelineShareLink" class="search" type="url" readonly></label><button class="ghost" type="button" id="copyTimelineView">Copy view link</button><small id="timelineCopyStatus" role="status"></small></details>
  ${state.eventLayout==='cards'&&list.length>1?'<div class="timeline-navigation"><button class="ghost" type="button" id="timelinePrevious" aria-label="Previous event">← Previous</button><button class="ghost" type="button" id="timelineNext" aria-label="Next event">Next →</button></div>':''}
  </div>${invalidRange?'<p role="alert">Enter a valid date range. The to date must be on or after the from date.</p>':''}${state.eventLayout==='deadlines'?'<p class="muted">Shows open registrations with a published closing date, soonest deadline first. Date filters apply to event dates.</p>':''}${list.length?(state.eventLayout==='deadlines'?`<div class="timeline-list">${list.map(timelineDeadlineRow).join('')}</div>`:state.eventLayout==='list'?`<div class="timeline-list">${timelineMonthGroups(list).map(([month,rows])=>`<section class="timeline-month"><h3>${esc(timelineMonthLabel(month))} <small>${rows.length} ${rows.length===1?'event':'events'}</small></h3>${rows.map(timelineCompactRow).join('')}</section>`).join('')}</div>`:`<div class="carousel" id="timelineTrack" data-timeline-key="${esc(key)}" role="region" aria-label="Competition timeline" tabindex="0">${list.map(eventCard).join('')}</div>`):'<div class="panel"><h3>No matching events</h3><button class="button" id="reset">Reset filters</button></div>'}</section>`;}
 
@@ -796,6 +835,16 @@ function bind(){
  $$('[data-pass]').forEach(b=>b.onclick=()=>openPass(b.dataset.pass));
  $$('[data-replay]').forEach(b=>b.onclick=()=>openReplay(b.dataset.replay));
  $$('[data-report]').forEach(b=>b.onclick=()=>{const e=events.find(x=>x.id===b.dataset.report);download(`${e.id}-report.txt`,`${e.name}\n${fmt(e.start)}\nTeam medals: 3\nWins: 7\nHighlights: 4 personal bests`);});
+ $$('[data-timeline-days]').forEach(button=>button.onclick=()=>{Object.assign(state,timelineQuickRange(Number(button.dataset.timelineDays)));render()});
+ const clearTimelineDates=$('#clearTimelineDates');if(clearTimelineDates)clearTimelineDates.onclick=()=>{state.eventMonth='';state.eventFrom='';state.eventTo='';render()};
+ const shareLink=$('#timelineShareLink'),copyView=$('#copyTimelineView'),copyStatus=$('#timelineCopyStatus');
+ if(shareLink&&typeof location!=='undefined'){
+  shareLink.value=shareTimelineUrl(location.href,state);
+  copyView.onclick=async()=>{
+   try{await navigator.clipboard.writeText(shareLink.value);copyStatus.textContent='View link copied.'}
+   catch{shareLink.focus();shareLink.select();copyStatus.textContent='Select and copy the link above.'}
+  };
+ }
  const fromDate=$('#timelineFrom'),toDate=$('#timelineTo');
  if(fromDate)fromDate.onchange=()=>{state.eventFrom=fromDate.value;render()};
  if(toDate)toDate.onchange=()=>{state.eventTo=toDate.value;render()};
@@ -957,5 +1006,6 @@ function bind(){
  const ed=$('#exportDiagnostics');if(ed)ed.onclick=()=>download('fighteye-production-diagnostics.json',JSON.stringify({version:VERSION,apiHealth:state.apiHealth,events:events.length,athletes:athletes.length,duplicates:duplicateIds(events),invalid:invalidEvents().length,online:navigator.onLine,report:state.productionReport,generatedAt:new Date().toISOString()},null,2),'application/json');
  const clear=$('#clearCustom');if(clear)clear.onclick=()=>{const ids=new Set(state.adminEvents.map(e=>e.id));for(let i=events.length-1;i>=0;i--)if(ids.has(events[i].id))events.splice(i,1);state.adminEvents=[];saveStore();notify('Custom events removed.');};
 }
+window.addEventListener('hashchange',()=>{const shared=readSharedTimeline(location.hash);if(shared){Object.assign(state,shared);state.tab='events';render()}});
 window.addEventListener('DOMContentLoaded',()=>{render();refreshPublishedEvents();window.addEventListener('online',()=>refreshPublishedEvents());setInterval(()=>refreshPublishedEvents(),6*3600000);document.addEventListener('visibilitychange',scheduleFightChecks);if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});});
 })();
