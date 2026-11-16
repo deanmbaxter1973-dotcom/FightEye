@@ -290,3 +290,13 @@ body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
 .timeline-compare button,.timeline-reminders button{min-height:44px}
 .timeline-reminders{flex:1 0 100%}
 .event-changes li{margin:.4rem 0;overflow-wrap:anywhere}
+
+.timeline-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.2rem;margin:.75rem 0 1rem;text-align:center}
+.timeline-calendar>*{display:grid;place-content:center;min-width:0;min-height:44px;border-radius:7px}
+.timeline-calendar a{background:var(--card2);color:var(--text);outline:1px solid var(--gold);text-decoration:none;font-weight:700}
+.timeline-calendar a small{color:var(--gold)}
+.timeline-calendar span{color:var(--muted)}
+.timeline-calendar~.timeline-list section{scroll-margin-block:1rem}
+.timeline-direct-links{display:flex;gap:.5rem;flex-wrap:wrap}
+.timeline-direct-links:empty{display:none}
+.timeline-direct-links a,.timeline-row-actions a{display:inline-flex;align-items:center;min-height:44px;text-decoration:none;box-sizing:border-box}

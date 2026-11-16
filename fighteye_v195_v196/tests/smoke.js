@@ -17,7 +17,7 @@ assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'E
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const store=new Map();
 const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[{id:'test-athlete',name:'Test Athlete',ranking:'Cadet',weight:'42 kg'}],addEventListener:()=>{},webkit:{messageHandlers:{fighteyeHealth:{postMessage:()=>{}}}}},document:{getElementById:()=>({}),querySelector:()=>null,querySelectorAll:()=>[]},localStorage:{getItem:key=>store.get(key)||null,setItem:(key,value)=>store.set(key,value)},URLSearchParams,navigator:{userAgent:'Mozilla/5.0 (iPhone) AppleWebKit Safari',standalone:false},URL,setTimeout:()=>1,clearTimeout:()=>{}};
-vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,timelineComparison,timelineChangeGroups,eventDeadlineCalendarText,timelineQuickRange,savedTimelineConflicts,shareTimelineUrl,readSharedTimeline,timelineMatches,timelineSelection,eventCalendarText,timelineMonthGroups,timelineEntryLabel,ukTimelineDay,timelinePreferences,readTimelinePreferences,saveTimelinePreferences,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,filterFightDayBouts,fightResultsSummary,fightResultsReport,priorityFightBouts,fightDayBriefing,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
+vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,timelineCalendarDays,timelineEventLinks,timelineComparison,timelineChangeGroups,eventDeadlineCalendarText,timelineQuickRange,savedTimelineConflicts,shareTimelineUrl,readSharedTimeline,timelineMatches,timelineSelection,eventCalendarText,timelineMonthGroups,timelineEntryLabel,ukTimelineDay,timelinePreferences,readTimelinePreferences,saveTimelinePreferences,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,filterFightDayBouts,fightResultsSummary,fightResultsReport,priorityFightBouts,fightDayBriefing,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
 const official='https://www.sportdata.org/kickboxing/sportsid/veranstaltung_info_main.php?vernr=2488';
 const timetable='https://www.sportdata.org/setglinc/dtm/dtm_timetable.php?eventid=2488&system=kickboxing';
 assert.strictEqual(context.__events.parseSportdataLink(official).id,'2488','official event URL accepted');
@@ -274,3 +274,18 @@ assert(reminders.includes('DTSTART;VALUE=DATE:20261115'));
 assert(reminders.includes('DTEND;VALUE=DATE:20261116'));
 assert(!reminders.includes('entry-deadline/closed'));
 console.log('Timeline phases 276–278 passed: saved comparison, deadline alarms and saved change grouping.');
+
+const cross={id:'cross',name:'Cross-month cup',start:'2026-11-30',end:'2026-12-02',resultsUrl:'https://example.org/results'};
+const range=timeline.timelineSelection([cross],{...filters,eventLayout:'calendar',eventFrom:'2026-12-01'},'2026-11-16');
+assert.equal(range.month,'2026-12');assert.equal(range.list.length,1);
+const daysInMonth=timeline.timelineCalendarDays(range.list,range.month,{from:'2026-12-02'});
+assert.equal(daysInMonth.offset,1);
+assert.equal(daysInMonth.days.length,31);
+assert.deepEqual(Array.from(daysInMonth.days.filter(d=>d.events.length),d=>d.date),['2026-12-02']);
+assert.equal(timeline.timelineCalendarDays([],'2028-02').days.length,29);
+const resultView=timeline.timelineSelection([cross,{...cross,id:'unsafe',resultsUrl:'javascript:alert(1)'}],{...filters,eventPeriod:'results'},'2026-12-03');
+assert.deepEqual(Array.from(resultView.list,e=>e.id),['cross']);
+assert(!timeline.timelineEventLinks(cross,'2026-12-02').includes('Results'));
+assert(timeline.timelineEventLinks(cross,'2026-12-03').includes('href="https://example.org/results"'));
+assert(events.find(e=>e.id==='oxford-champions-2026')?.resultsUrl.includes('/33395/'));
+console.log('Timeline phases 279–281 passed: month boundaries, results filter and direct link validation.');

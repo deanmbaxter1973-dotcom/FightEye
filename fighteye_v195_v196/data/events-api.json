@@ -1494,5 +1494,26 @@
     "venue": "K2 Sports Centre",
     "start": "2027-07-10",
     "end": "2027-07-11"
+  },
+  {
+    "id": "oxford-champions-2026",
+    "name": "Oxford Champions Open 2026",
+    "org": "Oxford Champions",
+    "country": "United Kingdom",
+    "flag": "🇬🇧",
+    "city": "Oxford",
+    "venue": "See organiser listing",
+    "start": "2026-09-12",
+    "end": "2026-09-12",
+    "collection": [
+      "UK"
+    ],
+    "rule": "See organiser listing",
+    "athletes": 0,
+    "source": "Smoothcomp",
+    "sourceUrl": "https://smoothcomp.com/en/event/33395",
+    "resultsUrl": "https://smoothcomp.com/en/event/33395/schedule/matchlist",
+    "verifiedAt": "2026-11-16",
+    "image": "linear-gradient(135deg,#061832,#0a244b)"
   }
 ]
