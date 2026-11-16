@@ -319,3 +319,8 @@ body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
 .timeline-planner-actions strong,.timeline-planner-actions p{overflow-wrap:anywhere}
 .timeline-planner-actions button{margin-top:.4rem;max-width:100%;white-space:normal}
 .timeline-planner-actions small{display:block;margin-top:.3rem}
+
+.timeline-planner-queue{list-style:none;padding:0;margin:0}
+.timeline-planner-queue li>div:last-child{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem}
+.timeline-planner-clashes{margin-top:.75rem;padding:.75rem;border:1px solid var(--line);border-inline-start:.25rem solid #c68a28;border-radius:.75rem;overflow-wrap:anywhere}
+.timeline-planner-clashes h3{margin-top:0}

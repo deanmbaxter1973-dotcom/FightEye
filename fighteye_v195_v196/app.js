@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VERSION='v287';
+const VERSION='v290';
 const ENTRY_PLAN_STAGES={considering:'Considering',ready:'Ready to enter',entered:'Entered',skipping:'Skipping'};
 const ICLOUD_FEED='https://raw.githubusercontent.com/deanmbaxter1973-dotcom/FightEye/main/fighteye_v195_v196/data/events.ics';
 const UK_TIMELINE_DATE=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',year:'numeric',month:'2-digit',day:'2-digit'});
@@ -316,8 +316,11 @@ function timelinePlannerRows(rows,saved,plans,today,stage=''){
  return rows.filter(e=>saved.has(e.id)&&!e.kind&&timelineDateIsValid(e.start)&&timelineDateIsValid(e.end)&&e.end>=e.start&&e.end>=today&&(!stage||timelinePlanStage(e.id,plans)===stage)).sort((a,b)=>a.start.localeCompare(b.start)||a.name.localeCompare(b.name));
 }
 function timelinePlannerDeadlines(rows,plans,today){
- const {eventTo}=timelineQuickRange(7,today);
- return rows.filter(e=>registrationOpen(e,today)&&timelineDateIsValid(e.closing)&&e.closing<=eventTo&&['ready','considering'].includes(timelinePlanStage(e.id,plans))).sort((a,b)=>a.closing.localeCompare(b.closing)||a.start.localeCompare(b.start));
+ return timelineReminderRows(rows,today).filter(e=>['ready','considering'].includes(timelinePlanStage(e.id,plans))).sort((a,b)=>a.closing.localeCompare(b.closing)||a.start.localeCompare(b.start)||a.name.localeCompare(b.name));
+}
+function timelinePlannerClashes(rows,plans,today){
+ const entered=new Set(rows.filter(e=>timelinePlanStage(e.id,plans)==='entered').map(e=>e.id));
+ return savedTimelineConflicts(rows,entered,today);
 }
 function plannerDeadlineLabel(e,today){
  if(!timelineDateIsValid(e.closing||''))return 'Entry deadline TBC';
@@ -329,19 +332,25 @@ function timelineEntryPlanPanel(){
  const rows=timelinePlannerRows(events,saved,plans,today);
  const count=stage=>rows.filter(e=>timelinePlanStage(e.id,plans)===stage).length;
  const shown=filter?rows.filter(e=>timelinePlanStage(e.id,plans)===filter):rows;
- const deadlines=timelinePlannerDeadlines(rows,plans,today),next=deadlines[0],entered=count('entered');
+ const deadlines=timelinePlannerDeadlines(rows,plans,today),entered=count('entered');
+ const weekEnd=timelineQuickRange(7,today).eventTo,soon=deadlines.filter(e=>e.closing<=weekEnd).length;
+ const clashes=timelinePlannerClashes(rows,plans,today);
+ const clashIds=new Set(clashes.flatMap(pair=>pair.map(e=>e.id)));
  return `<details class="panel timeline-entry-planner" ${state.entryPlannerOpen?'open':''}>
  <summary>My entry planner · ${rows.length} upcoming saved competitions</summary>
  <p>Entry status stays on this device. Submit and confirm entries with the organiser.</p>
  <div class="timeline-planner-actions">
- <section aria-label="Upcoming entry deadlines"><strong>${deadlines.length} ${deadlines.length===1?'entry deadline':'entry deadlines'} to act on in the next 7 days</strong>
- <p>${next?`Next: ${esc(next.name)} · ${esc(plannerDeadlineLabel(next,today))}`:'No published deadlines due for competitions you’re considering or ready to enter.'}</p>
- ${next?`<button class="ghost" type="button" data-open="${esc(next.id)}">Open next deadline</button>`:''}</section>
+ <section aria-label="Upcoming entry deadlines"><strong>${soon} ${soon===1?'entry deadline':'entry deadlines'} to act on in the next 7 days</strong>
+ ${deadlines.length?`<details id="timelinePlannerQueue" ${state.timelinePlannerQueueOpen?'open':''}><summary>All open deadlines · ${deadlines.length}</summary>
+ <ol class="timeline-planner-queue">${deadlines.map(e=>`<li><div><strong>${esc(e.name)}</strong><small>${esc(plannerDeadlineLabel(e,today))} · ${esc(ENTRY_PLAN_STAGES[timelinePlanStage(e.id,plans)])}</small></div><div><button class="ghost" type="button" data-open="${esc(e.id)}" aria-label="Open ${esc(e.name)}">Open event</button>${timelineEventLinks(e,today)}</div></li>`).join('')}</ol></details>`:'<p>No open published deadlines for competitions you’re considering or ready to enter.</p>'}
+ <button class="ghost" type="button" id="exportPlannerDeadlines" ${deadlines.length?'':'disabled'}>Export entry reminders (.ics) · ${deadlines.length}</button>
+ <small>Includes all open deadlines in this queue, with a calendar alert two days before where there’s enough notice. Export again if deadlines change.</small></section>
  <div><label>Filter by entry status<select class="search" id="timelinePlanFilter"><option value="">All statuses (${rows.length})</option>${Object.entries(ENTRY_PLAN_STAGES).map(([value,label])=>`<option value="${value}" ${filter===value?'selected':''}>${label} (${count(value)})</option>`).join('')}</select></label>
  <button class="ghost" type="button" id="exportEnteredTimeline" ${entered?'':'disabled'}>Export entered competitions (.ics) · ${entered}</button>
  <small>Includes all upcoming saved competitions marked Entered.</small></div></div>
+ ${clashes.length?`<section class="timeline-planner-clashes" aria-label="Entered competition clashes"><h3>Entered competitions: ${clashes.length} possible ${clashes.length===1?'clash':'clashes'}</h3><p>Competition dates overlap. Check the session times before making travel plans.</p><ul>${clashes.map(([a,b])=>`<li><span>${esc(fmt(a.start>b.start?a.start:b.start))} · <button class="ghost" type="button" data-open="${esc(a.id)}">${esc(a.name)}</button> and <button class="ghost" type="button" data-open="${esc(b.id)}">${esc(b.name)}</button></span></li>`).join('')}</ul></section>`:''}
  <p id="timelinePlanStatus" role="status"></p>
- ${shown.length?`<ul>${shown.map(e=>`<li><div><strong>${esc(e.name)}</strong><small>${esc(fmt(e.start))} · ${esc(plannerDeadlineLabel(e,today))}</small><button class="ghost" type="button" data-open="${esc(e.id)}">Open event</button></div><label>My entry status for ${esc(e.name)}<select class="search" data-timeline-plan="${esc(e.id)}">${Object.entries(ENTRY_PLAN_STAGES).map(([value,label])=>`<option value="${value}" ${timelinePlanStage(e.id,plans)===value?'selected':''}>${label}</option>`).join('')}</select></label></li>`).join('')}</ul>`:`<p>${rows.length?'No competitions with this entry status.':'Save an upcoming competition to add it here.'}</p>`}</details>`;
+ ${shown.length?`<ul>${shown.map(e=>`<li><div><strong>${esc(e.name)}</strong><small>${esc(fmt(e.start))} · ${esc(plannerDeadlineLabel(e,today))}${clashIds.has(e.id)?' · Possible date clash':''}</small><button class="ghost" type="button" data-open="${esc(e.id)}">Open event</button></div><label>My entry status for ${esc(e.name)}<select class="search" data-timeline-plan="${esc(e.id)}">${Object.entries(ENTRY_PLAN_STAGES).map(([value,label])=>`<option value="${value}" ${timelinePlanStage(e.id,plans)===value?'selected':''}>${label}</option>`).join('')}</select></label></li>`).join('')}</ul>`:`<p>${rows.length?'No competitions with this entry status.':'Save an upcoming competition to add it here.'}</p>`}</details>`;
 }
 function timelineCompactRow(e){
  const saved=state.saved.has(e.id);
@@ -998,6 +1007,14 @@ function bind(){
  const exportTimeline=$('#exportTimelineCalendar');if(exportTimeline)exportTimeline.onclick=()=>shareEventCalendar('fighteye-shown-events.ics',eventCalendarText(timelineSelection(events,state,ukTimelineDay()).list),'FightEye competition calendar');
  const planner=$('.timeline-entry-planner'),planStatus=$('#timelinePlanStatus');
  if(planner)planner.ontoggle=()=>{state.entryPlannerOpen=planner.open};
+ const plannerQueue=$('#timelinePlannerQueue');
+ if(plannerQueue)plannerQueue.ontoggle=()=>{state.timelinePlannerQueueOpen=plannerQueue.open};
+ const exportPlannerDeadlines=$('#exportPlannerDeadlines');
+ if(exportPlannerDeadlines)exportPlannerDeadlines.onclick=()=>{
+  const today=ukTimelineDay(),rows=timelinePlannerRows(events,state.saved,state.timelinePlans,today);
+  const deadlines=timelinePlannerDeadlines(rows,state.timelinePlans,today);
+  if(deadlines.length)return shareEventCalendar('fighteye-planner-entry-reminders.ics',eventDeadlineCalendarText(deadlines,today),'FightEye planner entry reminders');
+ };
  const planFilter=$('#timelinePlanFilter');
  if(planFilter)planFilter.onchange=()=>{state.timelinePlanFilter=planFilter.value;state.entryPlannerOpen=true;render();$('#timelinePlanFilter')?.focus({preventScroll:true})};
  const exportEntered=$('#exportEnteredTimeline');
