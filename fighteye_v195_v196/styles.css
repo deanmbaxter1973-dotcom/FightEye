@@ -300,3 +300,16 @@ body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
 .timeline-direct-links{display:flex;gap:.5rem;flex-wrap:wrap}
 .timeline-direct-links:empty{display:none}
 .timeline-direct-links a,.timeline-row-actions a{display:inline-flex;align-items:center;min-height:44px;text-decoration:none;box-sizing:border-box}
+
+.timeline-month-nav{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}
+.timeline-month-nav h3{margin:0;font-size:1rem}
+.timeline-month-nav button,.timeline-entry-planner button,.timeline-entry-planner select{min-height:44px}
+.timeline-calendar button{background:var(--card2);color:var(--text);border:1px solid var(--line);font:inherit}
+.timeline-calendar button[aria-pressed=true]{outline:2px solid var(--gold);outline-offset:-2px}
+.timeline-calendar [aria-current=date]{font-weight:800;color:var(--gold)}
+.timeline-entry-planner summary{padding:.5rem 0}
+.timeline-entry-planner ul{list-style:none;padding:0}
+.timeline-entry-planner li{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:.7rem;padding:.65rem 0;border-top:1px solid var(--line)}
+.timeline-entry-planner li small,.timeline-entry-planner label{display:block;overflow-wrap:anywhere}
+.timeline-entry-planner select{display:block;width:100%;min-width:0;font-size:16px}
+.timeline-entry-planner label{flex:1 1 12rem;max-width:24rem;min-width:0}
