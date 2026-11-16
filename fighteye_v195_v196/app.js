@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VERSION='v281';
+const VERSION='v284';
 const ICLOUD_FEED='https://raw.githubusercontent.com/deanmbaxter1973-dotcom/FightEye/main/fighteye_v195_v196/data/events.ics';
 const UK_TIMELINE_DATE=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',year:'numeric',month:'2-digit',day:'2-digit'});
 const events=(window.FIGHTEYE_EVENTS||[]).map(e=>({...e,status:statusFor(e)})).sort((a,b)=>new Date(a.start)-new Date(b.start));
@@ -25,7 +25,7 @@ state.editAthlete='';state.clubDetailsError='';state.athleteEditError='';
 state.weightRecords=readWeightStore();state.weightError='';
 state.healthLinkedAthlete='';state.healthSyncAt='';state.healthSyncStatus='disconnected';state.healthBackgroundEnabled=false;
 state.injuries=[];state.injuryKey=null;state.injuryError='';state.injuryAthleteId='';
-state.eventPeriod='upcoming';state.timelineComparisonIds=new Set();state.eventMonth='';state.eventFrom='';state.eventTo='';Object.assign(state,readTimelinePreferences());
+state.eventPeriod='upcoming';state.timelineDay='';state.timelinePlans=readTimelinePlans();state.timelineComparisonIds=new Set();state.eventMonth='';state.eventFrom='';state.eventTo='';Object.assign(state,readTimelinePreferences());
 const initialTimeline=typeof location==='undefined'?null:readSharedTimeline(location.hash);
 if(initialTimeline)Object.assign(state,initialTimeline);
 state.eventChanges=readEventChanges();
@@ -286,9 +286,34 @@ function timelineCalendarDays(rows,month,{from,to}={}){
   return {date,events:(!from||date>=from)&&(!to||date<=to)?rows.filter(e=>e.start<=date&&e.end>=date):[]};
  })};
 }
+function adjacentTimelineMonth(month,step){
+ if(!timelineDateIsValid(month+'-01')||![-1,1].includes(step))return '';
+ const date=new Date(month+'-01T12:00:00Z');date.setUTCMonth(date.getUTCMonth()+step);
+ const result=date.toISOString().slice(0,7);return timelineDateIsValid(result+'-01')?result:'';
+}
+function timelineDayAgenda(days,selected,today){
+ return days.find(day=>day.date===selected&&day.events.length)
+  ||days.find(day=>day.date===today&&day.events.length)
+  ||days.find(day=>day.date>=today&&day.events.length)
+  ||days.find(day=>day.events.length)||null;
+}
 function timelineCalendarView(rows,month,range){
- const {offset,days}=timelineCalendarDays(rows,month,range);
- return `<p class="muted">Select a day with events to jump to its list. Calendar export includes all shown events in this month.</p><div class="timeline-calendar" aria-label="${esc(timelineMonthLabel(month))}">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day=>`<strong>${day}</strong>`).join('')}${'<span aria-hidden="true"></span>'.repeat(offset)}${days.map(({date,events})=>events.length?`<a href="#timeline-day-${date}" aria-label="${esc(fmt(date))}: ${events.length} events">${Number(date.slice(-2))}<small>${events.length}</small></a>`:`<span>${Number(date.slice(-2))}</span>`).join('')}</div><div class="timeline-list">${days.filter(day=>day.events.length).map(({date,events})=>`<section class="timeline-month" id="timeline-day-${date}"><h3>${esc(fmt(date))}</h3>${events.map(timelineCompactRow).join('')}</section>`).join('')}</div>`;
+ const {offset,days}=timelineCalendarDays(rows,month,range),today=ukTimelineDay(),agenda=timelineDayAgenda(days,state.timelineDay,today);
+ return `<div class="timeline-month-nav"><button type="button" class="ghost" data-timeline-move="-1" ${adjacentTimelineMonth(month,-1)?'':'disabled'}>← Previous month</button><h3>${esc(timelineMonthLabel(month))}</h3><button type="button" class="ghost" data-timeline-move="1" ${adjacentTimelineMonth(month,1)?'':'disabled'}>Next month →</button><button type="button" class="ghost" id="timelineCurrentMonth">Current month</button></div>
+ <p class="muted">Tap a date to see its events. Calendar export includes all events matching your filters in this month.</p>
+ <div class="timeline-calendar" aria-label="${esc(timelineMonthLabel(month))}">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day=>`<strong>${day}</strong>`).join('')}${'<span aria-hidden="true"></span>'.repeat(offset)}${days.map(({date,events})=>events.length?`<button type="button" data-timeline-day="${date}" aria-pressed="${agenda?.date===date}" ${date===today?'aria-current="date"':''} aria-label="${esc(fmt(date))}: ${events.length} ${events.length===1?'event':'events'}">${Number(date.slice(-2))}<small>${events.length}</small></button>`:`<span ${date===today?'aria-current="date"':''}>${Number(date.slice(-2))}</span>`).join('')}</div>
+ <section class="timeline-list timeline-day-agenda" aria-label="Day agenda"><h3>${agenda?esc(fmt(agenda.date)):'Day agenda'}</h3>${agenda?agenda.events.map(timelineCompactRow).join(''):'<p>No events match your filters this month.</p><button class="ghost" type="button" id="reset">Reset filters</button>'}</section>`;
+}
+function readTimelinePlans(){
+ try{
+  const value=JSON.parse(localStorage.getItem('fighteye-entry-plans-v1')||'{}');
+  return new Map(Object.entries(value||{}).filter(([,stage])=>['considering','ready','entered','skipping'].includes(stage)));
+ }catch{return new Map()}
+}
+function timelinePlanStage(id){return state.timelinePlans.get(id)||'considering'}
+function timelineEntryPlanPanel(){
+ const rows=events.filter(e=>state.saved.has(e.id)&&!e.kind&&e.end>=ukTimelineDay()).sort((a,b)=>a.start.localeCompare(b.start));
+ return `<details class="panel timeline-entry-planner" ${state.entryPlannerOpen?'open':''}><summary>My entry planner · ${rows.length} upcoming saved competitions</summary><p>Track your own progress here. Marking an event Entered records your plan on this device; submit and confirm your entry with the organiser.</p>${rows.length?`<ul>${rows.map(e=>`<li><div><strong>${esc(e.name)}</strong><small>${esc(fmt(e.start))} · ${e.closing?'Entry deadline: '+esc(fmt(e.closing)):'Entry deadline TBC'}</small><button class="ghost" type="button" data-open="${esc(e.id)}">Open event</button></div><label>My entry status for ${esc(e.name)}<select class="search" data-timeline-plan="${esc(e.id)}">${[['considering','Considering'],['ready','Ready to enter'],['entered','Entered'],['skipping','Skipping']].map(([value,label])=>`<option value="${value}" ${timelinePlanStage(e.id)===value?'selected':''}>${label}</option>`).join('')}</select></label></li>`).join('')}</ul>`:'<p>Save an upcoming competition to add it here.</p>'}<p id="timelinePlanStatus" role="status"></p></details>`;
 }
 function timelineCompactRow(e){
  const saved=state.saved.has(e.id);
@@ -388,13 +413,13 @@ function timelineReminderRows(rows,today){
  return rows.filter(e=>timelineDateIsValid(e.closing||'')&&registrationOpen(e,today));
 }
 function timelineResults(){
- const today=ukTimelineDay(),{months,month,invalidRange,list}=timelineSelection(events,state,today);
- const key=JSON.stringify([state.eventPeriod,month,state.eventFrom,state.eventTo,state.query,state.filter,state.sourceFilter,state.seriesFilter,state.kindFilter,state.countryFilter]);
- return `<section class="section" id="timelineResults"><div class="section-head"><div><h2>Competition calendar</h2><small>${list.length} matching events • ${esc(state.eventRefresh||'Published calendar')}</small></div><button class="ghost" id="refreshEvents" aria-label="Check for event updates">Check updates</button></div><div class="event-period" role="group" aria-label="Event period">${[['upcoming','Upcoming'],['open','Registration open'],['past','Past'],['results','Results'],['saved','Saved'],['all','All']].map(([key,label])=>`<button data-event-period="${key}" class="chip ${state.eventPeriod===key?'active':''}" aria-pressed="${state.eventPeriod===key}">${label}</button>`).join('')}</div>${state.sourceFilter==='USA Combat Sports'?'<p class="muted">No dated USA Combat Sports event listings have been verified yet.</p>':''}${timelineChangesPanel()}${state.eventPeriod==='saved'?timelineComparePanel():''}${timelineConflictsPanel(today)}<div class="timeline-shortcuts" role="group" aria-label="Quick date ranges">
+ const today=ukTimelineDay(),{months,month:shownMonth,invalidRange,list}=timelineSelection(events,state,today);
+ const key=JSON.stringify([state.eventPeriod,shownMonth,state.eventFrom,state.eventTo,state.query,state.filter,state.sourceFilter,state.seriesFilter,state.kindFilter,state.countryFilter]);
+ return `<section class="section" id="timelineResults"><div class="section-head"><div><h2>Competition calendar</h2><small>${list.length} matching events • ${esc(state.eventRefresh||'Published calendar')}</small></div><button class="ghost" id="refreshEvents" aria-label="Check for event updates">Check updates</button></div><div class="event-period" role="group" aria-label="Event period">${[['upcoming','Upcoming'],['open','Registration open'],['past','Past'],['results','Results'],['saved','Saved'],['all','All']].map(([key,label])=>`<button data-event-period="${key}" class="chip ${state.eventPeriod===key?'active':''}" aria-pressed="${state.eventPeriod===key}">${label}</button>`).join('')}</div>${state.sourceFilter==='USA Combat Sports'?'<p class="muted">No dated USA Combat Sports event listings have been verified yet.</p>':''}${timelineChangesPanel()}${state.eventPeriod==='saved'?timelineEntryPlanPanel()+timelineComparePanel():''}${timelineConflictsPanel(today)}<div class="timeline-shortcuts" role="group" aria-label="Quick date ranges">
  <button type="button" class="ghost" data-timeline-days="7">Next 7 days</button><button type="button" class="ghost" data-timeline-days="30">Next 30 days</button>
  <button type="button" class="ghost" id="clearTimelineDates">Clear dates</button>
  </div><div class="timeline-tools">
- <label>Month<select id="timelineMonth" class="search"><option value="">${state.eventLayout==='calendar'?'Automatic month':'All months'}</option>${months.map(m=>`<option value="${m}" ${m===month?'selected':''}>${esc(timelineMonthLabel(m))}</option>`).join('')}</select></label>
+ <label>Month<select id="timelineMonth" class="search"><option value="">${state.eventLayout==='calendar'?'Automatic month':'All months'}</option>${months.map(m=>`<option value="${m}" ${m===state.eventMonth?'selected':''}>${esc(timelineMonthLabel(m))}</option>`).join('')}</select></label>
  <label>From date<input id="timelineFrom" class="search" type="date" value="${esc(state.eventFrom)}"></label>
  <label>To date<input id="timelineTo" class="search" type="date" value="${esc(state.eventTo)}"></label>
  <label>View<select id="timelineLayout" class="search"><option value="cards">Swipe cards</option><option value="list" ${state.eventLayout==='list'?'selected':''}>Compact list</option><option value="deadlines" ${state.eventLayout==='deadlines'?'selected':''}>Entry deadlines</option><option value="calendar" ${state.eventLayout==='calendar'?'selected':''}>Month calendar</option></select></label>
@@ -402,7 +427,7 @@ function timelineResults(){
  <details class="timeline-reminders"><summary>Entry deadline reminders</summary><p>Export shown open entry deadlines as all-day calendar entries with an alert two days before when there is enough notice. Your calendar app controls whether alerts are enabled.</p><button class="ghost" type="button" id="exportTimelineReminders" ${timelineReminderRows(list,today).length?'':'disabled'}>Export deadline reminders (.ics)</button></details>
  <details class="timeline-share"><summary>Share view</summary><p>The link includes your filters and search text. Saved view opens as Upcoming for the recipient; your saved events stay on this device.</p><label>Shareable link<input id="timelineShareLink" class="search" type="url" readonly></label><button class="ghost" type="button" id="copyTimelineView">Copy view link</button><small id="timelineCopyStatus" role="status"></small></details>
  ${state.eventLayout==='cards'&&list.length>1?'<div class="timeline-navigation"><button class="ghost" type="button" id="timelinePrevious" aria-label="Previous event">← Previous</button><button class="ghost" type="button" id="timelineNext" aria-label="Next event">Next →</button></div>':''}
- </div>${invalidRange?'<p role="alert">Enter a valid date range. The to date must be on or after the from date.</p>':''}${state.eventLayout==='deadlines'?'<p class="muted">Shows open registrations with a published closing date, soonest deadline first. Date filters apply to event dates.</p>':''}${list.length?(state.eventLayout==='calendar'?timelineCalendarView(list,month,{from:state.eventFrom,to:state.eventTo}):state.eventLayout==='deadlines'?`<div class="timeline-list">${list.map(timelineDeadlineRow).join('')}</div>`:state.eventLayout==='list'?`<div class="timeline-list">${timelineMonthGroups(list).map(([month,rows])=>`<section class="timeline-month"><h3>${esc(timelineMonthLabel(month))} <small>${rows.length} ${rows.length===1?'event':'events'}</small></h3>${rows.map(timelineCompactRow).join('')}</section>`).join('')}</div>`:`<div class="carousel" id="timelineTrack" data-timeline-key="${esc(key)}" role="region" aria-label="Competition timeline" tabindex="0">${list.map(eventCard).join('')}</div>`):'<div class="panel"><h3>No matching events</h3><button class="button" id="reset">Reset filters</button></div>'}</section>`;}
+ </div>${invalidRange?'<p role="alert">Enter a valid date range. The to date must be on or after the from date.</p>':''}${state.eventLayout==='deadlines'?'<p class="muted">Shows open registrations with a published closing date, soonest deadline first. Date filters apply to event dates.</p>':''}${state.eventLayout==='calendar'?timelineCalendarView(list,shownMonth,{from:state.eventFrom,to:state.eventTo}):list.length?(state.eventLayout==='deadlines'?`<div class="timeline-list">${list.map(timelineDeadlineRow).join('')}</div>`:state.eventLayout==='list'?`<div class="timeline-list">${timelineMonthGroups(list).map(([month,rows])=>`<section class="timeline-month"><h3>${esc(timelineMonthLabel(month))} <small>${rows.length} ${rows.length===1?'event':'events'}</small></h3>${rows.map(timelineCompactRow).join('')}</section>`).join('')}</div>`:`<div class="carousel" id="timelineTrack" data-timeline-key="${esc(key)}" role="region" aria-label="Competition timeline" tabindex="0">${list.map(eventCard).join('')}</div>`):'<div class="panel"><h3>No matching events</h3><button class="button" id="reset">Reset filters</button></div>'}</section>`;}
 
 const PROFILE_BACKUP_SCHEMA='fighteye-profile-v1';
 function profileSnapshot(){const profile={...persisted,groups:state.groups,competitionPlans:state.competitionPlans,customAthletes:state.customAthletes,selectedGroup:state.selectedGroup,saved:[...state.saved],budget:state.budget,attendance:state.attendance,adminEvents:state.adminEvents,parentAthlete:state.parentAthlete,analyticsAthlete:state.analyticsAthlete,analyticsGoal:state.analyticsGoal,weightRange:state.weightRange,weightUnit:state.weightUnit};return {schema:PROFILE_BACKUP_SCHEMA,createdAt:new Date().toISOString(),profile,weights:state.weightRecords}}
@@ -900,7 +925,7 @@ async function addToCalendar(id){
 }
 function download(name,text,type='text/plain'){const b=new Blob([text],{type}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),500);}
 function resetTimelineFilters(){
- state.query='';state.filter='All';state.sourceFilter='All sources';state.seriesFilter='All organisers';state.kindFilter='All activities';state.countryFilter='';state.eventPeriod='upcoming';state.eventMonth='';state.eventFrom='';state.eventTo='';saveTimelinePreferences();render();
+ state.query='';state.filter='All';state.sourceFilter='All sources';state.seriesFilter='All organisers';state.kindFilter='All activities';state.countryFilter='';state.eventPeriod='upcoming';state.eventMonth='';state.eventFrom='';state.eventTo='';state.timelineDay='';saveTimelinePreferences();render();
 }
 function bind(){
  const refreshRoster=$('#refreshRoster');if(refreshRoster)refreshRoster.onclick=()=>{const group=state.groups.find(g=>g.id===state.selectedGroup);if(group&&!state.rosterLoading)runRosterDiscovery(group)};
@@ -913,8 +938,8 @@ function bind(){
  $$('[data-pass]').forEach(b=>b.onclick=()=>openPass(b.dataset.pass));
  $$('[data-replay]').forEach(b=>b.onclick=()=>openReplay(b.dataset.replay));
  $$('[data-report]').forEach(b=>b.onclick=()=>{const e=events.find(x=>x.id===b.dataset.report);download(`${e.id}-report.txt`,`${e.name}\n${fmt(e.start)}\nTeam medals: 3\nWins: 7\nHighlights: 4 personal bests`);});
- $$('[data-timeline-days]').forEach(button=>button.onclick=()=>{Object.assign(state,timelineQuickRange(Number(button.dataset.timelineDays)));render()});
- const clearTimelineDates=$('#clearTimelineDates');if(clearTimelineDates)clearTimelineDates.onclick=()=>{state.eventMonth='';state.eventFrom='';state.eventTo='';render()};
+ $$('[data-timeline-days]').forEach(button=>button.onclick=()=>{Object.assign(state,timelineQuickRange(Number(button.dataset.timelineDays)));state.timelineDay='';render()});
+ const clearTimelineDates=$('#clearTimelineDates');if(clearTimelineDates)clearTimelineDates.onclick=()=>{state.eventMonth='';state.eventFrom='';state.eventTo='';state.timelineDay='';render()};
  const shareLink=$('#timelineShareLink'),copyView=$('#copyTimelineView'),copyStatus=$('#timelineCopyStatus');
  if(shareLink&&typeof location!=='undefined'){
   shareLink.value=shareTimelineUrl(location.href,state);
@@ -943,7 +968,25 @@ function bind(){
   return shareEventCalendar('fighteye-entry-deadlines.ics',eventDeadlineCalendarText(rows,today),'FightEye entry deadlines');
  };
  const exportTimeline=$('#exportTimelineCalendar');if(exportTimeline)exportTimeline.onclick=()=>shareEventCalendar('fighteye-shown-events.ics',eventCalendarText(timelineSelection(events,state,ukTimelineDay()).list),'FightEye competition calendar');
- const month=$('#timelineMonth');if(month)month.onchange=()=>{state.eventMonth=month.value;render()};
+ const planner=$('.timeline-entry-planner'),planStatus=$('#timelinePlanStatus');
+ if(planner)planner.ontoggle=()=>{state.entryPlannerOpen=planner.open};
+ $$('[data-timeline-plan]').forEach(select=>select.onchange=()=>{
+  const id=select.dataset.timelinePlan,stage=select.value,previous=timelinePlanStage(id);
+  if(!state.saved.has(id)||!['considering','ready','entered','skipping'].includes(stage)){select.value=previous;return}
+  const proposed=new Map(state.timelinePlans);if(stage==='considering')proposed.delete(id);else proposed.set(id,stage);
+  try{localStorage.setItem('fighteye-entry-plans-v1',JSON.stringify(Object.fromEntries(proposed)));state.timelinePlans=proposed;if(planStatus)planStatus.textContent='Entry status saved on this device.'}
+  catch{select.value=previous;if(planStatus)planStatus.textContent='Could not save the entry status.'}
+ });
+ const calendarMonth=()=>timelineSelection(events,state,ukTimelineDay()).month;
+ $$('[data-timeline-move]').forEach(button=>button.onclick=()=>{
+  const month=adjacentTimelineMonth(calendarMonth(),Number(button.dataset.timelineMove));
+  if(month){state.eventMonth=month;state.timelineDay='';render();$('[data-timeline-move="'+button.dataset.timelineMove+'"]')?.focus({preventScroll:true})}
+ });
+ const currentMonth=$('#timelineCurrentMonth');if(currentMonth)currentMonth.onclick=()=>{state.eventMonth=ukTimelineDay().slice(0,7);state.timelineDay='';render();$('#timelineCurrentMonth')?.focus({preventScroll:true})};
+ $$('[data-timeline-day]').forEach(button=>button.onclick=()=>{
+  state.timelineDay=button.dataset.timelineDay;render();$('[data-timeline-day="'+state.timelineDay+'"]')?.focus({preventScroll:true});
+ });
+ const month=$('#timelineMonth');if(month)month.onchange=()=>{state.eventMonth=month.value;state.timelineDay='';render()};
  const layout=$('#timelineLayout');if(layout)layout.onchange=()=>{state.eventLayout=layout.value;saveTimelinePreferences();render()};
  const track=$('#timelineTrack'),previous=$('#timelinePrevious'),next=$('#timelineNext');
  if(track&&previous&&next){
@@ -965,7 +1008,7 @@ function bind(){
  const importProfile=$('#profileBackupImport');if(importProfile)importProfile.onsubmit=async e=>{e.preventDefault();const fd=new FormData(importProfile),file=fd.get('file'),passphrase=String(fd.get('passphrase')||'');if(!file?.size||file.size>9000000){notify('Select a backup under 9 MB.');return}try{const snapshot=await decryptProfileSnapshot(await file.text(),passphrase);if(!window.confirm(`Replace profiles and weights on this device with this backup? Injury records will remain here. Export the current profiles first.`))return;const oldProfile=localStorage.getItem('fighteye-v192'),oldWeights=localStorage.getItem('fighteye-weights-v1');try{localStorage.setItem('fighteye-v192',JSON.stringify(snapshot.profile));localStorage.setItem('fighteye-weights-v1',JSON.stringify(snapshot.weights));location.reload()}catch(error){if(oldProfile===null)localStorage.removeItem('fighteye-v192');else localStorage.setItem('fighteye-v192',oldProfile);if(oldWeights===null)localStorage.removeItem('fighteye-weights-v1');else localStorage.setItem('fighteye-weights-v1',oldWeights);throw error}}catch{notify('Could not restore: check the passphrase, file and available storage.')}};
  const refresh=$('#refreshEvents');if(refresh)refresh.onclick=()=>refreshPublishedEvents(true);
  const reset=$('#reset');if(reset)reset.onclick=resetTimelineFilters;
- $$('[data-event-period]').forEach(b=>b.onclick=()=>{state.eventPeriod=b.dataset.eventPeriod;state.eventMonth='';render();});
+ $$('[data-event-period]').forEach(b=>b.onclick=()=>{state.eventPeriod=b.dataset.eventPeriod;state.eventMonth='';state.timelineDay='';render();});
  $$('[data-budget]').forEach(i=>i.onchange=e=>{state.budget[e.target.dataset.budget]=Number(e.target.value)||0;saveStore();render()});
  $$('[data-att]').forEach(i=>i.onchange=e=>{state.attendance[e.target.dataset.att]=e.target.checked;saveStore();});
  $$('[data-group]').forEach(b=>b.onclick=()=>{state.selectedGroup=b.dataset.group;state.rosterQuery='';state.rosterStatusFilter='all';state.rosterImportPreview=null;state.rosterImportText='';state.rosterImportError='';state.rosterImportOpen=false;state.squadQuery='';state.preparationOpen=false;state.coachBriefingOpen=false;state.fightDayDate='';state.fightDayArea='';state.fightDayAthlete='';state.clubForm='';state.editAthlete='';saveStore();render();});
@@ -1100,6 +1143,6 @@ function bind(){
  const ed=$('#exportDiagnostics');if(ed)ed.onclick=()=>download('fighteye-production-diagnostics.json',JSON.stringify({version:VERSION,apiHealth:state.apiHealth,events:events.length,athletes:athletes.length,duplicates:duplicateIds(events),invalid:invalidEvents().length,online:navigator.onLine,report:state.productionReport,generatedAt:new Date().toISOString()},null,2),'application/json');
  const clear=$('#clearCustom');if(clear)clear.onclick=()=>{const ids=new Set(state.adminEvents.map(e=>e.id));for(let i=events.length-1;i>=0;i--)if(ids.has(events[i].id))events.splice(i,1);state.adminEvents=[];saveStore();notify('Custom events removed.');};
 }
-window.addEventListener('hashchange',()=>{const shared=readSharedTimeline(location.hash);if(shared){Object.assign(state,shared);state.tab='events';render()}});
+window.addEventListener('hashchange',()=>{const shared=readSharedTimeline(location.hash);if(shared){Object.assign(state,shared);state.timelineDay='';state.tab='events';render()}});
 window.addEventListener('DOMContentLoaded',()=>{render();refreshPublishedEvents();window.addEventListener('online',()=>refreshPublishedEvents());setInterval(()=>refreshPublishedEvents(),6*3600000);document.addEventListener('visibilitychange',scheduleFightChecks);if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});});
 })();
