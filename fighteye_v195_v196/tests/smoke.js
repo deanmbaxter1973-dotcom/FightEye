@@ -17,7 +17,7 @@ assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'E
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const store=new Map();
 const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[{id:'test-athlete',name:'Test Athlete',ranking:'Cadet',weight:'42 kg'}],addEventListener:()=>{},webkit:{messageHandlers:{fighteyeHealth:{postMessage:()=>{}}}}},document:{getElementById:()=>({}),querySelector:()=>null,querySelectorAll:()=>[]},localStorage:{getItem:key=>store.get(key)||null,setItem:(key,value)=>store.set(key,value)},URLSearchParams,navigator:{userAgent:'Mozilla/5.0 (iPhone) AppleWebKit Safari',standalone:false},URL,setTimeout:()=>1,clearTimeout:()=>{}};
-vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,timelineCalendarDays,adjacentTimelineMonth,timelineDayAgenda,readTimelinePlans,bind,timelineEventLinks,timelineComparison,timelineChangeGroups,eventDeadlineCalendarText,timelineQuickRange,savedTimelineConflicts,shareTimelineUrl,readSharedTimeline,timelineMatches,timelineSelection,eventCalendarText,timelineMonthGroups,timelineEntryLabel,ukTimelineDay,timelinePreferences,readTimelinePreferences,saveTimelinePreferences,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,filterFightDayBouts,fightResultsSummary,fightResultsReport,priorityFightBouts,fightDayBriefing,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
+vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,timelineCalendarDays,adjacentTimelineMonth,timelineDayAgenda,readTimelinePlans,timelinePlannerRows,timelinePlannerDeadlines,bind,timelineEventLinks,timelineComparison,timelineChangeGroups,eventDeadlineCalendarText,timelineQuickRange,savedTimelineConflicts,shareTimelineUrl,readSharedTimeline,timelineMatches,timelineSelection,eventCalendarText,timelineMonthGroups,timelineEntryLabel,ukTimelineDay,timelinePreferences,readTimelinePreferences,saveTimelinePreferences,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,filterFightDayBouts,fightResultsSummary,fightResultsReport,priorityFightBouts,fightDayBriefing,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
 const official='https://www.sportdata.org/kickboxing/sportsid/veranstaltung_info_main.php?vernr=2488';
 const timetable='https://www.sportdata.org/setglinc/dtm/dtm_timetable.php?eventid=2488&system=kickboxing';
 assert.strictEqual(context.__events.parseSportdataLink(official).id,'2488','official event URL accepted');
@@ -310,3 +310,25 @@ assert(timeline.eventsView().includes('value="entered" selected'),'saved status 
 assert(!decodeURIComponent(timeline.shareTimelineUrl('https://example.test/',timeline.state)).includes(savedId),'shared view omits tracked entries');
 context.document.querySelectorAll=queryAll;
 console.log('Timeline phases 282–284 passed: month navigation, day agenda and local entry planner.');
+
+const fixture=(id,closing,extra={})=>({id,name:id,start:'2026-11-29',end:'2026-11-30',closing,...extra});
+const plannerFixtures=[
+ fixture('seventh','2026-11-22'),fixture('today','2026-11-16'),fixture('eighth','2026-11-23'),
+ fixture('entered','2026-11-17'),fixture('skipped','2026-11-17'),fixture('unknown',''),
+ fixture('closed','2026-11-15'),fixture('unsaved','2026-11-17'),
+ fixture('training','2026-11-17',{kind:'Squad training'}),fixture('past','2026-11-10',{start:'2026-11-12',end:'2026-11-12'}),
+ fixture('badDate','2026-11-17',{start:'2026-11-31'}),fixture('badDeadline','2026-11-1x')
+];
+const plannerSaved=new Set(plannerFixtures.filter(e=>e.id!=='unsaved').map(e=>e.id));
+const plannerStages=new Map([['seventh','ready'],['entered','entered'],['skipped','skipping'],['past','entered'],['unsaved','entered'],['training','entered']]);
+const plannerDay='2026-11-16',plannerRows=timeline.timelinePlannerRows(plannerFixtures,plannerSaved,plannerStages,plannerDay);
+assert.deepEqual(Array.from(timeline.timelinePlannerDeadlines(plannerRows,plannerStages,plannerDay),e=>e.id),['today','seventh']);
+const enteredRows=timeline.timelinePlannerRows(plannerFixtures,plannerSaved,plannerStages,plannerDay,'entered');
+assert.deepEqual(Array.from(enteredRows,e=>e.id),['entered']);
+assert.equal(Array.from(timeline.timelinePlannerRows(plannerFixtures,plannerSaved,plannerStages,plannerDay,'ready'),e=>e.id).join(),'seventh');
+assert.equal((timeline.eventCalendarText(enteredRows).match(/BEGIN:VEVENT/g)||[]).length,1);
+assert(timeline.eventCalendarText(enteredRows).includes('UID:entered@fighteye.app'));
+timeline.state.timelinePlanFilter='ready';
+assert(!timeline.eventsView().includes('data-timeline-plan="'+savedId+'"'),'status filter hides entered row');
+assert(timeline.eventsView().includes('Export entered competitions (.ics) · 1'),'export count is independent of planner filter');
+console.log('Timeline phases 285–287 passed: deadline window, status filter and entered calendar scope.');
