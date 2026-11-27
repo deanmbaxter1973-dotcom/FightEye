@@ -1,6 +1,7 @@
 (function(){
 'use strict';
-const VERSION='v284';
+const VERSION='v287';
+const ENTRY_PLAN_STAGES={considering:'Considering',ready:'Ready to enter',entered:'Entered',skipping:'Skipping'};
 const ICLOUD_FEED='https://raw.githubusercontent.com/deanmbaxter1973-dotcom/FightEye/main/fighteye_v195_v196/data/events.ics';
 const UK_TIMELINE_DATE=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',year:'numeric',month:'2-digit',day:'2-digit'});
 const events=(window.FIGHTEYE_EVENTS||[]).map(e=>({...e,status:statusFor(e)})).sort((a,b)=>new Date(a.start)-new Date(b.start));
@@ -25,7 +26,7 @@ state.editAthlete='';state.clubDetailsError='';state.athleteEditError='';
 state.weightRecords=readWeightStore();state.weightError='';
 state.healthLinkedAthlete='';state.healthSyncAt='';state.healthSyncStatus='disconnected';state.healthBackgroundEnabled=false;
 state.injuries=[];state.injuryKey=null;state.injuryError='';state.injuryAthleteId='';
-state.eventPeriod='upcoming';state.timelineDay='';state.timelinePlans=readTimelinePlans();state.timelineComparisonIds=new Set();state.eventMonth='';state.eventFrom='';state.eventTo='';Object.assign(state,readTimelinePreferences());
+state.eventPeriod='upcoming';state.timelineDay='';state.timelinePlans=readTimelinePlans();state.timelinePlanFilter='';state.timelineComparisonIds=new Set();state.eventMonth='';state.eventFrom='';state.eventTo='';Object.assign(state,readTimelinePreferences());
 const initialTimeline=typeof location==='undefined'?null:readSharedTimeline(location.hash);
 if(initialTimeline)Object.assign(state,initialTimeline);
 state.eventChanges=readEventChanges();
@@ -307,13 +308,40 @@ function timelineCalendarView(rows,month,range){
 function readTimelinePlans(){
  try{
   const value=JSON.parse(localStorage.getItem('fighteye-entry-plans-v1')||'{}');
-  return new Map(Object.entries(value||{}).filter(([,stage])=>['considering','ready','entered','skipping'].includes(stage)));
+  return new Map(Object.entries(value||{}).filter(([,stage])=>Object.hasOwn(ENTRY_PLAN_STAGES,stage)));
  }catch{return new Map()}
 }
-function timelinePlanStage(id){return state.timelinePlans.get(id)||'considering'}
+function timelinePlanStage(id,plans=state.timelinePlans){return plans.get(id)||'considering'}
+function timelinePlannerRows(rows,saved,plans,today,stage=''){
+ return rows.filter(e=>saved.has(e.id)&&!e.kind&&timelineDateIsValid(e.start)&&timelineDateIsValid(e.end)&&e.end>=e.start&&e.end>=today&&(!stage||timelinePlanStage(e.id,plans)===stage)).sort((a,b)=>a.start.localeCompare(b.start)||a.name.localeCompare(b.name));
+}
+function timelinePlannerDeadlines(rows,plans,today){
+ const {eventTo}=timelineQuickRange(7,today);
+ return rows.filter(e=>registrationOpen(e,today)&&timelineDateIsValid(e.closing)&&e.closing<=eventTo&&['ready','considering'].includes(timelinePlanStage(e.id,plans))).sort((a,b)=>a.closing.localeCompare(b.closing)||a.start.localeCompare(b.start));
+}
+function plannerDeadlineLabel(e,today){
+ if(!timelineDateIsValid(e.closing||''))return 'Entry deadline TBC';
+ if(e.closing===today)return 'Entries close today';
+ return (e.closing<today?'Entries closed ':'Entries close ')+fmt(e.closing);
+}
 function timelineEntryPlanPanel(){
- const rows=events.filter(e=>state.saved.has(e.id)&&!e.kind&&e.end>=ukTimelineDay()).sort((a,b)=>a.start.localeCompare(b.start));
- return `<details class="panel timeline-entry-planner" ${state.entryPlannerOpen?'open':''}><summary>My entry planner · ${rows.length} upcoming saved competitions</summary><p>Track your own progress here. Marking an event Entered records your plan on this device; submit and confirm your entry with the organiser.</p>${rows.length?`<ul>${rows.map(e=>`<li><div><strong>${esc(e.name)}</strong><small>${esc(fmt(e.start))} · ${e.closing?'Entry deadline: '+esc(fmt(e.closing)):'Entry deadline TBC'}</small><button class="ghost" type="button" data-open="${esc(e.id)}">Open event</button></div><label>My entry status for ${esc(e.name)}<select class="search" data-timeline-plan="${esc(e.id)}">${[['considering','Considering'],['ready','Ready to enter'],['entered','Entered'],['skipping','Skipping']].map(([value,label])=>`<option value="${value}" ${timelinePlanStage(e.id)===value?'selected':''}>${label}</option>`).join('')}</select></label></li>`).join('')}</ul>`:'<p>Save an upcoming competition to add it here.</p>'}<p id="timelinePlanStatus" role="status"></p></details>`;
+ const today=ukTimelineDay(),{saved,timelinePlans:plans,timelinePlanFilter:filter}=state;
+ const rows=timelinePlannerRows(events,saved,plans,today);
+ const count=stage=>rows.filter(e=>timelinePlanStage(e.id,plans)===stage).length;
+ const shown=filter?rows.filter(e=>timelinePlanStage(e.id,plans)===filter):rows;
+ const deadlines=timelinePlannerDeadlines(rows,plans,today),next=deadlines[0],entered=count('entered');
+ return `<details class="panel timeline-entry-planner" ${state.entryPlannerOpen?'open':''}>
+ <summary>My entry planner · ${rows.length} upcoming saved competitions</summary>
+ <p>Entry status stays on this device. Submit and confirm entries with the organiser.</p>
+ <div class="timeline-planner-actions">
+ <section aria-label="Upcoming entry deadlines"><strong>${deadlines.length} ${deadlines.length===1?'entry deadline':'entry deadlines'} to act on in the next 7 days</strong>
+ <p>${next?`Next: ${esc(next.name)} · ${esc(plannerDeadlineLabel(next,today))}`:'No published deadlines due for competitions you’re considering or ready to enter.'}</p>
+ ${next?`<button class="ghost" type="button" data-open="${esc(next.id)}">Open next deadline</button>`:''}</section>
+ <div><label>Filter by entry status<select class="search" id="timelinePlanFilter"><option value="">All statuses (${rows.length})</option>${Object.entries(ENTRY_PLAN_STAGES).map(([value,label])=>`<option value="${value}" ${filter===value?'selected':''}>${label} (${count(value)})</option>`).join('')}</select></label>
+ <button class="ghost" type="button" id="exportEnteredTimeline" ${entered?'':'disabled'}>Export entered competitions (.ics) · ${entered}</button>
+ <small>Includes all upcoming saved competitions marked Entered.</small></div></div>
+ <p id="timelinePlanStatus" role="status"></p>
+ ${shown.length?`<ul>${shown.map(e=>`<li><div><strong>${esc(e.name)}</strong><small>${esc(fmt(e.start))} · ${esc(plannerDeadlineLabel(e,today))}</small><button class="ghost" type="button" data-open="${esc(e.id)}">Open event</button></div><label>My entry status for ${esc(e.name)}<select class="search" data-timeline-plan="${esc(e.id)}">${Object.entries(ENTRY_PLAN_STAGES).map(([value,label])=>`<option value="${value}" ${timelinePlanStage(e.id,plans)===value?'selected':''}>${label}</option>`).join('')}</select></label></li>`).join('')}</ul>`:`<p>${rows.length?'No competitions with this entry status.':'Save an upcoming competition to add it here.'}</p>`}</details>`;
 }
 function timelineCompactRow(e){
  const saved=state.saved.has(e.id);
@@ -970,12 +998,24 @@ function bind(){
  const exportTimeline=$('#exportTimelineCalendar');if(exportTimeline)exportTimeline.onclick=()=>shareEventCalendar('fighteye-shown-events.ics',eventCalendarText(timelineSelection(events,state,ukTimelineDay()).list),'FightEye competition calendar');
  const planner=$('.timeline-entry-planner'),planStatus=$('#timelinePlanStatus');
  if(planner)planner.ontoggle=()=>{state.entryPlannerOpen=planner.open};
+ const planFilter=$('#timelinePlanFilter');
+ if(planFilter)planFilter.onchange=()=>{state.timelinePlanFilter=planFilter.value;state.entryPlannerOpen=true;render();$('#timelinePlanFilter')?.focus({preventScroll:true})};
+ const exportEntered=$('#exportEnteredTimeline');
+ if(exportEntered)exportEntered.onclick=()=>{
+  const rows=timelinePlannerRows(events,state.saved,state.timelinePlans,ukTimelineDay(),'entered');
+  if(rows.length)return shareEventCalendar('fighteye-entered-competitions.ics',eventCalendarText(rows),'FightEye entered competitions');
+ };
  $$('[data-timeline-plan]').forEach(select=>select.onchange=()=>{
   const id=select.dataset.timelinePlan,stage=select.value,previous=timelinePlanStage(id);
-  if(!state.saved.has(id)||!['considering','ready','entered','skipping'].includes(stage)){select.value=previous;return}
+  if(!state.saved.has(id)||!Object.hasOwn(ENTRY_PLAN_STAGES,stage)){select.value=previous;return}
   const proposed=new Map(state.timelinePlans);if(stage==='considering')proposed.delete(id);else proposed.set(id,stage);
-  try{localStorage.setItem('fighteye-entry-plans-v1',JSON.stringify(Object.fromEntries(proposed)));state.timelinePlans=proposed;if(planStatus)planStatus.textContent='Entry status saved on this device.'}
-  catch{select.value=previous;if(planStatus)planStatus.textContent='Could not save the entry status.'}
+  try{localStorage.setItem('fighteye-entry-plans-v1',JSON.stringify(Object.fromEntries(proposed)));state.timelinePlans=proposed}
+  catch{select.value=previous;if(planStatus)planStatus.textContent='Could not save the entry status.';return}
+  if(planner){
+   state.entryPlannerOpen=true;render();
+   const status=$('#timelinePlanStatus');if(status)status.textContent='Entry status saved on this device.';
+   (Array.from($$('[data-timeline-plan]')).find(item=>item.dataset.timelinePlan===id)||$('#timelinePlanFilter'))?.focus({preventScroll:true});
+  }
  });
  const calendarMonth=()=>timelineSelection(events,state,ukTimelineDay()).month;
  $$('[data-timeline-move]').forEach(button=>button.onclick=()=>{
