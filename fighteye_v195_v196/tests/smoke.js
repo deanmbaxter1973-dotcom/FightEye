@@ -17,7 +17,7 @@ assert.strictEqual(events.find(e=>e.id==='kbgb-tatami-squad-nov-2026').access,'E
 assert.strictEqual(events.find(e=>e.id==='bristol-open-2026').start,'2026-10-23','Bristol Open uses published date');
 const store=new Map();
 const context={window:{FIGHTEYE_EVENTS:events,FIGHTEYE_ATHLETES:[{id:'test-athlete',name:'Test Athlete',ranking:'Cadet',weight:'42 kg'}],addEventListener:()=>{},webkit:{messageHandlers:{fighteyeHealth:{postMessage:()=>{}}}}},document:{getElementById:()=>({}),querySelector:()=>null,querySelectorAll:()=>[]},localStorage:{getItem:key=>store.get(key)||null,setItem:(key,value)=>store.set(key,value)},URLSearchParams,navigator:{userAgent:'Mozilla/5.0 (iPhone) AppleWebKit Safari',standalone:false},URL,setTimeout:()=>1,clearTimeout:()=>{}};
-vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,timelineCalendarDays,adjacentTimelineMonth,timelineDayAgenda,readTimelinePlans,timelinePlannerRows,timelinePlannerDeadlines,timelinePlannerClashes,bind,timelineEventLinks,timelineComparison,timelineChangeGroups,eventDeadlineCalendarText,timelineQuickRange,savedTimelineConflicts,shareTimelineUrl,readSharedTimeline,timelineMatches,timelineSelection,eventCalendarText,timelineMonthGroups,timelineEntryLabel,ukTimelineDay,timelinePreferences,readTimelinePreferences,saveTimelinePreferences,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,filterFightDayBouts,fightResultsSummary,fightResultsReport,priorityFightBouts,fightDayBriefing,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
+vm.runInNewContext(app.replace('})();','globalThis.__events={statusFor,eventsView,timelineCalendarDays,adjacentTimelineMonth,timelineDayAgenda,readTimelinePlans,timelinePlannerRows,timelinePlannerDeadlines,timelinePlannerClashes,timelinePlannerShown,timelinePlannerReview,timelinePlannerReport,bind,timelineEventLinks,timelineComparison,timelineChangeGroups,eventDeadlineCalendarText,timelineQuickRange,savedTimelineConflicts,shareTimelineUrl,readSharedTimeline,timelineMatches,timelineSelection,eventCalendarText,timelineMonthGroups,timelineEntryLabel,ukTimelineDay,timelinePreferences,readTimelinePreferences,saveTimelinePreferences,settingsView,clubView,passportView,nav,registrationOpen,calendarText,installGuide,sportdataId,parseSportdataLink,buildSportdataEvent,competitionSchedule,filterFightDayBouts,fightResultsSummary,fightResultsReport,priorityFightBouts,fightDayBriefing,saveStore,events,shiftBoutTime,markBoutChecked,fightDayGroup,boutCheckText,clubWebsite,parseHealthWeightXML,receiveHealthResult,validateWeightBackup,visibleWeights,weightText,state};})();'),context);
 const official='https://www.sportdata.org/kickboxing/sportsid/veranstaltung_info_main.php?vernr=2488';
 const timetable='https://www.sportdata.org/setglinc/dtm/dtm_timetable.php?eventid=2488&system=kickboxing';
 assert.strictEqual(context.__events.parseSportdataLink(official).id,'2488','official event URL accepted');
@@ -345,3 +345,27 @@ assert.deepEqual(Array.from(timeline.timelinePlannerClashes(overlapRows,plannerS
 plannerStages.set('second','ready');
 assert.equal(timeline.timelinePlannerClashes(overlapRows,plannerStages,plannerDay).length,0);
 console.log('Timeline phases 288–290 passed: actionable deadline queue, scoped reminders and entered date clashes.');
+
+const reviewRows=[
+ fixture('river','2026-11-15',{name:'River Open',city:'Nottingham',org:'WKU'}),
+ fixture('missing','',{name:'Future Cup',city:'Leeds',org:'WAKO'}),
+ fixture('current','2026-11-16',{name:'City Open',venue:'River Hall'}),
+ fixture('invalid','2026-02-30')
+];
+const reviewPlans=new Map([['river','ready'],['missing','entered']]);
+const visibleReview=options=>Array.from(timeline.timelinePlannerShown(reviewRows,reviewPlans,plannerDay,options),e=>e.id);
+assert.deepEqual(visibleReview({query:' RIVER '}),['river','current']);
+assert.deepEqual(visibleReview({query:'wku',stage:'ready',review:'closed'}),['river']);
+assert.deepEqual(visibleReview({review:'unknown'}),['missing','invalid']);
+assert.deepEqual(visibleReview({review:'open'}),['current']);
+assert.deepEqual(visibleReview({query:'Leeds',stage:'ready'}),[]);
+assert.equal(timeline.timelinePlannerReview(reviewRows[0],plannerDay),'closed');
+const report=timeline.timelinePlannerReport([reviewRows[0]],reviewPlans,plannerDay);
+assert(report.includes('River Open')&&report.includes('Ready to enter')&&report.includes('Nottingham'));
+assert(!report.includes('Future Cup')&&!report.includes('undefined'));
+assert(!report.includes('javascript:'));
+timeline.state.timelinePlanQuery='not-a-real-competition';
+assert(timeline.eventsView().includes('Showing 0 of '));
+assert(timeline.eventsView().includes('id="exportPlannerSummary" disabled'));
+assert(!decodeURIComponent(timeline.shareTimelineUrl('https://example.test/',timeline.state)).includes('not-a-real-competition'));
+console.log('Timeline phases 291–293 passed: combined planner search, deadline review and scoped summary export.');
