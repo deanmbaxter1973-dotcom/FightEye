@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VERSION='v290';
+const VERSION='v293';
 const ENTRY_PLAN_STAGES={considering:'Considering',ready:'Ready to enter',entered:'Entered',skipping:'Skipping'};
 const ICLOUD_FEED='https://raw.githubusercontent.com/deanmbaxter1973-dotcom/FightEye/main/fighteye_v195_v196/data/events.ics';
 const UK_TIMELINE_DATE=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',year:'numeric',month:'2-digit',day:'2-digit'});
@@ -26,7 +26,7 @@ state.editAthlete='';state.clubDetailsError='';state.athleteEditError='';
 state.weightRecords=readWeightStore();state.weightError='';
 state.healthLinkedAthlete='';state.healthSyncAt='';state.healthSyncStatus='disconnected';state.healthBackgroundEnabled=false;
 state.injuries=[];state.injuryKey=null;state.injuryError='';state.injuryAthleteId='';
-state.eventPeriod='upcoming';state.timelineDay='';state.timelinePlans=readTimelinePlans();state.timelinePlanFilter='';state.timelineComparisonIds=new Set();state.eventMonth='';state.eventFrom='';state.eventTo='';Object.assign(state,readTimelinePreferences());
+state.eventPeriod='upcoming';state.timelineDay='';state.timelinePlans=readTimelinePlans();state.timelinePlanFilter='';state.timelinePlanQuery='';state.timelinePlanReview='';state.timelineComparisonIds=new Set();state.eventMonth='';state.eventFrom='';state.eventTo='';Object.assign(state,readTimelinePreferences());
 const initialTimeline=typeof location==='undefined'?null:readSharedTimeline(location.hash);
 if(initialTimeline)Object.assign(state,initialTimeline);
 state.eventChanges=readEventChanges();
@@ -322,6 +322,25 @@ function timelinePlannerClashes(rows,plans,today){
  const entered=new Set(rows.filter(e=>timelinePlanStage(e.id,plans)==='entered').map(e=>e.id));
  return savedTimelineConflicts(rows,entered,today);
 }
+function timelinePlannerReview(e,today){
+ if(!timelineDateIsValid(e.closing||''))return 'unknown';
+ return e.closing<today?'closed':'open';
+}
+function timelinePlannerShown(rows,plans,today,{stage='',query='',review=''}={}){
+ const needle=query.trim().toLocaleLowerCase('en-GB');
+ return rows.filter(e=>(!stage||timelinePlanStage(e.id,plans)===stage)&&(!review||timelinePlannerReview(e,today)===review)&&(!needle||[e.name,e.org,e.series,e.city,e.venue,e.country].filter(Boolean).join(' ').toLocaleLowerCase('en-GB').includes(needle)));
+}
+function timelinePlannerReport(rows,plans,today,allRows=rows){
+ const clashes=timelinePlannerClashes(allRows,plans,today),clashIds=new Set(clashes.flatMap(pair=>pair.map(e=>e.id)));
+ return ['FightEye entry planning summary', 'Prepared: '+today,'Personal planning record; confirm entries and dates with the organiser.', ...rows.map(e=>[
+  e.name, 'Dates: '+e.start+' to '+e.end,
+  'Entry status: '+ENTRY_PLAN_STAGES[timelinePlanStage(e.id,plans)],
+  plannerDeadlineLabel(e,today),
+  'Location: '+[e.venue,e.city,e.country].filter(Boolean).join(', '),
+  clashIds.has(e.id)?'Possible date clash with another entered competition.':'',
+  timelineHttpsUrl(e.sourceUrl)||timelineHttpsUrl(e.registration)
+ ].filter(Boolean).join('\n'))].join('\n\n')+'\n';
+}
 function plannerDeadlineLabel(e,today){
  if(!timelineDateIsValid(e.closing||''))return 'Entry deadline TBC';
  if(e.closing===today)return 'Entries close today';
@@ -331,7 +350,7 @@ function timelineEntryPlanPanel(){
  const today=ukTimelineDay(),{saved,timelinePlans:plans,timelinePlanFilter:filter}=state;
  const rows=timelinePlannerRows(events,saved,plans,today);
  const count=stage=>rows.filter(e=>timelinePlanStage(e.id,plans)===stage).length;
- const shown=filter?rows.filter(e=>timelinePlanStage(e.id,plans)===filter):rows;
+ const shown=timelinePlannerShown(rows,plans,today,{stage:filter,query:state.timelinePlanQuery,review:state.timelinePlanReview});
  const deadlines=timelinePlannerDeadlines(rows,plans,today),entered=count('entered');
  const weekEnd=timelineQuickRange(7,today).eventTo,soon=deadlines.filter(e=>e.closing<=weekEnd).length;
  const clashes=timelinePlannerClashes(rows,plans,today);
@@ -349,8 +368,15 @@ function timelineEntryPlanPanel(){
  <button class="ghost" type="button" id="exportEnteredTimeline" ${entered?'':'disabled'}>Export entered competitions (.ics) · ${entered}</button>
  <small>Includes all upcoming saved competitions marked Entered.</small></div></div>
  ${clashes.length?`<section class="timeline-planner-clashes" aria-label="Entered competition clashes"><h3>Entered competitions: ${clashes.length} possible ${clashes.length===1?'clash':'clashes'}</h3><p>Competition dates overlap. Check the session times before making travel plans.</p><ul>${clashes.map(([a,b])=>`<li><span>${esc(fmt(a.start>b.start?a.start:b.start))} · <button class="ghost" type="button" data-open="${esc(a.id)}">${esc(a.name)}</button> and <button class="ghost" type="button" data-open="${esc(b.id)}">${esc(b.name)}</button></span></li>`).join('')}</ul></section>`:''}
+ <form id="timelinePlannerSearch" class="timeline-planner-search">
+ <label>Search saved competitions<input class="search" name="query" type="search" maxlength="120" value="${esc(state.timelinePlanQuery)}" placeholder="Event, organiser or location"></label>
+ <label>Review entry deadlines<select class="search" name="review">${[['','All deadlines'],['closed','Deadline passed'],['unknown','Deadline TBC'],['open','Deadline today or later']].map(([value,label])=>`<option value="${value}" ${state.timelinePlanReview===value?'selected':''}>${label}</option>`).join('')}</select></label>
+ <button class="ghost" type="submit">Apply</button><button class="ghost" type="button" id="clearPlannerSearch">Clear planner filters</button></form>
+ <p role="status">Showing ${shown.length} of ${rows.length} upcoming saved competitions.</p>
+ <button class="ghost" type="button" id="exportPlannerSummary" ${shown.length?'':'disabled'}>Export shown planning summary (.txt)</button>
+ <small>This file includes your entry statuses. Share only with people you choose.</small>
  <p id="timelinePlanStatus" role="status"></p>
- ${shown.length?`<ul>${shown.map(e=>`<li><div><strong>${esc(e.name)}</strong><small>${esc(fmt(e.start))} · ${esc(plannerDeadlineLabel(e,today))}${clashIds.has(e.id)?' · Possible date clash':''}</small><button class="ghost" type="button" data-open="${esc(e.id)}">Open event</button></div><label>My entry status for ${esc(e.name)}<select class="search" data-timeline-plan="${esc(e.id)}">${Object.entries(ENTRY_PLAN_STAGES).map(([value,label])=>`<option value="${value}" ${timelinePlanStage(e.id,plans)===value?'selected':''}>${label}</option>`).join('')}</select></label></li>`).join('')}</ul>`:`<p>${rows.length?'No competitions with this entry status.':'Save an upcoming competition to add it here.'}</p>`}</details>`;
+ ${shown.length?`<ul>${shown.map(e=>`<li><div><strong>${esc(e.name)}</strong><small>${esc(fmt(e.start))} · ${esc(plannerDeadlineLabel(e,today))}${clashIds.has(e.id)?' · Possible date clash':''}</small><button class="ghost" type="button" data-open="${esc(e.id)}">Open event</button></div><label>My entry status for ${esc(e.name)}<select class="search" data-timeline-plan="${esc(e.id)}">${Object.entries(ENTRY_PLAN_STAGES).map(([value,label])=>`<option value="${value}" ${timelinePlanStage(e.id,plans)===value?'selected':''}>${label}</option>`).join('')}</select></label></li>`).join('')}</ul>`:`<p>${rows.length?'No competitions match these planner filters.':'Save an upcoming competition to add it here.'}</p>`}</details>`;
 }
 function timelineCompactRow(e){
  const saved=state.saved.has(e.id);
@@ -1014,6 +1040,21 @@ function bind(){
   const today=ukTimelineDay(),rows=timelinePlannerRows(events,state.saved,state.timelinePlans,today);
   const deadlines=timelinePlannerDeadlines(rows,state.timelinePlans,today);
   if(deadlines.length)return shareEventCalendar('fighteye-planner-entry-reminders.ics',eventDeadlineCalendarText(deadlines,today),'FightEye planner entry reminders');
+ };
+ const plannerSearch=$('#timelinePlannerSearch');
+ if(plannerSearch)plannerSearch.onsubmit=e=>{
+  e.preventDefault();const fd=new FormData(plannerSearch);
+  state.timelinePlanQuery=String(fd.get('query')||'').trim().slice(0,120);
+  state.timelinePlanReview=['closed','unknown','open'].includes(fd.get('review'))?fd.get('review'):'';
+  state.entryPlannerOpen=true;render();$('#timelinePlannerSearch input')?.focus({preventScroll:true});
+ };
+ const clearPlanner=$('#clearPlannerSearch');
+ if(clearPlanner)clearPlanner.onclick=()=>{state.timelinePlanQuery='';state.timelinePlanReview='';state.timelinePlanFilter='';state.entryPlannerOpen=true;render();$('#timelinePlannerSearch input')?.focus({preventScroll:true})};
+ const summary=$('#exportPlannerSummary');
+ if(summary)summary.onclick=()=>{
+  const today=ukTimelineDay(),rows=timelinePlannerRows(events,state.saved,state.timelinePlans,today);
+  const shown=timelinePlannerShown(rows,state.timelinePlans,today,{stage:state.timelinePlanFilter,query:state.timelinePlanQuery,review:state.timelinePlanReview});
+  if(shown.length)download('fighteye-entry-planning-summary.txt',timelinePlannerReport(shown,state.timelinePlans,today,rows));
  };
  const planFilter=$('#timelinePlanFilter');
  if(planFilter)planFilter.onchange=()=>{state.timelinePlanFilter=planFilter.value;state.entryPlannerOpen=true;render();$('#timelinePlanFilter')?.focus({preventScroll:true})};

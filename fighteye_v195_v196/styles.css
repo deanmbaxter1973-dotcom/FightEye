@@ -324,3 +324,8 @@ body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
 .timeline-planner-queue li>div:last-child{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem}
 .timeline-planner-clashes{margin-top:.75rem;padding:.75rem;border:1px solid var(--line);border-inline-start:.25rem solid #c68a28;border-radius:.75rem;overflow-wrap:anywhere}
 .timeline-planner-clashes h3{margin-top:0}
+
+.timeline-planner-search{display:flex;flex-wrap:wrap;align-items:end;gap:.6rem;margin-top:1rem}
+.timeline-planner-search label{flex:1 1 14rem}
+.timeline-planner-search input,.timeline-planner-search select{width:100%;min-width:0;min-height:44px;font-size:16px}
+.timeline-planner-search button{min-height:44px}
